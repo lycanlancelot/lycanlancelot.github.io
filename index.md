@@ -60,7 +60,7 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
 ## Featured Systems
 
 <div class="project-summary-panel">
-  <p>My GitHub work clusters around one theme: turning AI from a demo into an operating system for real workflows. The strongest examples are Termly, Remote Agent Workbench, AgentForge, Video-RAG, Toy Gifting, and BranchFlow.</p>
+  <p>My GitHub projects cluster around applied AI products, agentic developer tooling, multimodal retrieval, and operator workflows. I separate original builds, collaborations, and research forks clearly, while using each project to show architecture, product judgment, and implementation depth.</p>
   <a class="button" href="/github-projects.html">Read the full GitHub project summary</a>
 </div>
 
@@ -68,10 +68,10 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <article class="project-card highlight">
     <p class="project-kicker">Healthcare AI / Contract Intelligence</p>
     <h3>Termly</h3>
-    <p>End-to-end system for Australian medical contract analysis, MPPA PDF generation, identifier validation, OCR correction, structured extraction, and risk assessment.</p>
+    <p>Australian medical contract automation system for MPPA PDF generation, Medicare/PBS identifier validation, scanned PDF analysis, OCR correction, clause extraction, and compliance-oriented risk assessment.</p>
     <ul>
-      <li>FastAPI, Pydantic, Claude Sonnet, Azure Document Intelligence, OCR, Docker.</li>
-      <li>Designed around healthcare compliance, auditability, and Australian data-sovereignty constraints.</li>
+      <li>FastAPI, Pydantic, Claude Sonnet, Azure Document Intelligence, Tesseract OCR, Docker.</li>
+      <li>Shows domain modeling, document AI, validation algorithms, and deployment-aware service design.</li>
     </ul>
     <a href="https://github.com/lycanlancelot/Termly">Repository</a>
   </article>
@@ -79,10 +79,10 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <article class="project-card highlight">
     <p class="project-kicker">Agentic Developer Tooling</p>
     <h3>Remote Agent Workbench</h3>
-    <p>React/Vite + Express/Socket.IO web UI for orchestrating Claude Code and Codex from a remote browser, targeting VS Code Codex extension parity.</p>
+    <p>VS Code-like remote web workbench for orchestrating Claude Code and Codex from a browser, built around real task execution rather than a mock dashboard.</p>
     <ul>
-      <li>Conversation continuity, task queues, steering, file previews, model controls, permission prompts, and remote connections.</li>
-      <li>Designed as a VS Code-like workbench shell for serious repeated agent workflows.</li>
+      <li>React/Vite, TypeScript, Express, Socket.IO, task persistence, file previews, permission prompts, and terminal streaming.</li>
+      <li>Shows practical safety boundaries: allowed directories, verifiable task output, and remote access patterns.</li>
     </ul>
     <a href="https://github.com/lycanlancelot/remote-agent">Repository</a>
   </article>
@@ -90,10 +90,10 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <article class="project-card highlight">
     <p class="project-kicker">Multi-Agent Developer Tooling</p>
     <h3>AgentForge</h3>
-    <p>Local control plane for Claude Code, Codex, and Kimi Code, with live terminals, task queues, worktree isolation, auto-commit scheduling, and Cloudflare Tunnel remote access.</p>
+    <p>Local control plane for Claude Code, Codex, and Kimi Code, designed to make long-running coding-agent work observable, parallelizable, and recoverable.</p>
     <ul>
       <li>Express, Socket.IO, SQLite, xterm.js, WSL, git worktrees, PM2.</li>
-      <li>Built to make repeated agent work observable, parallelizable, and recoverable.</li>
+      <li>Includes live terminals, task queues, worktree isolation, auto-commit scheduling, session logs, and Cloudflare Tunnel remote access.</li>
     </ul>
     <a href="https://github.com/lycanlancelot/agent-forge">Repository</a>
   </article>
@@ -101,14 +101,14 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <article class="project-card">
     <p class="project-kicker">Multimodal RAG</p>
     <h3>Video-RAG</h3>
-    <p>Visual retrieval-augmented generation pipeline that extracts video keyframes, embeds them with CLIP, stores them in ChromaDB, and answers natural-language queries with timestamped evidence.</p>
+    <p>Collaborative visual retrieval system that samples video frames, embeds them with CLIP, stores them in ChromaDB, and answers natural-language queries with timestamped context.</p>
     <a href="https://github.com/Iliana678/Video-RAG">Repository</a>
   </article>
 
   <article class="project-card">
     <p class="project-kicker">Operator Automation</p>
     <h3>Toy Gifting System</h3>
-    <p>Back-office tool for toy sourcing and custom gift-box assembly, combining catalog ingestion, supplier metadata, compliance fields, feedback capture, and 3D packing visualization.</p>
+    <p>Back-office tool for toy sourcing and custom gift-box assembly, combining SQLite catalog ingestion, supplier/compliance metadata, operator feedback, bilingual product data, and Three.js packing visualization.</p>
     <a href="https://github.com/lycanlancelot/toy-gifting">Repository</a>
   </article>
 
@@ -122,22 +122,29 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <article class="project-card">
     <p class="project-kicker">Creative AI Workflow</p>
     <h3>BranchFlow</h3>
-    <p>Nonlinear writing and prompt orchestration workbench for Seedance-style video generation, with branching narrative state, prompt drawers, React Flow mind maps, and Obsidian Canvas export.</p>
+    <p>Local nonlinear writing and prompt orchestration workbench for Seedance-style video generation, with branching narrative state, prompt drawers, React Flow mind maps, and Obsidian Canvas export.</p>
     <a href="https://github.com/lycanlancelot/writer-helper">Repository</a>
   </article>
 
   <article class="project-card">
     <p class="project-kicker">Realtime Communication AI</p>
-    <h3>RageZone / Quarrel-Mate</h3>
-    <p>LLM-powered communication assistant concept with a WeChat Mini Program shell, realtime chat service design, persona modes, token-based auth, and monetization entry points.</p>
-    <a href="https://github.com/lycanlancelot">GitHub profile</a>
+    <h3>RageZone</h3>
+    <p>WeChat Mini Program and Node/WebSocket service for an LLM-assisted argument coaching product, including persona setup, chat flow, JWT/Firebase auth planning, evaluation scripts, and monetization entry points.</p>
+    <a href="https://github.com/lycanlancelot/ragezone">Repository</a>
   </article>
 
   <article class="project-card">
-    <p class="project-kicker">Research Fork / Financial Agents</p>
-    <h3>AI Hedge Fund Lab</h3>
-    <p>Experimental multi-agent trading research environment combining valuation, fundamentals, sentiment, technical analysis, risk management, and portfolio-decision agents for education and backtesting.</p>
-    <a href="https://github.com/virattt/ai-hedge-fund">Upstream</a>
+    <p class="project-kicker">Voice AI / Mobile Prototype</p>
+    <h3>Elder Companion</h3>
+    <p>Expo React Native prototype with elder-facing voice chat, family dashboard, Firebase persistence, ElevenLabs integration plan, Claude daily summaries, and alert workflow design.</p>
+    <a href="https://github.com/lycanlancelot/elder-companion">Repository</a>
+  </article>
+
+  <article class="project-card">
+    <p class="project-kicker">Agent Architecture Research</p>
+    <h3>Claude Code Source Map</h3>
+    <p>Technical study repository for understanding early Claude Code internals, terminal-agent command flow, and source-map based inspection of agent CLI architecture.</p>
+    <a href="https://github.com/lycanlancelot/claude-code-sourcemap">Repository</a>
   </article>
 </div>
 
