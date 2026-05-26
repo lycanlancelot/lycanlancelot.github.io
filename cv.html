@@ -15,8 +15,8 @@
     --timeline: rgb(100, 100, 150);
     --text: rgb(35, 35, 45);
     --muted: rgb(90, 90, 110);
-    --page-w: 8.5in;
-    --page-h: 11in;
+    --page-w: 210mm;
+    --page-h: 297mm;
     --serif: "Source Serif 4", Georgia, serif;
     --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
   }
@@ -45,6 +45,8 @@
     margin: 24px auto;
     padding: 0;
     position: relative;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 2px 14px rgba(0,0,0,0.12);
     overflow: hidden;
   }
@@ -80,15 +82,17 @@
 
   .body {
     display: grid;
-    grid-template-columns: 2.4in 1fr;
+    grid-template-columns: 58mm 1fr;
     gap: 0;
+    flex: 1;
+    min-height: 0;
   }
   .sidebar {
     background: var(--sidebar-bg);
-    padding: 22px 18px;
+    padding: 20px 16px;
   }
   .main-col {
-    padding: 22px 26px 22px 22px;
+    padding: 20px 24px 20px 20px;
   }
 
   h2.section {
@@ -104,7 +108,7 @@
 
   .contact-row {
     display: grid;
-    grid-template-columns: 18px 1fr;
+    grid-template-columns: 34px 1fr;
     gap: 6px;
     align-items: baseline;
     margin-bottom: 4px;
@@ -195,6 +199,10 @@
     font-size: 9pt;
   }
 
+  .spacer {
+    height: 12px;
+  }
+
   .print-hint {
     max-width: var(--page-w);
     margin: 16px auto 0;
@@ -204,21 +212,118 @@
   }
 
   @media print {
-    html, body { background: #fff; font-size: 10pt; }
+    html, body {
+      width: var(--page-w);
+      min-height: var(--page-h);
+      background: #fff;
+      font-size: 9.35pt;
+    }
     .page {
+      width: var(--page-w);
+      height: var(--page-h);
+      min-height: var(--page-h);
       margin: 0;
       box-shadow: none;
+      break-after: page;
       page-break-after: always;
+      overflow: hidden;
     }
     .page:last-child { page-break-after: auto; }
     .print-hint { display: none; }
-    @page { size: Letter; margin: 0; }
+    .header {
+      padding: 22px 0 17px;
+    }
+    .header h1 {
+      font-size: 24pt;
+    }
+    .header .subtitle {
+      font-size: 11.5pt;
+    }
+    .header.page2 {
+      padding: 11px 34px;
+      font-size: 13pt;
+    }
+    .sidebar {
+      padding: 16px 14px;
+    }
+    .main-col {
+      padding: 16px 20px 16px 18px;
+    }
+    h2.section {
+      font-size: 12.5pt;
+      margin-bottom: 6px;
+    }
+    .sidebar h2.section {
+      font-size: 11.5pt;
+    }
+    .section-block {
+      margin-bottom: 12px;
+    }
+    .profile,
+    .skill-group,
+    .tl-entry ul,
+    .clean-list,
+    .pub-item {
+      font-size: 8.45pt;
+    }
+    .profile {
+      line-height: 1.32;
+    }
+    .skill-group {
+      margin-bottom: 5px;
+      line-height: 1.27;
+    }
+    .contact-row {
+      margin-bottom: 3px;
+      font-size: 8.2pt;
+      grid-template-columns: 30px 1fr;
+    }
+    .edu-item {
+      margin-bottom: 6px;
+      font-size: 8.5pt;
+    }
+    .tl-entry {
+      padding-bottom: 9px;
+    }
+    .tl-head .company {
+      font-size: 9.5pt;
+    }
+    .tl-head .dates {
+      font-size: 8.2pt;
+    }
+    .tl-role {
+      margin-bottom: 2px;
+      font-size: 8.6pt;
+    }
+    .tl-entry ul {
+      margin-top: 2px;
+      padding-left: 14px;
+    }
+    .tl-entry ul li {
+      margin-bottom: 1.5px;
+      line-height: 1.27;
+    }
+    .clean-list li {
+      margin-bottom: 2px;
+      line-height: 1.25;
+    }
+    .pub-item {
+      margin-bottom: 4px;
+      line-height: 1.24;
+    }
+    .pub-item .pub-venue {
+      font-size: 8pt;
+    }
+    .spacer {
+      height: 8px;
+    }
+    @page { size: A4; margin: 0; }
   }
 </style>
 </head>
 <body>
 
-<p class="print-hint">Tip: use <em>Print - Save as PDF</em> with background graphics ON for a clean export.</p>
+<p class="print-hint">Tip: use <em>Print - Save as PDF</em> with Paper A4, Margins None, Scale 100%, and Background graphics ON.</p>
 
 <section class="page">
   <header class="header">
@@ -383,7 +488,7 @@
         </div>
       </div>
 
-      <div style="height:14px"></div>
+      <div class="spacer"></div>
       <h2 class="section">SELECTED ML / AI SYSTEMS</h2>
       <div class="timeline">
         <div class="tl-entry">
@@ -459,7 +564,7 @@
         </div>
       </div>
 
-      <div style="height:14px"></div>
+      <div class="spacer"></div>
       <h2 class="section">RESEARCH EXPERIENCE</h2>
       <div class="timeline">
         <div class="tl-entry">
@@ -475,7 +580,7 @@
         </div>
       </div>
 
-      <div style="height:14px"></div>
+      <div class="spacer"></div>
       <h2 class="section">PUBLICATIONS</h2>
       <div class="pub-item">
         <div>
