@@ -7,6 +7,7 @@ layout: default
   <h1>Liangjun (Lance) Song, PhD</h1>
   <p class="hero-copy">Forward-Deployed AI Engineer building production-grade agentic workflows, RAG systems, and automation platforms that move ambiguous business work into auditable software.</p>
   <div class="hero-actions">
+    <a class="button primary" href="/cv.html">View CV</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
     <a class="button" href="https://github.com/lycanlancelot">GitHub</a>

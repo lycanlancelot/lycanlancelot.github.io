@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liangjun (Lance) Song - AI Engineer / Data Scientist CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --header-bg: rgb(205, 230, 247);
+    --sidebar-bg: rgb(228, 232, 243);
+    --main: rgb(40, 40, 90);
+    --timeline: rgb(100, 100, 150);
+    --text: rgb(35, 35, 45);
+    --muted: rgb(90, 90, 110);
+    --page-w: 8.5in;
+    --page-h: 11in;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ececec;
+    font-family: var(--sans);
+    color: var(--text);
+    font-size: 10pt;
+    line-height: 1.4;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  a { color: var(--main); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .page {
+    width: var(--page-w);
+    min-height: var(--page-h);
+    background: #fff;
+    margin: 24px auto;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  .header {
+    background: var(--header-bg);
+    text-align: center;
+    padding: 28px 0 22px;
+    color: var(--main);
+  }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: 26pt;
+    margin: 0;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+  .header .subtitle {
+    font-size: 13pt;
+    margin-top: 4px;
+    letter-spacing: 2px;
+    font-weight: 600;
+  }
+  .header.page2 {
+    padding: 14px 40px;
+    font-family: var(--serif);
+    font-size: 14pt;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: 2.4in 1fr;
+    gap: 0;
+  }
+  .sidebar {
+    background: var(--sidebar-bg);
+    padding: 22px 18px;
+  }
+  .main-col {
+    padding: 22px 26px 22px 22px;
+  }
+
+  h2.section {
+    font-family: var(--serif);
+    color: var(--main);
+    font-size: 14pt;
+    margin: 0 0 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .sidebar h2.section { font-size: 12pt; }
+  .section-block { margin-bottom: 18px; }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 6px;
+    align-items: baseline;
+    margin-bottom: 4px;
+    font-size: 9pt;
+  }
+  .contact-row .icon { color: var(--main); }
+  .contact-row .status-label { color: var(--main); font-weight: 600; }
+
+  .profile {
+    font-size: 9pt;
+    line-height: 1.45;
+    text-align: justify;
+  }
+
+  .edu-item { margin-bottom: 8px; font-size: 9.5pt; }
+  .edu-item .school { font-weight: 600; }
+  .edu-item .meta { color: var(--muted); font-size: 8.5pt; }
+
+  .skill-group { margin-bottom: 8px; font-size: 9pt; line-height: 1.4; }
+  .skill-group .label { font-weight: 700; color: var(--text); display: block; margin-bottom: 1px; }
+
+  .timeline { position: relative; padding-left: 18px; }
+  .tl-entry {
+    position: relative;
+    padding-bottom: 14px;
+  }
+  .tl-entry:last-child { padding-bottom: 0; }
+  .tl-entry::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--timeline);
+  }
+  .tl-entry::after {
+    content: "";
+    position: absolute;
+    left: -11px;
+    top: 16px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--timeline);
+    opacity: 0.55;
+  }
+  .tl-entry:last-child::after { display: none; }
+
+  .tl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 2px;
+  }
+  .tl-head .company { font-weight: 700; font-size: 10.5pt; }
+  .tl-head .dates { font-weight: 700; font-size: 9pt; white-space: nowrap; }
+  .tl-role { font-weight: 600; font-style: italic; color: var(--muted); margin-bottom: 4px; font-size: 9.5pt; }
+  .tl-entry ul {
+    margin: 4px 0 0;
+    padding-left: 16px;
+    font-size: 9pt;
+  }
+  .tl-entry ul li { margin-bottom: 3px; line-height: 1.4; }
+
+  .clean-list {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 9pt;
+  }
+  .clean-list li { margin-bottom: 3px; line-height: 1.35; }
+
+  .pub-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 9pt;
+    margin-bottom: 6px;
+  }
+  .pub-item .pub-title { font-weight: 700; }
+  .pub-item .pub-venue { color: var(--muted); font-style: italic; display: block; font-size: 8.5pt; }
+  .pub-item .pub-year { font-weight: 600; white-space: nowrap; }
+
+  .muted-inline {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 9pt;
+  }
+
+  .print-hint {
+    max-width: var(--page-w);
+    margin: 16px auto 0;
+    font-size: 9pt;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  @media print {
+    html, body { background: #fff; font-size: 10pt; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .print-hint { display: none; }
+    @page { size: Letter; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<p class="print-hint">Tip: use <em>Print - Save as PDF</em> with background graphics ON for a clean export.</p>
+
+<section class="page">
+  <header class="header">
+    <h1>LIANGJUN (LANCE) SONG, PHD</h1>
+    <div class="subtitle">AI ENGINEER / DATA SCIENTIST</div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="section-block">
+        <h2 class="section">CONTACT</h2>
+        <div class="contact-row"><span class="icon">TEL</span><span>0432 203 278</span></div>
+        <div class="contact-row"><span class="icon">@</span><span>liangjun.song@outlook.com</span></div>
+        <div class="contact-row"><span class="icon">LOC</span><span>Melbourne, VIC, Australia</span></div>
+        <div class="contact-row"><span class="icon">in</span><span><a href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn Profile</a></span></div>
+        <div class="contact-row"><span class="status-label">Status:</span><span>Australian Permanent Resident</span></div>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section">PROFILE</h2>
+        <p class="profile">Highly accomplished AI Engineer and Data Scientist with 6+ years of experience architecting large-scale AI solutions. Expert in LLM pipelines, Agentic Workflows, LangGraph, and complex RAG systems. Hands-on practitioner of AI-augmented development workflows using Claude Code, Codex, and Gemini Code Assist to accelerate delivery. Proven track record in orchestrating multi-turn conversational agents, accelerating model inference (vLLM/SGLang), and building robust cloud-native MLOps deployments handling millions of events.</p>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section">EDUCATION</h2>
+        <div class="edu-item">
+          <div class="school">PhD in Computer Science</div>
+          <div>RMIT University</div>
+          <div class="meta">2015 - 2020</div>
+        </div>
+        <div class="edu-item">
+          <div class="school">B.Sc. in Computer Science</div>
+          <div>Harbin Institute of Technology</div>
+          <div class="meta">2009 - 2013</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section">SKILLS</h2>
+        <div class="skill-group"><span class="label">AI &amp; LLM Pipelines:</span>LangGraph, LangChain, RAG Architecture, Azure OpenAI, Vector Search, Nemoguardrails</div>
+        <div class="skill-group"><span class="label">AI-Augmented Dev:</span>Claude Code, GitHub Codex, Gemini Code Assist, agentic coding workflows, MCP</div>
+        <div class="skill-group"><span class="label">LLM Serving &amp; Inference:</span>vLLM, SGLang, LiteLLM router/gateway, local model deployment (DGX Spark / ARM64)</div>
+        <div class="skill-group"><span class="label">Languages:</span>Python (Expert), SQL, TypeScript, C++</div>
+        <div class="skill-group"><span class="label">Backend Services:</span>FastAPI, Pydantic, PostgreSQL, AsyncIO</div>
+        <div class="skill-group"><span class="label">ML Frameworks:</span>PyTorch, TensorFlow, Keras</div>
+        <div class="skill-group"><span class="label">Cloud &amp; MLOps:</span>Docker, Vercel, Supabase, Azure, GCP (Vertex AI), CI/CD</div>
+        <div class="skill-group"><span class="label">Data Science Libraries:</span>NumPy, Pandas, SciPy, Matplotlib</div>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <h2 class="section">WORK EXPERIENCE</h2>
+      <div class="timeline">
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">WiseTech Global</div>
+            <div class="dates">Apr 2025 - Present</div>
+          </div>
+          <div class="tl-role">AI Engineer - AI/ML Group</div>
+          <ul>
+            <li>Architected and optimized end-to-end LLM pipelines for production support platforms (CWBot &amp; TriageAgent), orchestrating stateful, multi-turn conversational agents using LangGraph, FastAPI, and Azure OpenAI.</li>
+            <li>Designed advanced RAG workflows with dynamic question rewriting and custom retriever factories, integrating heterogeneous data sources while using asynchronous patterns (<code>asyncio.to_thread</code>) to maximize pipeline throughput.</li>
+            <li>Implemented robust LLM guardrails (Nemoguardrails) for PII filtering and response steering, backed by PostgreSQL checkpointing for persistent and durable chat state.</li>
+            <li>Led container-first CI/CD modernization for AI services (retrieval-transparency project), establishing multi-environment Docker dev containers, GitHub Actions pipelines, and resolving subtle env-drift issues (Azure Search field schema, devcontainer port conflicts, PostgreSQL SSL).</li>
+            <li>Pioneered AI-augmented engineering practice across the team, integrating Claude Code into daily workflow for spec-driven development, code review, and test generation, materially improving feature delivery velocity.</li>
+            <li>Maintained extensive test coverage strategy across backend / frontend / system test sets, incorporating quality gates, linting / type checks, and readiness endpoints for production scalability.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">SGLang Framework</div>
+            <div class="dates">Feb 2025 - Present</div>
+          </div>
+          <div class="tl-role">Open Source Contributor</div>
+          <ul>
+            <li>Contributing core optimizations to the SGLang framework (LMSYS / UC Berkeley) to accelerate LLM inference pipelines for state-of-the-art models including DeepSeek R1, Llama 3, and Qwen.</li>
+            <li>Working on backend runtime, distributed serving, and frontend prompt-language features to improve throughput, contextual routing, and controllability.</li>
+            <li>Leveraging AI coding agents (Claude Code) to navigate the large codebase, draft PRs, and review diffs, demonstrating an effective human-in-the-loop open source contribution workflow.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Redbubble</div>
+            <div class="dates">Mar 2023 - Jan 2025</div>
+          </div>
+          <div class="tl-role">Data Scientist - Search &amp; Recommendation Team</div>
+          <ul>
+            <li>Led search and recommendation enhancements with Marqo vector search integration, optimizing end-to-end MLOps pipelines on GCP Vertex AI, improving add-to-cart rate by 0.5% and CTR by 10%.</li>
+            <li>Developed sophisticated fraud detection models and offline evaluation pipelines for user behavior simulation.</li>
+            <li>Designed robust ML infrastructure handling 100M+ user events for feature extraction and serving.</li>
+            <li>Drove GA4 analytics migration to ensure data reliability across internal dashboard-driven A/B testing frameworks.</li>
+            <li>Optimized search relevance for long-tail queries, bridging technical execution with direct business impact.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page">
+  <header class="header page2">
+    <span>LIANGJUN (LANCE) SONG, PHD</span>
+    <span>PAGE 2</span>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="section-block">
+        <h2 class="section">AWARDS</h2>
+        <ul class="clean-list">
+          <li>Best Student Paper Award, ADC 2016</li>
+          <li>Best Student Paper Runner Up, DASFAA 2017</li>
+          <li>Google Code Jam Top 1000 Worldwide</li>
+          <li>ACM-ICPC Asia Regional Silver Medal</li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <h2 class="section">CERTIFICATIONS</h2>
+        <ul class="clean-list">
+          <li>Google Cloud Professional Data Engineer (2023)</li>
+          <li>Microsoft Azure AI Fundamentals (AI-900) (2022)</li>
+          <li>Modernizing Data Lakes and Data Warehouses with GCP</li>
+          <li>Neural Networks and Deep Learning</li>
+          <li>NLP with Classification and Vector Spaces</li>
+          <li>NLP with Probabilistic Models</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <h2 class="section">WORK EXPERIENCE (CONT.)</h2>
+      <div class="timeline">
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Redbubble</div>
+            <div class="dates">Aug 2022 - Mar 2023</div>
+          </div>
+          <div class="tl-role">Data Scientist - AI Renovation Team</div>
+          <ul>
+            <li>Utilized language-image models for automated content tagging and classification across a massive catalog.</li>
+            <li>Enhanced content taxonomy using structured user engagement data modeling.</li>
+            <li>Conducted extensive experiments with search engine optimization for new content tags.</li>
+            <li>Developed personalization pipelines that significantly increased core user engagement metrics.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Redbubble</div>
+            <div class="dates">Jan 2022 - Jul 2022</div>
+          </div>
+          <div class="tl-role">Data Scientist - Content Moderation Team</div>
+          <ul>
+            <li>Implemented content classification systems using language-image models for efficient automated moderation.</li>
+            <li>Developed image duplicate detection pipelines using machine learning and statistical modeling techniques.</li>
+            <li>Established a comprehensive data quality framework with anomaly detection capabilities.</li>
+            <li>Achieved productionization of content classification systems, significantly reducing intellectual property infringement risks.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+      <h2 class="section">PROJECTS</h2>
+      <div class="timeline">
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">AI-Augmented Engineering Practice</div>
+            <div class="dates">2025 - Present</div>
+          </div>
+          <div class="tl-role">Personal R&amp;D &amp; Workflow</div>
+          <ul>
+            <li>Adopted Claude Code as primary coding agent for production work (CWBot multi-agent system, retrieval-transparency Azure Search debugging, FastAPI / UV scaffolding) and SGLang open source contributions, refining a documentation-driven, iteration-gated workflow.</li>
+            <li>Deployed Claude Code on NVIDIA DGX Spark (Ubuntu 24.04 ARM64), working through aarch64-specific install crashes, version pinning, and headless OAuth credential-transfer workarounds.</li>
+            <li>Designed self-hosted LLM gateway architecture: LiteLLM unified OpenAI-compatible router over local vLLM / SGLang backends and commercial providers, with PostgreSQL-backed cost tracking and Langfuse observability; remote access hardened via Tailscale mesh VPN.</li>
+            <li>Standardized team Python dev tooling (Ruff, pre-commit hooks, pytest, GitHub Actions CI) and authored bilingual training materials - 70-slide LangChain / LCEL / LangSmith deck, vector vs lexical search talk, and a "Vibe Coding" case study on SGLang's distributed serving.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Termly</div>
+            <div class="dates">2026</div>
+          </div>
+          <div class="tl-role">Creator &amp; Lead Developer</div>
+          <ul>
+            <li>End-to-end AI extraction pipeline for image and video streams; cloud-native architecture migrated from Render to Vercel + Supabase to reduce latency and improve deployment agility.</li>
+            <li>Built primarily through agentic coding with Claude Code, keeping human review focused on architecture and acceptance gates.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Quarrel-Mate <span class="muted-inline">(GitHub, open source)</span></div>
+            <div class="dates">2025</div>
+          </div>
+          <div class="tl-role">Creator &amp; Maintainer</div>
+          <ul>
+            <li>Open-source LLM-powered communication assistant that helps users de-escalate arguments and rephrase emotionally charged messages into constructive responses.</li>
+            <li>Built with Python + FastAPI backend and a lightweight web UI; integrates multiple LLM providers (OpenAI, Anthropic, local vLLM) via an OpenAI-compatible interface for tone analysis and reply drafting.</li>
+            <li>Designed prompt-engineering pipeline with nonviolent communication (NVC) framing, intent detection, and configurable politeness levels; covered with unit tests and CI on GitHub Actions.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Long-Document PDF Q&amp;A Pipeline</div>
+            <div class="dates">2025</div>
+          </div>
+          <div class="tl-role">Research &amp; Prototype</div>
+          <ul>
+            <li>Prototyped a 36+ page PDF understanding pipeline combining PyMuPDF text extraction, layout-preserving chunking, and vision-language fallback for image-heavy documents.</li>
+            <li>Benchmarked direct PDF ingestion (Claude, Gemini) vs RAG with Marqo / Chroma vector stores; documented trade-offs in latency, accuracy, and cost for production deployment.</li>
+            <li>Integrated multi-pass summarization and citation-grounded answers, with evaluation harness for factual recall and hallucination rate.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+      <h2 class="section">RESEARCH EXPERIENCE</h2>
+      <div class="timeline">
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Microsoft Research Asia</div>
+            <div class="dates">Jul 2012 - Jun 2013</div>
+          </div>
+          <div class="tl-role">Research Intern - Web Search and Data Mining Group</div>
+          <ul>
+            <li>Developed Autosub, a collaborative project for generating video subtitles using advanced speech-to-text APIs.</li>
+            <li>Contributed to web page mining projects using data mining and time-series analysis techniques.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+      <h2 class="section">PUBLICATIONS</h2>
+      <div class="pub-item">
+        <div>
+          <div class="pub-title">Towards Efficient Personalized Ranking</div>
+          <div class="pub-venue">PhD Thesis, RMIT University</div>
+        </div>
+        <div class="pub-year">2020</div>
+      </div>
+      <div class="pub-item">
+        <div>
+          <div class="pub-title">Incremental Preference Adjustment: a Graph Theoretical Approach</div>
+          <div class="pub-venue">The VLDB Journal (Core Rank A*)</div>
+        </div>
+        <div class="pub-year">2020</div>
+      </div>
+      <div class="pub-item">
+        <div>
+          <div class="pub-title">Continuous Summarization over Microblog Threads</div>
+          <div class="pub-venue">DASFAA (Best Student Paper Award Runner Up)</div>
+        </div>
+        <div class="pub-year">2017</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
