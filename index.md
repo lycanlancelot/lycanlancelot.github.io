@@ -8,6 +8,7 @@ layout: default
   <p class="hero-copy">Forward-Deployed AI Engineer building production-grade agentic workflows, RAG systems, and automation platforms that move ambiguous business work into auditable software.</p>
   <div class="hero-actions">
     <a class="button primary" href="/cv.html">View CV</a>
+    <a class="button primary" href="/projects.html">Projects Dashboard</a>
     <a class="button" href="/github-projects.html">GitHub Projects</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
@@ -61,7 +62,8 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
 
 <div class="project-summary-panel">
   <p>My GitHub projects cluster around applied AI products, agentic developer tooling, multimodal retrieval, and operator workflows. I separate original builds, collaborations, and research forks clearly, while using each project to show architecture, product judgment, and implementation depth.</p>
-  <a class="button" href="/github-projects.html">Read the full GitHub project summary</a>
+  <a class="button primary" href="/projects.html">Open Projects Dashboard →</a>
+  <a class="button" href="/github-projects.html">GitHub project summary</a>
 </div>
 
 <div class="project-grid">

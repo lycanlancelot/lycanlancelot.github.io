@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects Dashboard — Lance Song</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg:       #070b12;
+  --panel:    #101826;
+  --panel-2:  #132033;
+  --panel-3:  #1a2d45;
+  --line:     rgba(148,163,184,0.18);
+  --text:     #e5edf8;
+  --muted:    #9fb0c7;
+  --dim:      #74849b;
+  --accent:   #3dd6b4;
+  --accent-2: #61a5ff;
+  --warn:     #f5c15c;
+  --red:      #f87171;
+  --purple:   #a78bfa;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--text);font-family:Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal,monospace;font-size:13px;line-height:1.5;}
+a{color:var(--accent-2);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* NAV */
+.site-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;border-bottom:1px solid var(--line);
+  background:var(--panel);position:sticky;top:0;z-index:100;
+}
+.site-nav .brand{font-size:14px;color:var(--accent);font-weight:700;letter-spacing:1px;}
+.site-nav .back-link{color:var(--muted);font-size:12px;}
+.site-nav .back-link:hover{color:var(--text);}
+
+/* HERO */
+.dash-hero{
+  padding:48px 32px 32px;max-width:960px;margin:0 auto;
+}
+.dash-hero h1{font-size:28px;color:var(--text);letter-spacing:-0.5px;margin-bottom:10px;}
+.dash-hero h1 span{color:var(--accent);}
+.dash-hero p{color:var(--muted);max-width:560px;font-size:12px;line-height:1.7;}
+
+/* STATS */
+.stat-row{
+  display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;
+}
+.stat-pill{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:6px;padding:10px 18px;font-size:11px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.stat-pill strong{color:var(--accent);font-size:18px;}
+.stat-pill span{color:var(--dim);}
+
+/* FILTERS */
+.filter-bar{
+  max-width:960px;margin:0 auto;padding:0 32px 20px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.filter-btn{
+  background:var(--panel);border:1px solid var(--line);color:var(--muted);
+  padding:6px 14px;border-radius:4px;cursor:pointer;font-size:11px;
+  font-family:inherit;transition:all 0.15s;
+}
+.filter-btn:hover{border-color:var(--accent);color:var(--text);}
+.filter-btn.active{background:var(--accent);color:#070b12;border-color:var(--accent);font-weight:700;}
+
+/* GRID */
+.projects-grid{
+  max-width:960px;margin:0 auto;padding:0 32px 80px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+}
+
+/* CARD */
+.project-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:20px;cursor:pointer;transition:all 0.2s;position:relative;
+  display:flex;flex-direction:column;gap:10px;
+}
+.project-card:hover{border-color:var(--accent-2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.project-card.highlight{border-color:rgba(61,214,180,0.35);}
+
+.card-kicker{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;}
+.card-title{font-size:16px;color:var(--text);font-weight:700;}
+.card-tagline{font-size:11px;color:var(--muted);line-height:1.5;}
+.card-tech{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
+.tech-pill{
+  font-size:9px;padding:2px 7px;border-radius:3px;
+  background:var(--panel-2);border:1px solid var(--line);color:var(--dim);
+}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--line);}
+.status-badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;letter-spacing:0.5px;}
+.status-active{background:rgba(61,214,180,0.12);color:var(--accent);border:1px solid rgba(61,214,180,0.3);}
+.status-2025{background:rgba(97,165,255,0.12);color:var(--accent-2);border:1px solid rgba(97,165,255,0.3);}
+.status-2026{background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.3);}
+.status-contrib{background:rgba(245,193,92,0.12);color:var(--warn);border:1px solid rgba(245,193,92,0.3);}
+.card-open-hint{font-size:10px;color:var(--dim);}
+
+/* MODAL */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(4,8,16,0.85);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  width:100%;max-width:820px;max-height:90vh;overflow:hidden;
+  display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,0.6);
+}
+.modal-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:22px 24px 16px;border-bottom:1px solid var(--line);gap:16px;
+}
+.modal-header-info{display:flex;flex-direction:column;gap:6px;}
+.modal-title{font-size:20px;color:var(--text);font-weight:700;}
+.modal-tagline{font-size:12px;color:var(--muted);}
+.modal-links{display:flex;gap:8px;align-items:center;}
+.modal-link-btn{
+  font-size:10px;padding:4px 12px;border-radius:4px;border:1px solid var(--line);
+  color:var(--muted);background:var(--panel-2);cursor:pointer;font-family:inherit;
+  text-decoration:none;display:inline-flex;align-items:center;gap:4px;
+}
+.modal-link-btn:hover{border-color:var(--accent-2);color:var(--accent-2);}
+.modal-link-btn.primary{background:var(--accent);color:#070b12;border-color:var(--accent);font-weight:700;}
+.modal-link-btn.primary:hover{background:#2fc49f;}
+.modal-close{
+  background:none;border:1px solid var(--line);border-radius:6px;
+  color:var(--dim);font-size:16px;width:30px;height:30px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:inherit;
+}
+.modal-close:hover{color:var(--text);border-color:var(--muted);}
+
+/* TABS */
+.modal-tabs{
+  display:flex;gap:0;border-bottom:1px solid var(--line);
+  padding:0 24px;background:var(--panel);
+}
+.modal-tab{
+  padding:11px 16px;font-size:11px;color:var(--dim);cursor:pointer;
+  border-bottom:2px solid transparent;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;
+  transition:all 0.15s;margin-bottom:-1px;
+}
+.modal-tab:hover{color:var(--muted);}
+.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* MODAL BODY */
+.modal-body{flex:1;overflow-y:auto;padding:24px;}
+
+/* OVERVIEW TAB */
+.overview-description{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.feature-list li{
+  font-size:11px;color:var(--muted);padding-left:16px;position:relative;line-height:1.5;
+}
+.feature-list li::before{content:"▸";position:absolute;left:0;color:var(--accent);}
+.tech-section h4{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.tech-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.tech-tag{
+  font-size:10px;padding:3px 10px;border-radius:4px;
+  background:var(--panel-3);border:1px solid var(--line);color:var(--text);
+}
+
+/* ARCHITECTURE TAB */
+.arch-wrap{min-height:240px;padding:8px 0;}
+.mermaid{font-size:11px !important;}
+
+/* GRAPH TAB */
+.graph-wrap{width:100%;height:380px;position:relative;}
+.graph-wrap svg{width:100%;height:100%;}
+.graph-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--panel);}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+
+/* SECTION LABEL */
+.section-label{
+  max-width:960px;margin:32px auto 12px;padding:0 32px;
+  font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:"";flex:1;height:1px;background:var(--line);}
+
+/* HIDDEN */
+.hidden{display:none !important;}
+
+@media(max-width:600px){
+  .dash-hero{padding:32px 16px 24px;}
+  .filter-bar,.projects-grid,.section-label{padding-left:16px;padding-right:16px;}
+  .modal{max-height:95vh;}
+  .modal-header{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <span class="brand">LANCE · PROJECTS</span>
+  <a class="back-link" href="/">← Back to Portfolio</a>
+</nav>
+
+<div class="dash-hero">
+  <h1>Projects <span>Dashboard</span></h1>
+  <p>Applied AI systems, agentic developer tooling, multimodal retrieval, and web applications — built and contributed by Lance Song.</p>
+  <div class="stat-row" id="stat-row"></div>
+</div>
+
+<div class="filter-bar" id="filter-bar"></div>
+
+<div id="projects-container"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-info">
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-tagline" id="modal-tagline"></div>
+        <div class="modal-links" id="modal-links"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-tabs" id="modal-tabs"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ─── PROJECT DATA ────────────────────────────────────────────────────────────
+// To add a new project: append a new object to this array.
+
+const PROJECTS = [
+  {
+    id: "termly",
+    name: "Termly",
+    tagline: "Document AI for Australian Healthcare Contracts",
+    kicker: "Healthcare AI · Contract Intelligence",
+    category: "ai-systems",
+    status: "active",
+    year: "2026",
+    github: "https://github.com/lycanlancelot/Termly",
+    demo: null,
+    highlight: true,
+    tech: ["Python", "FastAPI", "Pydantic", "Claude Sonnet", "Azure Doc Intelligence", "Tesseract OCR", "Docker"],
+    description: "Australian medical contract automation system. Ingests scanned PDFs, corrects OCR artefacts, extracts structured clauses and Medicare/PBS identifiers, validates compliance fields, and produces risk assessments via Claude Sonnet. Backed by FastAPI REST services with healthcare-domain validation logic and a provider-switchable LLM layer.",
+    features: [
+      "PDF extraction pipeline (Azure Doc Intelligence + Tesseract fallback)",
+      "Structured clause/entity extraction via Claude Sonnet with Pydantic schema enforcement",
+      "MPPA/Medicare identifier validation and risk scoring",
+      "Docker-containerised with environment parity local ↔ deployed",
+      "Switchable LLM provider layer (Claude, OpenAI, local)"
+    ],
+    mermaid: `graph LR
+    A([PDF / Contract]) --> B[Azure Doc Intelligence]
+    A --> C[Tesseract OCR]
+    B --> D[Clause Extractor]
+    C --> D
+    D --> E{{Claude Sonnet}}
+    E --> F[Structured Output<br/>Pydantic]
+    F --> G{Validation Engine}
+    G -->|pass| H[(PostgreSQL)]
+    G -->|fail| I[Risk Report]
+    H --> J[FastAPI REST]`,
+    graph: {
+      nodes: [
+        {id:"main", label:"main.py", type:"entry"},
+        {id:"routes_contracts", label:"routes/contracts.py", type:"api"},
+        {id:"routes_analysis", label:"routes/analysis.py", type:"api"},
+        {id:"svc_ocr", label:"services/ocr.py", type:"service"},
+        {id:"svc_llm", label:"services/llm_client.py", type:"service"},
+        {id:"svc_extract", label:"services/extractor.py", type:"service"},
+        {id:"svc_valid", label:"services/validator.py", type:"service"},
+        {id:"models", label:"models/contract.py", type:"data"},
+        {id:"docker", label:"Dockerfile", type:"config"},
+        {id:"azure", label:"Azure Doc Intel", type:"external"},
+        {id:"claude", label:"Claude Sonnet", type:"external"},
+        {id:"db", label:"PostgreSQL", type:"data"}
+      ],
+      links: [
+        {s:"main",t:"routes_contracts"},{s:"main",t:"routes_analysis"},
+        {s:"routes_contracts",t:"svc_ocr"},{s:"routes_contracts",t:"svc_extract"},
+        {s:"routes_analysis",t:"svc_llm"},{s:"routes_analysis",t:"svc_valid"},
+        {s:"svc_ocr",t:"azure"},{s:"svc_llm",t:"claude"},
+        {s:"svc_extract",t:"models"},{s:"svc_valid",t:"models"},
+        {s:"svc_valid",t:"db"},{s:"docker",t:"main"}
+      ]
+    }
+  },
+  {
+    id: "remote-agent",
+    name: "Remote Agent Workbench",
+    tagline: "Browser-based orchestration for Claude Code & Codex",
+    kicker: "Agentic Developer Tooling",
+    category: "dev-tools",
+    status: "active",
+    year: "2025–2026",
+    github: "https://github.com/lycanlancelot/remote-agent",
+    demo: null,
+    highlight: true,
+    tech: ["React", "Vite", "TypeScript", "Express", "Socket.IO", "Node.js", "PTY"],
+    description: "VS Code-like remote workbench for orchestrating Claude Code and Codex from a browser. Built around real task execution — live PTY-backed terminal streaming, file previews, task persistence, model controls, and permission prompts over Socket.IO. Enforces allowed-directory safety boundaries for agent work.",
+    features: [
+      "PTY-backed live terminal streaming via xterm.js",
+      "Task queue with persistence, status tracking, and conversation continuity",
+      "Allowed-directory safety boundary for agent work",
+      "File preview with syntax highlighting",
+      "Model selector and permission prompt UI",
+      "Remote access via Cloudflare Tunnel"
+    ],
+    mermaid: `graph TB
+    subgraph Browser
+      UI[React + Vite UI]
+      XT[xterm.js Terminal]
+      FP[File Preview]
+      TC[Task Controls]
+    end
+    subgraph Server
+      EX[Express]
+      SO{{Socket.IO}}
+      WS[Workspace Router]
+      TR[Terminal Router]
+    end
+    PT[PTY Process]
+    CC([Claude Code CLI])
+    DB[(SQLite Tasks)]
+
+    UI <-->|WebSocket| SO
+    SO --- EX
+    EX --- WS
+    EX --- TR
+    TR --> PT
+    PT --> CC
+    WS --> DB`,
+    graph: {
+      nodes: [
+        {id:"App", label:"App.tsx", type:"ui"},
+        {id:"Tasks", label:"Tasks.tsx", type:"ui"},
+        {id:"Terminal", label:"Terminal.tsx", type:"ui"},
+        {id:"FilePreview", label:"FilePreview.tsx", type:"ui"},
+        {id:"socket_client", label:"lib/socket.ts", type:"service"},
+        {id:"server", label:"server/index.ts", type:"entry"},
+        {id:"ws_router", label:"routes/workspace.ts", type:"api"},
+        {id:"term_router", label:"routes/terminal.ts", type:"api"},
+        {id:"taskStore", label:"services/taskStore.ts", type:"data"},
+        {id:"agentEngine", label:"services/agentEngine.ts", type:"service"},
+        {id:"pty", label:"PTY Process", type:"external"},
+        {id:"db", label:"SQLite", type:"data"}
+      ],
+      links: [
+        {s:"App",t:"Tasks"},{s:"App",t:"Terminal"},{s:"App",t:"FilePreview"},
+        {s:"App",t:"socket_client"},{s:"socket_client",t:"server"},
+        {s:"server",t:"ws_router"},{s:"server",t:"term_router"},
+        {s:"ws_router",t:"taskStore"},{s:"ws_router",t:"agentEngine"},
+        {s:"term_router",t:"pty"},{s:"agentEngine",t:"pty"},
+        {s:"taskStore",t:"db"}
+      ]
+    }
+  },
+  {
+    id: "agentforge",
+    name: "AgentForge",
+    tagline: "Multi-agent coding dashboard with git worktree isolation",
+    kicker: "Multi-Agent Developer Tooling",
+    category: "dev-tools",
+    status: "active",
+    year: "2025–2026",
+    github: "https://github.com/lycanlancelot/agent-forge",
+    demo: null,
+    highlight: true,
+    tech: ["React", "Express", "TypeScript", "SQLite", "xterm.js", "PM2", "Git Worktrees"],
+    description: "Local control plane for running Claude Code, Codex, and Kimi Code in parallel across isolated git worktrees. Designed for long-running multi-agent coding tasks that need to be observable, parallelisable, and recoverable. Includes live terminals, auto-commit scheduling, session logs, and remote access.",
+    features: [
+      "Multi-agent grid with live xterm.js terminals per agent",
+      "Git worktree isolation — each task works on its own branch copy",
+      "PM2 process management with auto-restart on failure",
+      "Auto-commit scheduling and session log export",
+      "SQLite-backed task and session state",
+      "Cloudflare Tunnel for remote browser access"
+    ],
+    mermaid: `graph TB
+    subgraph Dashboard
+      TQ[Task Queue UI]
+      AG[Agent Grid]
+      XT[xterm.js Terminals]
+      SL[Session Logs]
+    end
+    subgraph Orchestrator
+      OR[Orchestrator Service]
+      WM[Worktree Manager]
+      PM[PM2 Manager]
+    end
+    subgraph Agents
+      CC([Claude Code])
+      CX([Codex CLI])
+      KI([Kimi Code])
+    end
+    DB[(SQLite)]
+
+    AG <--> OR
+    OR --> WM
+    OR --> PM
+    WM --> CC
+    WM --> CX
+    WM --> KI
+    OR <--> DB
+    PM --> CC`,
+    graph: {
+      nodes: [
+        {id:"Dashboard", label:"Dashboard.tsx", type:"ui"},
+        {id:"AgentGrid", label:"AgentGrid.tsx", type:"ui"},
+        {id:"TaskQueue", label:"TaskQueue.tsx", type:"ui"},
+        {id:"XTerm", label:"Terminal.tsx (xterm)", type:"ui"},
+        {id:"server", label:"server/index.ts", type:"entry"},
+        {id:"orchestrator", label:"orchestrator.ts", type:"service"},
+        {id:"worktree", label:"worktreeManager.ts", type:"service"},
+        {id:"pm2mgr", label:"pm2Manager.ts", type:"service"},
+        {id:"db", label:"db/sqlite.ts", type:"data"},
+        {id:"git", label:"Git Worktrees", type:"external"},
+        {id:"pm2", label:"PM2", type:"external"}
+      ],
+      links: [
+        {s:"Dashboard",t:"AgentGrid"},{s:"Dashboard",t:"TaskQueue"},
+        {s:"AgentGrid",t:"XTerm"},{s:"AgentGrid",t:"orchestrator"},
+        {s:"server",t:"orchestrator"},{s:"orchestrator",t:"worktree"},
+        {s:"orchestrator",t:"pm2mgr"},{s:"orchestrator",t:"db"},
+        {s:"worktree",t:"git"},{s:"pm2mgr",t:"pm2"}
+      ]
+    }
+  },
+  {
+    id: "video-rag",
+    name: "Video-RAG",
+    tagline: "Multimodal RAG over video with CLIP embeddings",
+    kicker: "Multimodal Retrieval · AI Systems",
+    category: "ai-systems",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/Iliana678/Video-RAG",
+    demo: null,
+    highlight: false,
+    tech: ["Python", "CLIP", "ChromaDB", "FastAPI", "OpenCV", "OpenAI API"],
+    description: "Collaborative multimodal RAG pipeline. Samples video frames at configurable rates, generates CLIP image embeddings, stores them in ChromaDB, and answers natural-language queries with timestamped visual evidence. Supports image-only search paths and multiple LLM provider backends.",
+    features: [
+      "Configurable frame sampling (keyframes or fixed interval)",
+      "CLIP image embeddings stored in ChromaDB vector store",
+      "Natural-language query with timestamped frame results",
+      "Multiple LLM provider backends (OpenAI, local)",
+      "FastAPI serving layer with query and ingest endpoints"
+    ],
+    mermaid: `graph LR
+    VF([Video File]) --> FS[Frame Sampler]
+    FS --> CLIP{{CLIP Encoder}}
+    CLIP --> VDB[(ChromaDB)]
+    Q([NL Query]) --> QE[Query Encoder]
+    QE --> SR[Similarity Search]
+    VDB --> SR
+    SR --> TS[Timestamped Frames]
+    TS --> LLM{{LLM}}
+    LLM --> ANS([Answer])`,
+    graph: {
+      nodes: [
+        {id:"ingest", label:"ingest.py", type:"entry"},
+        {id:"frame_ex", label:"frame_extractor.py", type:"service"},
+        {id:"embedder", label:"embedder.py", type:"service"},
+        {id:"vectorstore", label:"vectorstore.py", type:"data"},
+        {id:"retriever", label:"retriever.py", type:"service"},
+        {id:"qa_chain", label:"qa_chain.py", type:"service"},
+        {id:"api", label:"api.py", type:"api"},
+        {id:"clip", label:"CLIP Model", type:"external"},
+        {id:"chroma", label:"ChromaDB", type:"data"},
+        {id:"llm", label:"LLM API", type:"external"}
+      ],
+      links: [
+        {s:"ingest",t:"frame_ex"},{s:"frame_ex",t:"embedder"},
+        {s:"embedder",t:"clip"},{s:"embedder",t:"vectorstore"},
+        {s:"vectorstore",t:"chroma"},{s:"api",t:"retriever"},
+        {s:"retriever",t:"vectorstore"},{s:"retriever",t:"qa_chain"},
+        {s:"qa_chain",t:"llm"}
+      ]
+    }
+  },
+  {
+    id: "toy-gifting",
+    name: "Toy Gifting System",
+    tagline: "Back-office sourcing + 3D bin-packing for gift boxes",
+    kicker: "Operator Automation · Web App",
+    category: "web-mobile",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/lycanlancelot/toy-gifting",
+    demo: null,
+    highlight: false,
+    tech: ["JavaScript", "Node.js", "SQLite", "Three.js", "HTML/CSS"],
+    description: "Back-office sourcing and assembly tool for building custom toy gift boxes targeting Australian children. Ingests SQLite toy catalogs, models supplier/compliance metadata and bilingual product data, drives an operator review loop, and renders a Three.js 3D bin-packing visualisation of the assembled box.",
+    features: [
+      "SQLite catalog ingestion with multi-field filtering",
+      "Supplier compliance, certification and dimension metadata",
+      "Three.js 3D bin-packing visualisation of assembled box",
+      "Operator feedback and approval workflow",
+      "Bilingual (English/Chinese) product data support",
+      "Price conversion and small-batch supplier modelling"
+    ],
+    mermaid: `graph TB
+    CAT[(Toy Catalog DB)] --> UI[Operator UI]
+    SUP[Supplier Metadata] --> UI
+    UI --> AS[Assembly Engine]
+    AS --> BP[Bin-Packing Algorithm]
+    BP --> 3D{{Three.js Renderer}}
+    3D --> VIZ([3D Box Preview])
+    UI --> FB[Operator Feedback]
+    FB --> AS
+    AS --> EX[Export / PDF]`,
+    graph: {
+      nodes: [
+        {id:"index", label:"index.html", type:"entry"},
+        {id:"catalog", label:"catalog.js", type:"service"},
+        {id:"assembler", label:"assembler.js", type:"service"},
+        {id:"packer", label:"packer.js", type:"service"},
+        {id:"renderer", label:"ThreeRenderer.js", type:"ui"},
+        {id:"api_catalog", label:"api/catalog.js", type:"api"},
+        {id:"db", label:"db/catalog.db", type:"data"},
+        {id:"three", label:"Three.js", type:"external"}
+      ],
+      links: [
+        {s:"index",t:"catalog"},{s:"index",t:"renderer"},
+        {s:"catalog",t:"api_catalog"},{s:"api_catalog",t:"db"},
+        {s:"catalog",t:"assembler"},{s:"assembler",t:"packer"},
+        {s:"renderer",t:"three"},{s:"packer",t:"renderer"}
+      ]
+    }
+  },
+  {
+    id: "branchflow",
+    name: "BranchFlow",
+    tagline: "Nonlinear writing workbench with React Flow mind maps",
+    kicker: "Creative AI · Web App",
+    category: "web-mobile",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/lycanlancelot/writer-helper",
+    demo: null,
+    highlight: false,
+    tech: ["React 18", "TypeScript", "Vite", "React Flow", "Obsidian Canvas"],
+    description: "Local nonlinear writing and prompt-orchestration workbench (枝影 · BranchFlow) for Seedance-style branching narrative work. Manages branching story state, drives prompt drawers per branch node, renders a React Flow mind-map of the story tree, and exports to Obsidian Canvas format.",
+    features: [
+      "Branching story editor with per-branch context isolation",
+      "Prompt drawer per node with LLM call and result injection",
+      "React Flow mind-map visualisation of story tree",
+      "Obsidian Canvas export for external note-taking integration",
+      "Local-only — no server, no auth required"
+    ],
+    mermaid: `graph TB
+    ED[Branch Editor] --> BS[Branch Tree State]
+    BS --> RF{{React Flow Graph}}
+    ED --> PD[Prompt Drawer]
+    PD --> LLM{{LLM Provider}}
+    LLM --> GEN[Generated Content]
+    GEN --> ED
+    BS --> OC[Obsidian Canvas Export]`,
+    graph: {
+      nodes: [
+        {id:"App", label:"App.tsx", type:"entry"},
+        {id:"BranchEditor", label:"BranchEditor.tsx", type:"ui"},
+        {id:"BranchTree", label:"BranchTree.ts", type:"service"},
+        {id:"FlowGraph", label:"ReactFlowGraph.tsx", type:"ui"},
+        {id:"PromptDrawer", label:"PromptDrawer.tsx", type:"ui"},
+        {id:"llm", label:"llm/provider.ts", type:"service"},
+        {id:"canvas_export", label:"export/canvas.ts", type:"service"},
+        {id:"rf", label:"React Flow", type:"external"}
+      ],
+      links: [
+        {s:"App",t:"BranchEditor"},{s:"App",t:"FlowGraph"},
+        {s:"BranchEditor",t:"BranchTree"},{s:"BranchEditor",t:"PromptDrawer"},
+        {s:"BranchTree",t:"FlowGraph"},{s:"FlowGraph",t:"rf"},
+        {s:"PromptDrawer",t:"llm"},{s:"BranchTree",t:"canvas_export"}
+      ]
+    }
+  },
+  {
+    id: "elder-companion",
+    name: "Elder Companion",
+    tagline: "Voice AI companion + family dashboard for elderly users",
+    kicker: "Voice AI · Mobile Prototype",
+    category: "web-mobile",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/lycanlancelot/elder-companion",
+    demo: null,
+    highlight: false,
+    tech: ["Expo", "React Native", "Node.js", "Firebase", "Claude API", "ElevenLabs"],
+    description: "Expo React Native prototype for elderly users, paired with a family-facing dashboard. Elder screen handles voice conversation, daily summaries, and alert workflows. Family dashboard shows activity feed, summaries, and allows configuring reminders and alerts.",
+    features: [
+      "Voice-first UI for elderly users (Expo/React Native)",
+      "Claude-backed conversation engine with safety guardrails",
+      "Firebase Firestore persistence for sessions and summaries",
+      "Daily summary generation workflow for family dashboard",
+      "ElevenLabs TTS integration plan for natural voice output",
+      "Alert system for unusual activity patterns"
+    ],
+    mermaid: `graph TB
+    subgraph ElderApp
+      VA([Voice Input]) --> ASR[Speech Recognition]
+      TTS[TTS Engine] --> VA
+    end
+    ASR --> LLM{{Claude API}}
+    LLM --> TTS
+    LLM --> SUM[Daily Summary]
+    SUM --> FS[(Firebase)]
+    FS --> FAM[Family Dashboard]
+    FAM --> ALERT[Alert Workflow]`,
+    graph: {
+      nodes: [
+        {id:"App", label:"App.tsx", type:"entry"},
+        {id:"VoiceScreen", label:"VoiceScreen.tsx", type:"ui"},
+        {id:"FamilyDash", label:"FamilyDashboard.tsx", type:"ui"},
+        {id:"claude_svc", label:"llm/claude.ts", type:"service"},
+        {id:"elevenlabs", label:"audio/elevenlabs.ts", type:"service"},
+        {id:"firebase_db", label:"firebase/db.ts", type:"data"},
+        {id:"summary_svc", label:"services/summary.ts", type:"service"},
+        {id:"firebase", label:"Firebase", type:"external"},
+        {id:"claude_api", label:"Claude API", type:"external"}
+      ],
+      links: [
+        {s:"App",t:"VoiceScreen"},{s:"App",t:"FamilyDash"},
+        {s:"VoiceScreen",t:"claude_svc"},{s:"VoiceScreen",t:"elevenlabs"},
+        {s:"claude_svc",t:"claude_api"},{s:"claude_svc",t:"summary_svc"},
+        {s:"summary_svc",t:"firebase_db"},{s:"firebase_db",t:"firebase"},
+        {s:"FamilyDash",t:"firebase_db"}
+      ]
+    }
+  },
+  {
+    id: "ragezone",
+    name: "RageZone",
+    tagline: "LLM-assisted argument coaching via WeChat Mini Program",
+    kicker: "Realtime Communication AI",
+    category: "web-mobile",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/lycanlancelot/ragezone",
+    demo: null,
+    highlight: false,
+    tech: ["WeChat Mini Program", "Node.js", "WebSocket", "LLM API", "JWT", "Firebase"],
+    description: "WeChat Mini Program and Node/WebSocket backend for an LLM-assisted argument coaching product. Users set a persona, engage in real-time chat guided by the LLM coach, and receive de-escalation or reframing suggestions. Includes auth design, evaluation scripts, and monetisation entry points.",
+    features: [
+      "WeChat Mini Program frontend with persona setup",
+      "Real-time WebSocket communication server",
+      "LLM-driven coaching and de-escalation suggestions",
+      "JWT + Firebase auth plan",
+      "Evaluation scripts and A/B test scaffolding",
+      "Monetisation entry points design"
+    ],
+    mermaid: `graph TB
+    WX([WeChat Mini Program]) <-->|WSS| WS[WebSocket Server]
+    WS --> PE[Persona Engine]
+    PE --> LLM{{LLM Coach}}
+    LLM --> CM[Coaching Messages]
+    CM --> WS
+    WS --> AUTH[JWT Auth]
+    AUTH --> FB[(Firebase)]`,
+    graph: {
+      nodes: [
+        {id:"wechat", label:"pages/chat.js", type:"ui"},
+        {id:"ws_client", label:"utils/ws.js", type:"service"},
+        {id:"server", label:"server/index.js", type:"entry"},
+        {id:"chat_route", label:"routes/chat.js", type:"api"},
+        {id:"persona", label:"services/persona.js", type:"service"},
+        {id:"llm_svc", label:"services/llm.js", type:"service"},
+        {id:"auth", label:"middleware/auth.js", type:"service"},
+        {id:"firebase", label:"Firebase", type:"external"},
+        {id:"llm_api", label:"LLM API", type:"external"}
+      ],
+      links: [
+        {s:"wechat",t:"ws_client"},{s:"ws_client",t:"server"},
+        {s:"server",t:"chat_route"},{s:"server",t:"auth"},
+        {s:"chat_route",t:"persona"},{s:"persona",t:"llm_svc"},
+        {s:"llm_svc",t:"llm_api"},{s:"auth",t:"firebase"}
+      ]
+    }
+  },
+  {
+    id: "claude-sourcemap",
+    name: "Claude Code Source Map",
+    tagline: "Source-map inspection of early Claude Code CLI internals",
+    kicker: "Agent Architecture Research",
+    category: "dev-tools",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/lycanlancelot/claude-code-sourcemap",
+    demo: null,
+    highlight: false,
+    tech: ["Node.js", "JavaScript", "Source Maps"],
+    description: "Technical research repository for understanding early Claude Code CLI internals. Extracts and resolves source maps from the minified bundle to reconstruct agent architecture, command flow, and terminal-agent interaction patterns.",
+    features: [
+      "Source map extraction from minified CLI bundle",
+      "Symbol resolution and module boundary reconstruction",
+      "Reconstructed agent architecture graph",
+      "Command-flow and terminal-agent interaction notes",
+      "Architecture annotations for study"
+    ],
+    mermaid: `graph LR
+    BUN([Minified Bundle]) --> EX[Source Map Extractor]
+    EX --> RS[Symbol Resolver]
+    RS --> MB[Module Boundaries]
+    MB --> AG[Architecture Graph]
+    AG --> VIZ([Visualisation])
+    AG --> DOC([Documentation])`,
+    graph: {
+      nodes: [
+        {id:"index", label:"index.js", type:"entry"},
+        {id:"extractor", label:"extractor.js", type:"service"},
+        {id:"resolver", label:"resolver.js", type:"service"},
+        {id:"graph_b", label:"graph_builder.js", type:"service"},
+        {id:"visualizer", label:"visualizer.js", type:"ui"},
+        {id:"maps", label:"source-maps/", type:"data"},
+        {id:"output", label:"output/", type:"data"}
+      ],
+      links: [
+        {s:"index",t:"extractor"},{s:"extractor",t:"maps"},
+        {s:"extractor",t:"resolver"},{s:"resolver",t:"graph_b"},
+        {s:"graph_b",t:"visualizer"},{s:"graph_b",t:"output"}
+      ]
+    }
+  },
+  {
+    id: "sglang",
+    name: "SGLang Framework",
+    tagline: "LLM inference runtime optimisation — open source contributor",
+    kicker: "Open Source Contribution · LLM Systems",
+    category: "contributions",
+    status: "active",
+    year: "2025–Present",
+    github: "https://github.com/sgl-project/sglang",
+    demo: null,
+    highlight: false,
+    tech: ["Python", "CUDA", "Triton", "NCCL", "C++", "Rust"],
+    description: "Contributing runtime and serving optimisations to the SGLang LLM inference framework (LMSYS / UC Berkeley). Work spans backend runtime, distributed serving, and frontend prompt-language features for DeepSeek R1, Llama 3, and Qwen. Uses Claude Code as an AI-assisted open-source contribution workflow.",
+    features: [
+      "Backend runtime optimisations for throughput and latency",
+      "Distributed serving and multi-GPU coordination",
+      "Frontend prompt-language features for contextual routing",
+      "KV cache management improvements",
+      "AI-assisted (Claude Code) open-source contribution workflow"
+    ],
+    mermaid: `graph TB
+    subgraph Frontend
+      PL[Prompt Language] --> SC[Scheduler]
+    end
+    subgraph Backend
+      SC --> RT[Runtime]
+      RT --> KV[KV Cache Manager]
+      RT --> DS[Distributed Serving]
+    end
+    subgraph Workers
+      DS --> G1([GPU Worker 1])
+      DS --> G2([GPU Worker 2])
+      DS --> GN([GPU Worker N])
+    end`,
+    graph: {
+      nodes: [
+        {id:"frontend", label:"sglang/frontend/", type:"entry"},
+        {id:"scheduler", label:"scheduler.py", type:"service"},
+        {id:"srt_backend", label:"srt_backend.py", type:"service"},
+        {id:"model_runner", label:"model_runner.py", type:"service"},
+        {id:"kv_cache", label:"radix_cache.py", type:"data"},
+        {id:"dist_serving", label:"dist_serving.py", type:"service"},
+        {id:"tokenizer", label:"tokenizer_manager.py", type:"service"},
+        {id:"gpu", label:"GPU Workers", type:"external"}
+      ],
+      links: [
+        {s:"frontend",t:"scheduler"},{s:"scheduler",t:"srt_backend"},
+        {s:"srt_backend",t:"model_runner"},{s:"model_runner",t:"kv_cache"},
+        {s:"srt_backend",t:"dist_serving"},{s:"scheduler",t:"tokenizer"},
+        {s:"dist_serving",t:"gpu"}
+      ]
+    }
+  },
+  {
+    id: "dispatch-ai",
+    name: "Dispatch.AI Course",
+    tagline: "Six-week AI engineering course project — LangGraph booking assistant",
+    kicker: "AI Education · LangGraph",
+    category: "ai-systems",
+    status: "2025",
+    year: "2025",
+    github: "https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI",
+    demo: null,
+    highlight: false,
+    tech: ["Python", "LangGraph", "Pydantic", "Redis", "MCP", "RAGAS"],
+    description: "Six-week AI engineering course project where students build an intelligent booking assistant with Pydantic state, Redis persistence, LangGraph routing, MCP tools, guardrails, and RAGAS evaluation. Demonstrates production-pattern agentic design for education.",
+    features: [
+      "LangGraph-orchestrated multi-turn booking agent",
+      "Pydantic state management with schema enforcement",
+      "Redis-backed session persistence",
+      "MCP tool integrations",
+      "RAGAS evaluation harness",
+      "Production-pattern guardrails"
+    ],
+    mermaid: `graph TB
+    USR([User]) --> GW[LangGraph Gateway]
+    GW --> RT{Router}
+    RT -->|booking| BA[Booking Agent]
+    RT -->|query| QA[Query Agent]
+    BA --> MCP[MCP Tools]
+    QA --> RAG[RAG Retrieval]
+    BA --> PS[(Pydantic State)]
+    PS --> RD[(Redis)]
+    BA --> EVAL[RAGAS Eval]`,
+    graph: {
+      nodes: [
+        {id:"main", label:"main.py", type:"entry"},
+        {id:"graph", label:"graph/workflow.py", type:"service"},
+        {id:"router", label:"graph/router.py", type:"service"},
+        {id:"booking_agent", label:"agents/booking.py", type:"service"},
+        {id:"query_agent", label:"agents/query.py", type:"service"},
+        {id:"state", label:"state/schema.py (Pydantic)", type:"data"},
+        {id:"redis", label:"Redis", type:"external"},
+        {id:"mcp", label:"MCP Tools", type:"external"},
+        {id:"ragas", label:"eval/ragas.py", type:"service"}
+      ],
+      links: [
+        {s:"main",t:"graph"},{s:"graph",t:"router"},
+        {s:"router",t:"booking_agent"},{s:"router",t:"query_agent"},
+        {s:"booking_agent",t:"state"},{s:"booking_agent",t:"mcp"},
+        {s:"state",t:"redis"},{s:"booking_agent",t:"ragas"}
+      ]
+    }
+  }
+];
+
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  { id: "all",           label: "All Projects" },
+  { id: "ai-systems",   label: "AI Systems" },
+  { id: "dev-tools",    label: "Dev Tools" },
+  { id: "web-mobile",   label: "Web / Mobile" },
+  { id: "contributions",label: "Contributions" },
+];
+
+const NODE_COLORS = {
+  entry:    "#3dd6b4",
+  service:  "#61a5ff",
+  data:     "#f5c15c",
+  api:      "#f0855a",
+  ui:       "#a78bfa",
+  config:   "#74849b",
+  external: "#3a5060"
+};
+
+const STATUS_LABELS = {
+  active: "ACTIVE",
+  "2025": "2025",
+  "2026": "2026",
+  contrib: "CONTRIB"
+};
+
+// ─── RENDER STATS ─────────────────────────────────────────────────────────────
+function renderStats() {
+  const total = PROJECTS.length;
+  const active = PROJECTS.filter(p => p.status === "active").length;
+  const techs = new Set(PROJECTS.flatMap(p => p.tech)).size;
+  const cats = new Set(PROJECTS.map(p => p.category)).size;
+
+  const data = [
+    { value: total,  label: "Total Projects" },
+    { value: active, label: "Active Now" },
+    { value: techs,  label: "Technologies" },
+    { value: cats,   label: "Categories" }
+  ];
+
+  document.getElementById("stat-row").innerHTML = data
+    .map(d => `<div class="stat-pill"><strong>${d.value}</strong><span>${d.label}</span></div>`)
+    .join("");
+}
+
+// ─── RENDER FILTERS ───────────────────────────────────────────────────────────
+let currentFilter = "all";
+
+function renderFilters() {
+  document.getElementById("filter-bar").innerHTML = CATEGORIES
+    .map(c => `<button class="filter-btn${c.id === currentFilter ? " active" : ""}"
+                 data-filter="${c.id}">${c.label}
+                 <span style="margin-left:4px;opacity:0.6">
+                   ${c.id === "all" ? PROJECTS.length : PROJECTS.filter(p => p.category === c.id).length}
+                 </span></button>`)
+    .join("");
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentFilter = btn.dataset.filter;
+      renderFilters();
+      renderGrid();
+    });
+  });
+}
+
+// ─── RENDER GRID ─────────────────────────────────────────────────────────────
+function statusBadge(p) {
+  const cls = p.status === "active" ? "status-active"
+            : p.status === "2025"   ? "status-2025"
+            : p.status === "2026"   ? "status-2026"
+            : "status-contrib";
+  const label = p.status === "active" ? "● ACTIVE" : p.year;
+  return `<span class="status-badge ${cls}">${label}</span>`;
+}
+
+function renderGrid() {
+  const filtered = currentFilter === "all"
+    ? PROJECTS
+    : PROJECTS.filter(p => p.category === currentFilter);
+
+  const grouped = {};
+  CATEGORIES.slice(1).forEach(c => {
+    const items = filtered.filter(p => p.category === c.id);
+    if (items.length) grouped[c.id] = { label: c.label, items };
+  });
+
+  const container = document.getElementById("projects-container");
+
+  if (currentFilter !== "all") {
+    container.innerHTML = `
+      <div class="projects-grid">
+        ${filtered.map(cardHTML).join("")}
+      </div>`;
+  } else {
+    container.innerHTML = Object.entries(grouped).map(([id, { label, items }]) => `
+      <div class="section-label">${label}</div>
+      <div class="projects-grid">
+        ${items.map(cardHTML).join("")}
+      </div>`).join("");
+  }
+
+  container.querySelectorAll(".project-card").forEach(card => {
+    card.addEventListener("click", () => openModal(card.dataset.id));
+  });
+}
+
+function cardHTML(p) {
+  return `<article class="project-card${p.highlight ? " highlight" : ""}" data-id="${p.id}">
+    <div class="card-kicker">${p.kicker}</div>
+    <div class="card-title">${p.name}</div>
+    <div class="card-tagline">${p.tagline}</div>
+    <div class="card-tech">${p.tech.slice(0, 4).map(t => `<span class="tech-pill">${t}</span>`).join("")}${p.tech.length > 4 ? `<span class="tech-pill">+${p.tech.length - 4}</span>` : ""}</div>
+    <div class="card-footer">
+      ${statusBadge(p)}
+      <span class="card-open-hint">↗ details</span>
+    </div>
+  </article>`;
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+let currentProject = null;
+let currentTab = "overview";
+let mermaidRendered = new Set();
+
+function openModal(id) {
+  currentProject = PROJECTS.find(p => p.id === id);
+  currentTab = "overview";
+  mermaidRendered.clear();
+  renderModalHeader();
+  renderModalTabs();
+  renderTabContent("overview");
+  document.getElementById("modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function renderModalHeader() {
+  const p = currentProject;
+  document.getElementById("modal-title").textContent = p.name;
+  document.getElementById("modal-tagline").textContent = p.tagline;
+
+  const links = [statusBadge(p)];
+  if (p.github) links.push(`<a class="modal-link-btn primary" href="${p.github}" target="_blank">↗ GitHub</a>`);
+  if (p.demo) links.push(`<a class="modal-link-btn" href="${p.demo}" target="_blank">↗ Demo</a>`);
+  document.getElementById("modal-links").innerHTML = links.join("");
+}
+
+const TABS = [
+  { id: "overview",      label: "Overview" },
+  { id: "architecture",  label: "Architecture" },
+  { id: "codegraph",     label: "Code Graph" },
+];
+
+function renderModalTabs() {
+  document.getElementById("modal-tabs").innerHTML = TABS
+    .map(t => `<button class="modal-tab${t.id === currentTab ? " active" : ""}" data-tab="${t.id}">${t.label}</button>`)
+    .join("");
+  document.querySelectorAll(".modal-tab").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+}
+
+function switchTab(tabId) {
+  currentTab = tabId;
+  document.querySelectorAll(".modal-tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
+  renderTabContent(tabId);
+}
+
+function renderTabContent(tabId) {
+  const p = currentProject;
+  const body = document.getElementById("modal-body");
+
+  if (tabId === "overview") {
+    body.innerHTML = `
+      <p class="overview-description">${p.description}</p>
+      <ul class="feature-list">${p.features.map(f => `<li>${f}</li>`).join("")}</ul>
+      <div class="tech-section">
+        <h4>Tech Stack</h4>
+        <div class="tech-grid">${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join("")}</div>
+      </div>`;
+  }
+
+  else if (tabId === "architecture") {
+    const mId = "mermaid-" + p.id;
+    if (!mermaidRendered.has(mId)) {
+      body.innerHTML = `<div class="arch-wrap"><div class="mermaid" id="${mId}">${p.mermaid}</div></div>`;
+      mermaid.run({ nodes: [document.getElementById(mId)] });
+      mermaidRendered.add(mId);
+    } else {
+      body.innerHTML = `<div class="arch-wrap"><div class="mermaid" id="${mId}">${p.mermaid}</div></div>`;
+    }
+  }
+
+  else if (tabId === "codegraph") {
+    body.innerHTML = `
+      <div class="graph-wrap" id="graph-wrap-${p.id}"></div>
+      <div class="graph-legend">${
+        Object.entries(NODE_COLORS).map(([type, color]) =>
+          `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${type}</div>`
+        ).join("")
+      }</div>`;
+    setTimeout(() => renderD3Graph(p, `graph-wrap-${p.id}`), 50);
+  }
+}
+
+// ─── D3 CODE GRAPH ────────────────────────────────────────────────────────────
+function renderD3Graph(project, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const W = container.clientWidth || 760;
+  const H = 380;
+
+  d3.select(container).select("svg").remove();
+
+  const nodes = project.graph.nodes.map(n => ({ ...n }));
+  const links = project.graph.links.map(l => ({ source: l.s, target: l.t }));
+
+  const svg = d3.select(container).append("svg")
+    .attr("width", W).attr("height", H)
+    .style("background", "var(--panel-2)")
+    .style("border-radius", "8px");
+
+  // Arrow marker
+  svg.append("defs").append("marker")
+    .attr("id", "arrow")
+    .attr("viewBox", "0 -4 8 8")
+    .attr("refX", 16).attr("refY", 0)
+    .attr("markerWidth", 6).attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-4L8,0L0,4")
+    .attr("fill", "rgba(148,163,184,0.4)");
+
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(90).strength(0.6))
+    .force("charge", d3.forceManyBody().strength(-280))
+    .force("center", d3.forceCenter(W / 2, H / 2))
+    .force("collision", d3.forceCollide(36));
+
+  const link = svg.append("g").selectAll("line")
+    .data(links).join("line")
+    .attr("stroke", "rgba(148,163,184,0.25)")
+    .attr("stroke-width", 1.5)
+    .attr("marker-end", "url(#arrow)");
+
+  const node = svg.append("g").selectAll("g")
+    .data(nodes).join("g")
+    .attr("cursor", "pointer")
+    .call(d3.drag()
+      .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on("drag",  (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on("end",   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+    );
+
+  node.append("circle")
+    .attr("r", 14)
+    .attr("fill", d => NODE_COLORS[d.type] || NODE_COLORS.config)
+    .attr("fill-opacity", 0.2)
+    .attr("stroke", d => NODE_COLORS[d.type] || NODE_COLORS.config)
+    .attr("stroke-width", 2);
+
+  node.append("text")
+    .attr("text-anchor", "middle")
+    .attr("dy", "0.32em")
+    .attr("font-size", "9px")
+    .attr("fill", d => NODE_COLORS[d.type] || NODE_COLORS.config)
+    .attr("font-family", "Monaco, monospace")
+    .text(d => d.label.length > 14 ? d.label.slice(0, 13) + "…" : d.label);
+
+  // Tooltip label below
+  node.append("title").text(d => d.label);
+
+  sim.on("tick", () => {
+    link
+      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+    node.attr("transform", d => `translate(${Math.max(16, Math.min(W - 16, d.x))},${Math.max(16, Math.min(H - 16, d.y))})`);
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "dark",
+  themeVariables: {
+    background: "#101826",
+    primaryColor: "#132033",
+    primaryTextColor: "#e5edf8",
+    primaryBorderColor: "rgba(148,163,184,0.25)",
+    lineColor: "rgba(148,163,184,0.4)",
+    secondaryColor: "#1a2d45",
+    tertiaryColor: "#0e1e30",
+    fontSize: "11px"
+  }
+});
+
+document.getElementById("modal-close").addEventListener("click", closeModal);
+document.getElementById("modal-overlay").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+renderStats();
+renderFilters();
+renderGrid();
+</script>
+</body>
+</html>
