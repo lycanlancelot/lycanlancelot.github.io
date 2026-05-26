@@ -384,57 +384,65 @@
       </div>
 
       <div style="height:14px"></div>
-      <h2 class="section">PROJECTS</h2>
+      <h2 class="section">SELECTED GITHUB PROJECTS</h2>
       <div class="timeline">
         <div class="tl-entry">
           <div class="tl-head">
-            <div class="company">AI-Augmented Engineering Practice</div>
-            <div class="dates">2025 - Present</div>
-          </div>
-          <div class="tl-role">Personal R&amp;D &amp; Workflow</div>
-          <ul>
-            <li>Adopted Claude Code as primary coding agent for production work (CWBot multi-agent system, retrieval-transparency Azure Search debugging, FastAPI / UV scaffolding) and SGLang open source contributions, refining a documentation-driven, iteration-gated workflow.</li>
-            <li>Deployed Claude Code on NVIDIA DGX Spark (Ubuntu 24.04 ARM64), working through aarch64-specific install crashes, version pinning, and headless OAuth credential-transfer workarounds.</li>
-            <li>Designed self-hosted LLM gateway architecture: LiteLLM unified OpenAI-compatible router over local vLLM / SGLang backends and commercial providers, with PostgreSQL-backed cost tracking and Langfuse observability; remote access hardened via Tailscale mesh VPN.</li>
-            <li>Standardized team Python dev tooling (Ruff, pre-commit hooks, pytest, GitHub Actions CI) and authored bilingual training materials - 70-slide LangChain / LCEL / LangSmith deck, vector vs lexical search talk, and a "Vibe Coding" case study on SGLang's distributed serving.</li>
-          </ul>
-        </div>
-
-        <div class="tl-entry">
-          <div class="tl-head">
-            <div class="company">Termly</div>
+            <div class="company">Termly <span class="muted-inline">(github.com/lycanlancelot/Termly)</span></div>
             <div class="dates">2026</div>
           </div>
           <div class="tl-role">Creator &amp; Lead Developer</div>
           <ul>
-            <li>End-to-end AI extraction pipeline for image and video streams; cloud-native architecture migrated from Render to Vercel + Supabase to reduce latency and improve deployment agility.</li>
-            <li>Built primarily through agentic coding with Claude Code, keeping human review focused on architecture and acceptance gates.</li>
+            <li>Built an Australian medical contract automation platform for MPPA PDF generation, Medicare/PBS identifier validation, scanned PDF analysis, OCR correction, clause extraction, and compliance risk assessment.</li>
+            <li>Implemented production-shaped FastAPI/Pydantic services integrating Claude Sonnet, Azure Document Intelligence, Tesseract OCR, Docker, and healthcare-specific validation rules.</li>
           </ul>
         </div>
 
         <div class="tl-entry">
           <div class="tl-head">
-            <div class="company">Quarrel-Mate <span class="muted-inline">(GitHub, open source)</span></div>
-            <div class="dates">2025</div>
+            <div class="company">Remote Agent Workbench <span class="muted-inline">(github.com/lycanlancelot/remote-agent)</span></div>
+            <div class="dates">2025 - Present</div>
           </div>
-          <div class="tl-role">Creator &amp; Maintainer</div>
+          <div class="tl-role">Creator &amp; Lead Developer</div>
           <ul>
-            <li>Open-source LLM-powered communication assistant that helps users de-escalate arguments and rephrase emotionally charged messages into constructive responses.</li>
-            <li>Built with Python + FastAPI backend and a lightweight web UI; integrates multiple LLM providers (OpenAI, Anthropic, local vLLM) via an OpenAI-compatible interface for tone analysis and reply drafting.</li>
-            <li>Designed prompt-engineering pipeline with nonviolent communication (NVC) framing, intent detection, and configurable politeness levels; covered with unit tests and CI on GitHub Actions.</li>
+            <li>Designed a VS Code-like remote control plane for Claude Code and Codex with React/Vite, Express, Socket.IO, live terminal streaming, file previews, task persistence, model controls, and permission prompts.</li>
+            <li>Focused on safe remote execution: allowed-directory policy, verifiable task outputs, conversation continuity, and Cloudflare/Tailscale-ready deployment patterns.</li>
           </ul>
         </div>
 
         <div class="tl-entry">
           <div class="tl-head">
-            <div class="company">Long-Document PDF Q&amp;A Pipeline</div>
+            <div class="company">AgentForge <span class="muted-inline">(github.com/lycanlancelot/agent-forge)</span></div>
             <div class="dates">2025</div>
           </div>
-          <div class="tl-role">Research &amp; Prototype</div>
+          <div class="tl-role">Creator &amp; Lead Developer</div>
           <ul>
-            <li>Prototyped a 36+ page PDF understanding pipeline combining PyMuPDF text extraction, layout-preserving chunking, and vision-language fallback for image-heavy documents.</li>
-            <li>Benchmarked direct PDF ingestion (Claude, Gemini) vs RAG with Marqo / Chroma vector stores; documented trade-offs in latency, accuracy, and cost for production deployment.</li>
-            <li>Integrated multi-pass summarization and citation-grounded answers, with evaluation harness for factual recall and hallucination rate.</li>
+            <li>Built a multi-agent coding dashboard for Claude Code, Codex, and Kimi Code with xterm.js terminals, task queues, git worktree parallelization, auto-commit scheduling, session logs, and remote access.</li>
+            <li>Created a practical human-in-the-loop workflow for dispatching, monitoring, and recovering long-running coding-agent tasks across isolated workspaces.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Video-RAG <span class="muted-inline">(github.com/Iliana678/Video-RAG)</span></div>
+            <div class="dates">2025</div>
+          </div>
+          <div class="tl-role">Builder &amp; Collaborator</div>
+          <ul>
+            <li>Implemented a multimodal RAG system that samples video frames, generates CLIP embeddings, persists them in ChromaDB, and answers natural-language queries with timestamped visual evidence.</li>
+            <li>Supported multiple LLM providers and image-only search paths for fast local testing and production-style retrieval experiments.</li>
+          </ul>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-head">
+            <div class="company">Toy Gifting System &amp; BranchFlow</div>
+            <div class="dates">2025</div>
+          </div>
+          <div class="tl-role">Operator Tooling / Creative AI Workflow</div>
+          <ul>
+            <li>Built a toy sourcing and gift-box assembly system with SQLite catalog ingestion, supplier/compliance metadata, operator feedback, and Three.js 3D packing visualization.</li>
+            <li>Built BranchFlow, a React/TypeScript nonlinear writing and prompt orchestration workbench with branching story state, prompt drawers, React Flow mind maps, and Obsidian Canvas export.</li>
           </ul>
         </div>
       </div>

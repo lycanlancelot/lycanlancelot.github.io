@@ -8,6 +8,7 @@ layout: default
   <p class="hero-copy">Forward-Deployed AI Engineer building production-grade agentic workflows, RAG systems, and automation platforms that move ambiguous business work into auditable software.</p>
   <div class="hero-actions">
     <a class="button primary" href="/cv.html">View CV</a>
+    <a class="button" href="/github-projects.html">GitHub Projects</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
     <a class="button" href="https://github.com/lycanlancelot">GitHub</a>
@@ -20,8 +21,8 @@ layout: default
     <span>AI, ML, search, recommendation, and production data systems</span>
   </div>
   <div>
-    <strong>2 active AI platforms</strong>
-    <span>Forward-deployed technical lead for CWBot and TriageAgent at WiseTech Global</span>
+    <strong>10+ GitHub systems</strong>
+    <span>Agent workbenches, contract AI, multimodal RAG, sourcing tools, and AI education projects</span>
   </div>
   <div>
     <strong>100M+ events</strong>
@@ -58,6 +59,11 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
 
 ## Featured Systems
 
+<div class="project-summary-panel">
+  <p>My GitHub work clusters around one theme: turning AI from a demo into an operating system for real workflows. The strongest examples are Termly, Remote Agent Workbench, AgentForge, Video-RAG, Toy Gifting, and BranchFlow.</p>
+  <a class="button" href="/github-projects.html">Read the full GitHub project summary</a>
+</div>
+
 <div class="project-grid">
   <article class="project-card highlight">
     <p class="project-kicker">Healthcare AI / Contract Intelligence</p>
@@ -81,10 +87,14 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
     <a href="https://github.com/lycanlancelot/remote-agent">Repository</a>
   </article>
 
-  <article class="project-card">
-    <p class="project-kicker">Multi-Agent Operations</p>
+  <article class="project-card highlight">
+    <p class="project-kicker">Multi-Agent Developer Tooling</p>
     <h3>AgentForge</h3>
-    <p>Local dashboard for managing Claude Code, Codex, and Kimi Code with real-time terminals, task queues, worktree parallelization, auto-commit scheduling, and Cloudflare Tunnel access.</p>
+    <p>Local control plane for Claude Code, Codex, and Kimi Code, with live terminals, task queues, worktree isolation, auto-commit scheduling, and Cloudflare Tunnel remote access.</p>
+    <ul>
+      <li>Express, Socket.IO, SQLite, xterm.js, WSL, git worktrees, PM2.</li>
+      <li>Built to make repeated agent work observable, parallelizable, and recoverable.</li>
+    </ul>
     <a href="https://github.com/lycanlancelot/agent-forge">Repository</a>
   </article>
 
@@ -114,6 +124,13 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
     <h3>BranchFlow</h3>
     <p>Nonlinear writing and prompt orchestration workbench for Seedance-style video generation, with branching narrative state, prompt drawers, React Flow mind maps, and Obsidian Canvas export.</p>
     <a href="https://github.com/lycanlancelot/writer-helper">Repository</a>
+  </article>
+
+  <article class="project-card">
+    <p class="project-kicker">Realtime Communication AI</p>
+    <h3>RageZone / Quarrel-Mate</h3>
+    <p>LLM-powered communication assistant concept with a WeChat Mini Program shell, realtime chat service design, persona modes, token-based auth, and monetization entry points.</p>
+    <a href="https://github.com/lycanlancelot">GitHub profile</a>
   </article>
 
   <article class="project-card">
