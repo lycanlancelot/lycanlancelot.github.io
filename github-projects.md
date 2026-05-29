@@ -5,9 +5,9 @@ title: GitHub Project Portfolio
 
 # GitHub Project Portfolio
 
-This page summarizes the GitHub projects I have built or meaningfully contributed to. I group them by the engineering problems they demonstrate: applied AI products, agentic developer tooling, multimodal retrieval, operator workflows, and human-facing AI applications.
+This page summarises the GitHub projects I have built or meaningfully contributed to. I group them by the engineering problems they demonstrate: search and retrieval systems, applied ML and AI products, agentic developer tooling, data science workflows, and human-facing AI applications.
 
-The goal is not to present every repository as a finished company product. Some are production-shaped systems, some are prototypes, and some are research labs. Together, they show how I turn ambiguous AI ideas into working software with clear data models, backend services, frontend workflows, testing hooks, and deployment paths.
+My background is a PhD in search and recommendation systems, three years as a Data Scientist building search ranking, recommendation, and content-understanding pipelines at Redbubble (100 M+ user events), and current work on production LLM and agentic systems. These projects span that full arc — from classical retrieval and ML to modern RAG, agents, and evaluation engineering.
 
 ## Applied AI Products
 
@@ -44,8 +44,10 @@ The goal is not to present every repository as a finished company product. Some 
 
 ## What These Projects Show
 
-- **Applied AI beyond prompt demos:** The stronger projects include data schemas, service boundaries, validation, UI states, operational logs, deployment steps, and recovery paths.
+- **Search, ranking, and retrieval foundations:** PhD research on personalised ranking and search (VLDB Journal, DASFAA, ADC) informs how I design retrieval quality, evaluation metrics, and vector search layers throughout these projects.
+- **Data science and ML depth:** Three years at Redbubble building search, recommendation, content classification, and moderation systems at 100 M+ event scale — feature pipelines, A/B experimentation, MLOps, and measurable business outcomes.
+- **Applied AI beyond prompt demos:** The stronger projects include data schemas, service boundaries, validation logic, UI states, operational logs, deployment steps, and recovery paths.
 - **Agentic workflow design:** Remote Agent Workbench and AgentForge show direct experience building the control surfaces needed to make coding agents usable for repeated work.
-- **Multimodal and retrieval depth:** Termly and Video-RAG cover two different RAG shapes: document/contract extraction and visual/video retrieval.
-- **Product judgment:** RageZone, Elder Companion, BranchFlow, and Toy Gifting show how I translate messy human workflows into focused software flows instead of over-general AI chat boxes.
-- **Honest scope control:** I separate original projects, collaborations, prototypes, and research forks so the technical signal stays credible.
+- **Retrieval depth:** Termly and Video-RAG cover two different RAG shapes — document/contract extraction and visual/video multimodal retrieval.
+- **Product judgment:** RageZone, Elder Companion, BranchFlow, and Toy Gifting translate messy human workflows into focused software flows rather than over-general AI chat boxes.
+- **Honest scope control:** Original builds, collaborations, prototypes, and research forks are kept clearly separate so the technical signal stays credible.

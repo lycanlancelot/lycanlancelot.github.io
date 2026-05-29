@@ -5,7 +5,7 @@ layout: default
 <section class="hero-panel">
   <p class="eyebrow">Melbourne, Australia / Australian Permanent Resident</p>
   <h1>Liangjun (Lance) Song, PhD</h1>
-  <p class="hero-copy">Forward-Deployed AI Engineer building production-grade agentic workflows, RAG systems, and automation platforms that move ambiguous business work into auditable software.</p>
+  <p class="hero-copy">Senior ML Engineer · Data Scientist · PhD in Search &amp; Recommendation Systems. I build production AI across the stack: search ranking, retrieval pipelines, content understanding, LLM-powered workflows, RAG, and agentic automation.</p>
   <div class="hero-actions">
     <a class="button primary" href="/cv.html">View CV</a>
     <a class="button primary" href="/projects.html">Projects Dashboard</a>
@@ -37,31 +37,35 @@ layout: default
 
 ## What I Build
 
-I specialize in agentic AI systems that have to survive real operations: stateful conversations, tool-use, retrieval, business workflow automation, guardrails, evaluation, telemetry, and deployment discipline.
+My background spans classical IR and ML — PhD-level research on personalised ranking and search, three years building search, recommendation, and content-understanding systems at Redbubble over 100 M+ user events — through to the modern AI layer: LLM orchestration, RAG, agentic workflows, evaluation engineering, and CI/CD-grade deployment.
 
-My strongest pattern is forward-deployed engineering: embed with operators, map the actual workflow, turn it into a precise system contract, then ship the agent, retrieval layer, APIs, dashboards, health checks, and evaluation loops needed to keep it trustworthy.
+I'm strongest where retrieval quality, ML system design, and data engineering matter together: search that has to be measurable, recommendations that have to survive a real catalog, and agents that have to work reliably across messy enterprise data.
 
 <div class="capability-strip">
+  <span>Search</span>
+  <span>Recommendation</span>
+  <span>Ranking</span>
+  <span>Vector Search</span>
+  <span>A/B Testing</span>
+  <span>RAG</span>
   <span>LangGraph</span>
   <span>LangChain</span>
-  <span>MCP</span>
-  <span>RAG</span>
   <span>FastAPI</span>
   <span>Python</span>
-  <span>TypeScript</span>
+  <span>Pandas · NumPy</span>
+  <span>Scikit-learn</span>
+  <span>PyTorch</span>
   <span>PostgreSQL</span>
   <span>Azure OpenAI</span>
-  <span>Claude</span>
-  <span>Gemini</span>
-  <span>Docker</span>
   <span>GCP Vertex AI</span>
-  <span>Supabase</span>
+  <span>Docker</span>
+  <span>MLOps</span>
 </div>
 
 ## Featured Systems
 
 <div class="project-summary-panel">
-  <p>My GitHub projects cluster around applied AI products, agentic developer tooling, multimodal retrieval, and operator workflows. I separate original builds, collaborations, and research forks clearly, while using each project to show architecture, product judgment, and implementation depth.</p>
+  <p>My GitHub projects span applied ML and AI products, search and retrieval systems, agentic developer tooling, data science workflows, and human-facing AI applications. I separate original builds, collaborations, and research forks clearly.</p>
   <a class="button primary" href="/projects.html">Open Projects Dashboard →</a>
   <a class="button" href="/github-projects.html">GitHub project summary</a>
 </div>
@@ -156,7 +160,7 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   <div class="timeline-item">
     <span>Apr 2025 - Present</span>
     <h3>WiseTech Global - AI Engineer, AI/ML Group</h3>
-    <p>Forward-deployed technical lead for CWBot and TriageAgent. Architect stateful multi-turn agents with LangGraph and MCP, integrate enterprise APIs and internal knowledge bases, implement guardrails, and establish evaluation, telemetry, readiness, and CI/CD standards for production AI services.</p>
+    <p>AI Engineer on CWBot and TriageAgent. Architect stateful multi-turn LLM agents with LangGraph and MCP, design RAG workflows over enterprise knowledge bases, implement guardrails and evaluation pipelines, and own CI/CD and deployment standards for production AI services.</p>
   </div>
   <div class="timeline-item">
     <span>Feb 2025 - Present</span>
@@ -165,8 +169,8 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
   </div>
   <div class="timeline-item">
     <span>Jan 2022 - Jan 2025</span>
-    <h3>Redbubble - Data Scientist</h3>
-    <p>Built search, recommendation, fraud, content-classification, and moderation systems. Delivered vector-search improvements with Marqo and GCP Vertex AI, improving CTR by 10% and add-to-cart by 0.5%, and designed ML infrastructure over 100M+ user events.</p>
+    <h3>Redbubble - Data Scientist (Search &amp; Recommendation · Content AI · Moderation)</h3>
+    <p>Built and owned search ranking, recommendation, content-classification, and moderation ML systems. Delivered vector-search improvements with Marqo and GCP Vertex AI MLOps pipelines, lifting CTR by 10% and add-to-cart by 0.5%. Designed feature pipelines and ML infrastructure over 100M+ user events and led GA4 analytics migration.</p>
   </div>
   <div class="timeline-item">
     <span>Jul 2012 - Jun 2013</span>
@@ -180,7 +184,7 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
 <div class="compact-grid">
   <div>
     <h3>Education</h3>
-    <p>PhD in Computer Science, RMIT University. B.Sc. in Computer Science, Harbin Institute of Technology.</p>
+    <p>PhD in Computer Science — Search &amp; Recommendation Systems, RMIT University. B.Sc. in Computer Science, Harbin Institute of Technology.</p>
   </div>
   <div>
     <h3>Publications</h3>
@@ -199,6 +203,6 @@ My strongest pattern is forward-deployed engineering: embed with operators, map 
 ## Hiring Signal
 
 <div class="hire-panel">
-  <p>I am strongest where an AI product cannot be solved by a demo alone: ambiguous workflow, operational risk, messy enterprise data, non-technical stakeholders, and the need for a system that is observable, evaluable, and safe enough to run repeatedly.</p>
+  <p>My strongest fit is where search, retrieval, and ML engineering meet production AI: meaningful evaluation metrics, large or noisy catalogs, data pipelines that need to be reliable, and systems that need to improve measurably over time — not just demo well once. PhD-trained in search and recommendation, hands-on in data science and MLOps, now building LLM-powered systems end-to-end.</p>
   <a class="button primary" href="mailto:liangjun.song@outlook.com">Start a conversation</a>
 </div>
