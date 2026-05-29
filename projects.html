@@ -738,52 +738,69 @@ const PROJECTS = [
   },
   {
     id: "dispatch-ai",
-    name: "Dispatch.AI Course",
-    tagline: "Six-week AI engineering course project — LangGraph booking assistant",
-    kicker: "AI Education · LangGraph",
-    category: "ai-systems",
-    status: "2025",
-    year: "2025",
+    name: "Dispatch.AI",
+    tagline: "6-week AI engineering course project — curriculum design + hands-on instruction",
+    kicker: "Teaching · Curriculum Design · LangGraph",
+    category: "teaching",
+    type: "teaching",
+    status: "2026",
+    year: "2026",
     github: "https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI",
     demo: null,
-    highlight: false,
-    tech: ["Python", "LangGraph", "Pydantic", "Redis", "MCP", "RAGAS"],
-    description: "Six-week AI engineering course project where students build an intelligent booking assistant with Pydantic state, Redis persistence, LangGraph routing, MCP tools, guardrails, and RAGAS evaluation. Demonstrates production-pattern agentic design for education.",
+    highlight: true,
+    tech: ["Python", "FastAPI", "LangGraph", "Groq", "Pydantic", "Redis", "MCP", "NeMo Guardrails", "RAGAS", "Docker", "Render"],
+    description: "Designed and instructed a 6-week progressive AI engineering course project for 13 students at Australia IT Group. Students build a production-grade AI booking assistant incrementally — from Pydantic state models and Redis persistence through LangGraph multi-turn agents, MCP tool servers, multi-agent routing, NeMo Guardrails, and RAGAS evaluation — finishing with a Docker + Render capstone deployment. Delivered the reference implementation, student scaffold, CI/CD grading pipeline, and PR-based submission workflow with a 100-synthetic-user evaluation gate.",
     features: [
-      "LangGraph-orchestrated multi-turn booking agent",
-      "Pydantic state management with schema enforcement",
-      "Redis-backed session persistence",
-      "MCP tool integrations",
-      "RAGAS evaluation harness",
-      "Production-pattern guardrails"
+      "Curriculum design: 6 progressive weeks from state management to full agentic deployment",
+      "Reference implementation (week6/) with complete working solution for all weeks",
+      "Student scaffold: Pydantic state, Redis StateManager, LangGraph BookingAgent and FAQAgent",
+      "MCP server with service catalog and booking tools",
+      "SupervisorAgent routing between BookingAgent, FAQAgent, and escalation paths",
+      "NeMo Guardrails for content safety + RAGAS evaluation with 100-synthetic-user test gate",
+      "Docker Compose + Render deployment; GitHub Actions CI/CD grading on PR submission"
+    ],
+    lectures: [
+      { date:"Week 1", title:"State Management — Pydantic models + Redis persistence",             duration:"2hr", topic:"applied" },
+      { date:"Week 2", title:"LangGraph Agent — BookingAgent with intent classification",          duration:"2hr", topic:"agents" },
+      { date:"Week 3", title:"MCP Server — service catalog + booking tools",                       duration:"2hr", topic:"agents" },
+      { date:"Week 4", title:"Multi-Agent — SupervisorAgent routing BookingAgent / FAQAgent",      duration:"2hr", topic:"agents" },
+      { date:"Week 5", title:"Guardrails + Evaluation — NeMo Guardrails + RAGAS",                 duration:"2hr", topic:"rag" },
+      { date:"Week 6", title:"Capstone Demo — Docker + Render deployment + student showcase",      duration:"3hr", topic:"applied" },
     ],
     mermaid: `graph TB
-    USR([User]) --> GW[LangGraph Gateway]
-    GW --> RT{Router}
-    RT -->|booking| BA[Booking Agent]
-    RT -->|query| QA[Query Agent]
-    BA --> MCP[MCP Tools]
-    QA --> RAG[RAG Retrieval]
+    USR([User]) --> API[FastAPI /dispatch]
+    API --> SV{SupervisorAgent}
+    SV -->|booking intent| BA[BookingAgent]
+    SV -->|FAQ intent| QA[FAQAgent]
+    SV -->|escalate| ES([Escalation])
+    BA --> MCP[MCP Tools<br/>service catalog]
+    BA --> GR[NeMo Guardrails]
     BA --> PS[(Pydantic State)]
     PS --> RD[(Redis)]
-    BA --> EVAL[RAGAS Eval]`,
+    BA --> EV[RAGAS Eval]
+    QA --> RAG[RAG Retrieval]`,
     graph: {
       nodes: [
-        {id:"main", label:"main.py", type:"entry"},
-        {id:"graph", label:"graph/workflow.py", type:"service"},
-        {id:"router", label:"graph/router.py", type:"service"},
-        {id:"booking_agent", label:"agents/booking.py", type:"service"},
-        {id:"query_agent", label:"agents/query.py", type:"service"},
-        {id:"state", label:"state/schema.py (Pydantic)", type:"data"},
+        {id:"main", label:"main.py (FastAPI)", type:"entry"},
+        {id:"api", label:"api/dispatch.py", type:"api"},
+        {id:"supervisor", label:"agents/supervisor.py", type:"service"},
+        {id:"booking", label:"agents/booking.py", type:"service"},
+        {id:"faq", label:"agents/faq_agent.py", type:"service"},
+        {id:"tools", label:"agents/tools.py", type:"service"},
+        {id:"mcp", label:"mcp/server.py", type:"service"},
+        {id:"state", label:"models/agent_state.py", type:"data"},
+        {id:"stmgr", label:"infrastructure/state_manager.py", type:"service"},
         {id:"redis", label:"Redis", type:"external"},
-        {id:"mcp", label:"MCP Tools", type:"external"},
-        {id:"ragas", label:"eval/ragas.py", type:"service"}
+        {id:"ragas", label:"eval/ragas.py", type:"service"},
+        {id:"guardrails", label:"NeMo Guardrails", type:"external"}
       ],
       links: [
-        {s:"main",t:"graph"},{s:"graph",t:"router"},
-        {s:"router",t:"booking_agent"},{s:"router",t:"query_agent"},
-        {s:"booking_agent",t:"state"},{s:"booking_agent",t:"mcp"},
-        {s:"state",t:"redis"},{s:"booking_agent",t:"ragas"}
+        {s:"main",t:"api"},{s:"api",t:"supervisor"},
+        {s:"supervisor",t:"booking"},{s:"supervisor",t:"faq"},
+        {s:"booking",t:"tools"},{s:"booking",t:"mcp"},
+        {s:"booking",t:"guardrails"},{s:"booking",t:"state"},
+        {s:"state",t:"stmgr"},{s:"stmgr",t:"redis"},
+        {s:"booking",t:"ragas"}
       ]
     }
   },

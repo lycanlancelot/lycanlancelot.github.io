@@ -118,10 +118,14 @@ I'm strongest where retrieval quality, ML system design, and data engineering ma
     <a href="https://github.com/lycanlancelot/toy-gifting">Repository</a>
   </article>
 
-  <article class="project-card">
-    <p class="project-kicker">AI Education / LangGraph</p>
-    <h3>Dispatch.AI Course Project</h3>
-    <p>Six-week AI engineering course project where students build an intelligent booking assistant with Pydantic state, Redis persistence, LangGraph routing, MCP tools, guardrails, and RAGAS evaluation.</p>
+  <article class="project-card highlight">
+    <p class="project-kicker">AI Curriculum Design · Instructor · LangGraph</p>
+    <h3>Dispatch.AI — AI Engineer Course Project</h3>
+    <p>6-week progressive course project I designed and instructed (13 students): students build a production-grade AI booking assistant step by step — Pydantic state, Redis persistence, LangGraph agents, MCP tools, multi-agent routing, NeMo Guardrails, RAGAS evaluation, and a Docker + Render capstone demo.</p>
+    <ul>
+      <li>FastAPI, LangGraph, Groq, Pydantic, Redis, MCP, NeMo Guardrails, RAGAS, Docker, Render.</li>
+      <li>Delivered reference implementation, student scaffold, CI/CD grading pipeline, and PR-based submission with 100-synthetic-user evaluation gate.</li>
+    </ul>
     <a href="https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI">Repository</a>
   </article>
 
