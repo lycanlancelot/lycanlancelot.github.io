@@ -37,7 +37,7 @@ layout: default
 
 ## What I Build
 
-My background spans classical IR and ML — PhD-level research on personalised ranking and search, three years building search, recommendation, and content-understanding systems at Redbubble over 100 M+ user events — through to the modern AI layer: LLM orchestration, RAG, agentic workflows, evaluation engineering, and CI/CD-grade deployment.
+My background spans classical IR and ML — PhD-level research on personalised ranking and search, four years building search, recommendation, and content-understanding systems at Redbubble over 100 M+ user events — through to the modern AI layer: LLM orchestration, RAG, agentic workflows, evaluation engineering, and CI/CD-grade deployment.
 
 I'm strongest where retrieval quality, ML system design, and data engineering matter together: search that has to be measurable, recommendations that have to survive a real catalog, and agents that have to work reliably across messy enterprise data.
 
@@ -168,7 +168,7 @@ I'm strongest where retrieval quality, ML system design, and data engineering ma
     <p>Contribute runtime and serving optimizations for LLM backends used by agentic systems, including work around model execution reliability, prompt/runtime control, and scalable inference behavior.</p>
   </div>
   <div class="timeline-item">
-    <span>Jan 2022 - Jan 2025</span>
+    <span>Jan 2021 - Jan 2025</span>
     <h3>Redbubble - Data Scientist (Search &amp; Recommendation · Content AI · Moderation)</h3>
     <p>Built and owned search ranking, recommendation, content-classification, and moderation ML systems. Delivered vector-search improvements with Marqo and GCP Vertex AI MLOps pipelines, lifting CTR by 10% and add-to-cart by 0.5%. Designed feature pipelines and ML infrastructure over 100M+ user events and led GA4 analytics migration.</p>
   </div>
