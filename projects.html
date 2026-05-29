@@ -192,6 +192,25 @@ a:hover{text-decoration:underline;}
 }
 .section-label::after{content:"";flex:1;height:1px;background:var(--line);}
 
+/* LECTURES TAB */
+.lec-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.lec-legend{display:flex;flex-wrap:wrap;gap:5px;}
+.lec-list{display:flex;flex-direction:column;gap:8px;}
+.lec-row{
+  display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:start;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:12px 14px;
+  transition:border-color 0.15s;
+}
+.lec-row:hover{border-color:rgba(148,163,184,0.35);}
+.lec-date{font-size:10px;color:var(--dim);padding-top:2px;font-variant-numeric:tabular-nums;}
+.lec-body{display:flex;flex-direction:column;gap:6px;}
+.lec-title{font-size:12px;color:var(--text);line-height:1.4;}
+.lec-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.lec-topic-pill{
+  font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid;font-weight:700;letter-spacing:0.5px;
+}
+.lec-duration{font-size:10px;color:var(--dim);}
+
 /* HIDDEN */
 .hidden{display:none !important;}
 
@@ -298,142 +317,73 @@ const PROJECTS = [
     }
   },
   {
-    id: "remote-agent",
-    name: "Remote Agent Workbench",
-    tagline: "Browser-based orchestration for Claude Code & Codex",
+    id: "agentic-workbench",
+    name: "Agentic Workbench",
+    tagline: "Remote orchestration + multi-agent control plane for AI coding agents",
     kicker: "Agentic Developer Tooling",
     category: "dev-tools",
     status: "active",
     year: "2025–2026",
     github: "https://github.com/lycanlancelot/remote-agent",
+    github2: "https://github.com/lycanlancelot/agent-forge",
     demo: null,
     highlight: true,
-    tech: ["React", "Vite", "TypeScript", "Express", "Socket.IO", "Node.js", "PTY"],
-    description: "VS Code-like remote workbench for orchestrating Claude Code and Codex from a browser. Built around real task execution — live PTY-backed terminal streaming, file previews, task persistence, model controls, and permission prompts over Socket.IO. Enforces allowed-directory safety boundaries for agent work.",
+    tech: ["React", "TypeScript", "Express", "Socket.IO", "xterm.js", "SQLite", "PM2", "Git Worktrees", "PTY"],
+    description: "Two complementary tools unified under one umbrella. Remote Agent Workbench handles single-agent browser orchestration via PTY streaming — live terminals, file previews, task persistence, and permission prompts. AgentForge is the multi-agent parallel control plane — running Claude Code, Codex, and Kimi Code simultaneously across isolated git worktrees with PM2 management and auto-commit scheduling. Together they cover the full range of AI coding-agent workflows from one-shot interactive tasks to long-running parallel batch jobs.",
     features: [
-      "PTY-backed live terminal streaming via xterm.js",
-      "Task queue with persistence, status tracking, and conversation continuity",
-      "Allowed-directory safety boundary for agent work",
-      "File preview with syntax highlighting",
-      "Model selector and permission prompt UI",
-      "Remote access via Cloudflare Tunnel"
+      "PTY-backed live terminal streaming via xterm.js (single-agent mode)",
+      "Task queue with persistence, conversation continuity, and allowed-directory safety boundary",
+      "File preview with syntax highlighting and model selector UI",
+      "Multi-agent grid running Claude Code, Codex, and Kimi Code in parallel",
+      "Git worktree isolation — each task works on its own branch copy",
+      "PM2 process management with auto-restart and auto-commit scheduling",
+      "Socket.IO real-time comms, Cloudflare Tunnel for remote browser access"
     ],
     mermaid: `graph TB
-    subgraph Browser
-      UI[React + Vite UI]
-      XT[xterm.js Terminal]
-      FP[File Preview]
-      TC[Task Controls]
+    subgraph WB["Remote Workbench · single agent"]
+      UI[React UI] <-->|Socket.IO| SRV[Express Server]
+      SRV --> TR[Terminal Router]
+      TR --> PT[PTY Process]
+      SRV --> WS[Workspace Router]
     end
-    subgraph Server
-      EX[Express]
-      SO{{Socket.IO}}
-      WS[Workspace Router]
-      TR[Terminal Router]
+    subgraph AF["AgentForge · multi-agent"]
+      AG[Agent Grid] <--> OR[Orchestrator]
+      OR --> WM[Worktree Manager]
+      OR --> PM[PM2 Manager]
     end
-    PT[PTY Process]
-    CC([Claude Code CLI])
-    DB[(SQLite Tasks)]
-
-    UI <-->|WebSocket| SO
-    SO --- EX
-    EX --- WS
-    EX --- TR
-    TR --> PT
-    PT --> CC
+    PT --> CC([Claude Code])
+    WM --> CC
+    WM --> CX([Codex CLI])
+    WM --> KI([Kimi Code])
+    OR <--> DB[(SQLite)]
     WS --> DB`,
     graph: {
       nodes: [
-        {id:"App", label:"App.tsx", type:"ui"},
-        {id:"Tasks", label:"Tasks.tsx", type:"ui"},
-        {id:"Terminal", label:"Terminal.tsx", type:"ui"},
-        {id:"FilePreview", label:"FilePreview.tsx", type:"ui"},
-        {id:"socket_client", label:"lib/socket.ts", type:"service"},
-        {id:"server", label:"server/index.ts", type:"entry"},
-        {id:"ws_router", label:"routes/workspace.ts", type:"api"},
-        {id:"term_router", label:"routes/terminal.ts", type:"api"},
-        {id:"taskStore", label:"services/taskStore.ts", type:"data"},
-        {id:"agentEngine", label:"services/agentEngine.ts", type:"service"},
-        {id:"pty", label:"PTY Process", type:"external"},
-        {id:"db", label:"SQLite", type:"data"}
-      ],
-      links: [
-        {s:"App",t:"Tasks"},{s:"App",t:"Terminal"},{s:"App",t:"FilePreview"},
-        {s:"App",t:"socket_client"},{s:"socket_client",t:"server"},
-        {s:"server",t:"ws_router"},{s:"server",t:"term_router"},
-        {s:"ws_router",t:"taskStore"},{s:"ws_router",t:"agentEngine"},
-        {s:"term_router",t:"pty"},{s:"agentEngine",t:"pty"},
-        {s:"taskStore",t:"db"}
-      ]
-    }
-  },
-  {
-    id: "agentforge",
-    name: "AgentForge",
-    tagline: "Multi-agent coding dashboard with git worktree isolation",
-    kicker: "Multi-Agent Developer Tooling",
-    category: "dev-tools",
-    status: "active",
-    year: "2025–2026",
-    github: "https://github.com/lycanlancelot/agent-forge",
-    demo: null,
-    highlight: true,
-    tech: ["React", "Express", "TypeScript", "SQLite", "xterm.js", "PM2", "Git Worktrees"],
-    description: "Local control plane for running Claude Code, Codex, and Kimi Code in parallel across isolated git worktrees. Designed for long-running multi-agent coding tasks that need to be observable, parallelisable, and recoverable. Includes live terminals, auto-commit scheduling, session logs, and remote access.",
-    features: [
-      "Multi-agent grid with live xterm.js terminals per agent",
-      "Git worktree isolation — each task works on its own branch copy",
-      "PM2 process management with auto-restart on failure",
-      "Auto-commit scheduling and session log export",
-      "SQLite-backed task and session state",
-      "Cloudflare Tunnel for remote browser access"
-    ],
-    mermaid: `graph TB
-    subgraph Dashboard
-      TQ[Task Queue UI]
-      AG[Agent Grid]
-      XT[xterm.js Terminals]
-      SL[Session Logs]
-    end
-    subgraph Orchestrator
-      OR[Orchestrator Service]
-      WM[Worktree Manager]
-      PM[PM2 Manager]
-    end
-    subgraph Agents
-      CC([Claude Code])
-      CX([Codex CLI])
-      KI([Kimi Code])
-    end
-    DB[(SQLite)]
-
-    AG <--> OR
-    OR --> WM
-    OR --> PM
-    WM --> CC
-    WM --> CX
-    WM --> KI
-    OR <--> DB
-    PM --> CC`,
-    graph: {
-      nodes: [
-        {id:"Dashboard", label:"Dashboard.tsx", type:"ui"},
+        {id:"UI", label:"App.tsx (React)", type:"ui"},
         {id:"AgentGrid", label:"AgentGrid.tsx", type:"ui"},
         {id:"TaskQueue", label:"TaskQueue.tsx", type:"ui"},
         {id:"XTerm", label:"Terminal.tsx (xterm)", type:"ui"},
+        {id:"FilePreview", label:"FilePreview.tsx", type:"ui"},
         {id:"server", label:"server/index.ts", type:"entry"},
+        {id:"ws_router", label:"routes/workspace.ts", type:"api"},
+        {id:"term_router", label:"routes/terminal.ts", type:"api"},
         {id:"orchestrator", label:"orchestrator.ts", type:"service"},
+        {id:"agentEngine", label:"agentEngine.ts", type:"service"},
         {id:"worktree", label:"worktreeManager.ts", type:"service"},
         {id:"pm2mgr", label:"pm2Manager.ts", type:"service"},
-        {id:"db", label:"db/sqlite.ts", type:"data"},
+        {id:"db", label:"SQLite", type:"data"},
+        {id:"pty", label:"PTY Process", type:"external"},
         {id:"git", label:"Git Worktrees", type:"external"},
         {id:"pm2", label:"PM2", type:"external"}
       ],
       links: [
-        {s:"Dashboard",t:"AgentGrid"},{s:"Dashboard",t:"TaskQueue"},
-        {s:"AgentGrid",t:"XTerm"},{s:"AgentGrid",t:"orchestrator"},
-        {s:"server",t:"orchestrator"},{s:"orchestrator",t:"worktree"},
-        {s:"orchestrator",t:"pm2mgr"},{s:"orchestrator",t:"db"},
+        {s:"UI",t:"AgentGrid"},{s:"UI",t:"TaskQueue"},{s:"UI",t:"FilePreview"},
+        {s:"UI",t:"server"},
+        {s:"server",t:"ws_router"},{s:"server",t:"term_router"},{s:"server",t:"orchestrator"},
+        {s:"ws_router",t:"agentEngine"},{s:"ws_router",t:"db"},
+        {s:"term_router",t:"pty"},{s:"agentEngine",t:"pty"},
+        {s:"AgentGrid",t:"orchestrator"},
+        {s:"orchestrator",t:"worktree"},{s:"orchestrator",t:"pm2mgr"},{s:"orchestrator",t:"db"},
         {s:"worktree",t:"git"},{s:"pm2mgr",t:"pm2"}
       ]
     }
@@ -836,6 +786,60 @@ const PROJECTS = [
         {s:"state",t:"redis"},{s:"booking_agent",t:"ragas"}
       ]
     }
+  },
+  {
+    id: "ai-bootcamp",
+    name: "AI Engineer Bootcamp",
+    tagline: "Guest Instructor at Australia IT Group — RAG, Agents, Fine-tuning",
+    kicker: "Teaching · Applied AI Engineering",
+    category: "teaching",
+    type: "teaching",
+    status: "active",
+    year: "2026",
+    github: "https://github.com/australiaitgroup/AI-Engineer-Bootcamp",
+    demo: null,
+    highlight: true,
+    tech: ["Python", "LangChain", "LangGraph", "RAG", "RAGAS", "Gemini", "DeepSeek", "ChromaDB", "PyTorch", "QLoRA"],
+    description: "Guest lecturer at Australia IT Group's AI Engineer Bootcamp (2026). Delivered 12+ sessions covering the full production AI stack — from embeddings and RAG architecture through multi-agent systems, LangGraph orchestration, evaluation engineering, and fine-tuning. All lecture notebooks and slides committed directly to the shared cohort repo (lycanlancelot@gmail.com).",
+    features: [
+      "RAG architecture: adaptive RAG, production RAG with DeepSeek, hybrid retrieval, RAGAS evaluation",
+      "Embeddings and vector search: 3-hour hands-on course with ChromaDB and sentence transformers",
+      "Multi-agent systems: architecture patterns, AutoGen & CrewAI, LangGraph orchestration",
+      "Fine-tuning: QLoRA, PEFT/Unsloth, sentence-transformer fine-tuning, MTEB benchmarking",
+      "Applied AI: Python UI building, PDF parsing, Text-to-SQL, LLM rate limits",
+      "Tooling: LangFuse monitoring, LangSmith ops, synthetic test data generation"
+    ],
+    lectures: [
+      { date:"2026-05-27", title:"Production RAG Application + LangChain Core Constructs", duration:"3hr", topic:"rag" },
+      { date:"2026-05-20", title:"UI Building, PDF Parsing & LLM Rate Limits",             duration:"2hr", topic:"applied" },
+      { date:"2026-05-17", title:"AI Data Engineering: Text to SQL",                       duration:"2hr", topic:"applied" },
+      { date:"2026-05-14", title:"Embeddings, Vector Search & RAG",                        duration:"3hr", topic:"embeddings" },
+      { date:"2026-05-06", title:"Advanced RAG — Bug Fixes & New Modules",                 duration:"2hr", topic:"rag" },
+      { date:"2026-03-23", title:"Fine-tuning Lecture (split slides edition)",             duration:"2hr", topic:"finetune" },
+      { date:"2026-03-18", title:"ML Model Evaluation & Fine-tuning",                      duration:"3hr", topic:"finetune" },
+      { date:"2026-03-15", title:"Multi-Agent RAG with Hybrid Search & Evaluation",        duration:"2hr", topic:"agents" },
+      { date:"2026-03-08", title:"AutoGen & CrewAI Practical Workshop",                    duration:"2hr", topic:"agents" },
+      { date:"2026-02-28", title:"Multi-Agent Architecture",                               duration:"2hr", topic:"agents" },
+      { date:"2026-02-14", title:"RAG QA Application with LangChain",                      duration:"2.5hr", topic:"rag" },
+      { date:"2026-02-05", title:"Adaptive RAG with Google Gemini 2.0 Flash",              duration:"2hr", topic:"rag" },
+    ],
+    mermaid: `graph LR
+    subgraph RAG["RAG & Retrieval"]
+      R1[Adaptive RAG<br/>Gemini 2.0]-->R2[RAG QA<br/>LangChain]-->R3[Multi-Agent RAG<br/>Hybrid Search]-->R4[Production RAG<br/>DeepSeek]
+    end
+    subgraph Agents["Multi-Agent Systems"]
+      A1[Architecture]-->A2[AutoGen &amp; CrewAI]-->A3[LangGraph]
+    end
+    subgraph Applied["Applied AI"]
+      P1[Embeddings<br/>3hr]-->P2[Text-to-SQL]-->P3[UI &amp; PDF]
+    end
+    subgraph MLOps["Evaluation &amp; Fine-tuning"]
+      M1[Model Eval<br/>3hr]-->M2[Fine-tuning<br/>QLoRA]
+    end
+    P1-->R1
+    R4-->A1
+    A3-->M1`,
+    graph: null
   }
 ];
 
@@ -847,6 +851,7 @@ const CATEGORIES = [
   { id: "dev-tools",    label: "Dev Tools" },
   { id: "web-mobile",   label: "Web / Mobile" },
   { id: "contributions",label: "Contributions" },
+  { id: "teaching",     label: "Teaching" },
 ];
 
 const NODE_COLORS = {
@@ -987,19 +992,30 @@ function renderModalHeader() {
   document.getElementById("modal-tagline").textContent = p.tagline;
 
   const links = [statusBadge(p)];
-  if (p.github) links.push(`<a class="modal-link-btn primary" href="${p.github}" target="_blank">↗ GitHub</a>`);
-  if (p.demo) links.push(`<a class="modal-link-btn" href="${p.demo}" target="_blank">↗ Demo</a>`);
+  if (p.github)  links.push(`<a class="modal-link-btn primary" href="${p.github}"  target="_blank">↗ GitHub</a>`);
+  if (p.github2) links.push(`<a class="modal-link-btn"         href="${p.github2}" target="_blank">↗ GitHub 2</a>`);
+  if (p.demo)    links.push(`<a class="modal-link-btn"         href="${p.demo}"    target="_blank">↗ Demo</a>`);
   document.getElementById("modal-links").innerHTML = links.join("");
 }
 
-const TABS = [
-  { id: "overview",      label: "Overview" },
-  { id: "architecture",  label: "Architecture" },
-  { id: "codegraph",     label: "Code Graph" },
-];
+function tabsForProject(p) {
+  if (p.type === "teaching") {
+    return [
+      { id: "overview",     label: "Overview" },
+      { id: "architecture", label: "Curriculum Map" },
+      { id: "lectures",     label: "Lectures" },
+    ];
+  }
+  return [
+    { id: "overview",     label: "Overview" },
+    { id: "architecture", label: "Architecture" },
+    { id: "codegraph",    label: "Code Graph" },
+  ];
+}
 
 function renderModalTabs() {
-  document.getElementById("modal-tabs").innerHTML = TABS
+  const tabs = tabsForProject(currentProject);
+  document.getElementById("modal-tabs").innerHTML = tabs
     .map(t => `<button class="modal-tab${t.id === currentTab ? " active" : ""}" data-tab="${t.id}">${t.label}</button>`)
     .join("");
   document.querySelectorAll(".modal-tab").forEach(btn => {
@@ -1012,6 +1028,14 @@ function switchTab(tabId) {
   document.querySelectorAll(".modal-tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
   renderTabContent(tabId);
 }
+
+const TOPIC_COLORS = {
+  rag:       { bg:"rgba(61,214,180,0.12)",  border:"rgba(61,214,180,0.35)",  text:"#3dd6b4", label:"RAG" },
+  agents:    { bg:"rgba(97,165,255,0.12)",  border:"rgba(97,165,255,0.35)",  text:"#61a5ff", label:"Agents" },
+  embeddings:{ bg:"rgba(245,193,92,0.12)",  border:"rgba(245,193,92,0.35)",  text:"#f5c15c", label:"Embeddings" },
+  finetune:  { bg:"rgba(167,139,250,0.12)", border:"rgba(167,139,250,0.35)", text:"#a78bfa", label:"Fine-tuning" },
+  applied:   { bg:"rgba(240,133,90,0.12)",  border:"rgba(240,133,90,0.35)",  text:"#f0855a", label:"Applied AI" },
+};
 
 function renderTabContent(tabId) {
   const p = currentProject;
@@ -1047,6 +1071,33 @@ function renderTabContent(tabId) {
         ).join("")
       }</div>`;
     setTimeout(() => renderD3Graph(p, `graph-wrap-${p.id}`), 50);
+  }
+
+  else if (tabId === "lectures") {
+    const legend = Object.entries(TOPIC_COLORS).map(([k, v]) =>
+      `<span class="lec-topic-pill" style="background:${v.bg};border-color:${v.border};color:${v.text}">${v.label}</span>`
+    ).join("");
+
+    const rows = (p.lectures || []).map(l => {
+      const tc = TOPIC_COLORS[l.topic] || TOPIC_COLORS.applied;
+      return `<div class="lec-row">
+        <div class="lec-date">${l.date}</div>
+        <div class="lec-body">
+          <div class="lec-title">${l.title}</div>
+          <div class="lec-meta">
+            <span class="lec-topic-pill" style="background:${tc.bg};border-color:${tc.border};color:${tc.text}">${tc.label}</span>
+            <span class="lec-duration">${l.duration}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    body.innerHTML = `
+      <div class="lec-header">
+        <span style="color:var(--muted);font-size:11px">${p.lectures.length} sessions · Feb – May 2026</span>
+        <div class="lec-legend">${legend}</div>
+      </div>
+      <div class="lec-list">${rows}</div>`;
   }
 }
 
