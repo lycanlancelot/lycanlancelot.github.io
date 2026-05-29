@@ -55,9 +55,23 @@ h1, h2, h3 {
 }
 
 h2 {
-  margin-top: 48px;
+  margin-top: 52px;
+  margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--lance-line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background: var(--lance-accent);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 p, li {
@@ -227,6 +241,7 @@ a {
 .project-card.highlight {
   background: linear-gradient(135deg, rgba(16, 24, 38, 0.92), rgba(19, 32, 51, 0.92));
   border-color: rgba(61, 214, 180, 0.34);
+  border-top: 2px solid var(--lance-accent);
 }
 
 .project-card h3,
@@ -244,15 +259,46 @@ a {
   display: inline-block;
   margin-top: 8px;
   font-weight: 700;
+  font-size: 13px;
+}
+
+.project-card a + a {
+  margin-left: 12px;
 }
 
 .timeline {
+  position: relative;
   display: grid;
   gap: 14px;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 30px;
+  bottom: 30px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--lance-accent), rgba(61, 214, 180, 0.1));
+  border-radius: 2px;
 }
 
 .timeline-item {
+  position: relative;
   padding: 20px 22px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 25px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lance-accent);
+  box-shadow: 0 0 8px rgba(61, 214, 180, 0.55);
 }
 
 .timeline-item span {
@@ -306,5 +352,13 @@ a {
   .project-summary-panel {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .timeline {
+    padding-left: 20px;
+  }
+
+  .timeline-item::before {
+    left: -18px;
   }
 }

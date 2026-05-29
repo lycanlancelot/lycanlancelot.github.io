@@ -9,7 +9,6 @@ layout: default
   <div class="hero-actions">
     <a class="button primary" href="/cv.html">View CV</a>
     <a class="button primary" href="/projects.html">Projects Dashboard</a>
-    <a class="button" href="/github-projects.html">GitHub Projects</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
     <a class="button" href="https://github.com/lycanlancelot">GitHub</a>
@@ -72,89 +71,55 @@ I'm strongest where retrieval quality, ML system design, and data engineering ma
 
 <div class="project-grid">
   <article class="project-card highlight">
-    <p class="project-kicker">Healthcare AI / Contract Intelligence</p>
+    <p class="project-kicker">Healthcare AI · Contract Intelligence</p>
     <h3>Termly</h3>
-    <p>Australian medical contract automation system for MPPA PDF generation, Medicare/PBS identifier validation, scanned PDF analysis, OCR correction, clause extraction, and compliance-oriented risk assessment.</p>
+    <p>Australian medical contract automation: scanned PDF extraction, OCR correction, structured clause/entity extraction, Medicare/PBS validation, and risk assessment.</p>
     <ul>
-      <li>FastAPI, Pydantic, Claude Sonnet, Azure Document Intelligence, Tesseract OCR, Docker.</li>
-      <li>Shows domain modeling, document AI, validation algorithms, and deployment-aware service design.</li>
+      <li>FastAPI · Pydantic · Claude Sonnet · Azure Document Intelligence · Tesseract OCR · Docker</li>
     </ul>
     <a href="https://github.com/lycanlancelot/Termly">Repository</a>
   </article>
 
   <article class="project-card highlight">
     <p class="project-kicker">Agentic Developer Tooling</p>
-    <h3>Remote Agent Workbench</h3>
-    <p>VS Code-like remote web workbench for orchestrating Claude Code and Codex from a browser, built around real task execution rather than a mock dashboard.</p>
+    <h3>Agentic Workbench</h3>
+    <p>Browser-based remote orchestration for single coding agents (Remote Agent Workbench) plus a multi-agent parallel control plane across isolated git worktrees (AgentForge) — covering the full range of AI coding-agent workflows.</p>
     <ul>
-      <li>React/Vite, TypeScript, Express, Socket.IO, task persistence, file previews, permission prompts, and terminal streaming.</li>
-      <li>Shows practical safety boundaries: allowed directories, verifiable task output, and remote access patterns.</li>
+      <li>React · TypeScript · Express · Socket.IO · xterm.js · PTY · SQLite · PM2 · Git Worktrees</li>
     </ul>
-    <a href="https://github.com/lycanlancelot/remote-agent">Repository</a>
+    <a href="https://github.com/lycanlancelot/remote-agent">Workbench</a>
+    <a href="https://github.com/lycanlancelot/agent-forge">AgentForge</a>
   </article>
 
   <article class="project-card highlight">
-    <p class="project-kicker">Multi-Agent Developer Tooling</p>
-    <h3>AgentForge</h3>
-    <p>Local control plane for Claude Code, Codex, and Kimi Code, designed to make long-running coding-agent work observable, parallelizable, and recoverable.</p>
+    <p class="project-kicker">AI Curriculum Design · Instructor</p>
+    <h3>Dispatch.AI</h3>
+    <p>6-week progressive course project I designed and instructed (13 students): build a production AI booking assistant from Pydantic state and Redis through LangGraph agents, MCP tools, multi-agent routing, NeMo Guardrails, and RAGAS evaluation to a Docker + Render capstone.</p>
     <ul>
-      <li>Express, Socket.IO, SQLite, xterm.js, WSL, git worktrees, PM2.</li>
-      <li>Includes live terminals, task queues, worktree isolation, auto-commit scheduling, session logs, and Cloudflare Tunnel remote access.</li>
+      <li>FastAPI · LangGraph · Groq · MCP · NeMo Guardrails · RAGAS · Docker · Render</li>
     </ul>
-    <a href="https://github.com/lycanlancelot/agent-forge">Repository</a>
+    <a href="https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI">Repository</a>
   </article>
 
   <article class="project-card">
     <p class="project-kicker">Multimodal RAG</p>
     <h3>Video-RAG</h3>
-    <p>Collaborative visual retrieval system that samples video frames, embeds them with CLIP, stores them in ChromaDB, and answers natural-language queries with timestamped context.</p>
+    <p>Visual retrieval pipeline: sample video frames → CLIP embeddings → ChromaDB → natural-language queries with timestamped evidence and multi-provider LLM answers.</p>
     <a href="https://github.com/Iliana678/Video-RAG">Repository</a>
   </article>
 
   <article class="project-card">
     <p class="project-kicker">Operator Automation</p>
     <h3>Toy Gifting System</h3>
-    <p>Back-office tool for toy sourcing and custom gift-box assembly, combining SQLite catalog ingestion, supplier/compliance metadata, operator feedback, bilingual product data, and Three.js packing visualization.</p>
+    <p>Back-office sourcing tool: SQLite catalog ingestion, supplier/compliance metadata, operator feedback loop, bilingual product data, and Three.js 3D bin-packing visualisation.</p>
     <a href="https://github.com/lycanlancelot/toy-gifting">Repository</a>
-  </article>
-
-  <article class="project-card highlight">
-    <p class="project-kicker">AI Curriculum Design · Instructor · LangGraph</p>
-    <h3>Dispatch.AI — AI Engineer Course Project</h3>
-    <p>6-week progressive course project I designed and instructed (13 students): students build a production-grade AI booking assistant step by step — Pydantic state, Redis persistence, LangGraph agents, MCP tools, multi-agent routing, NeMo Guardrails, RAGAS evaluation, and a Docker + Render capstone demo.</p>
-    <ul>
-      <li>FastAPI, LangGraph, Groq, Pydantic, Redis, MCP, NeMo Guardrails, RAGAS, Docker, Render.</li>
-      <li>Delivered reference implementation, student scaffold, CI/CD grading pipeline, and PR-based submission with 100-synthetic-user evaluation gate.</li>
-    </ul>
-    <a href="https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI">Repository</a>
   </article>
 
   <article class="project-card">
     <p class="project-kicker">Creative AI Workflow</p>
     <h3>BranchFlow</h3>
-    <p>Local nonlinear writing and prompt orchestration workbench for Seedance-style video generation, with branching narrative state, prompt drawers, React Flow mind maps, and Obsidian Canvas export.</p>
+    <p>Nonlinear writing and prompt-orchestration workbench with branching story state, per-branch LLM prompt drawers, React Flow mind maps, and Obsidian Canvas export.</p>
     <a href="https://github.com/lycanlancelot/writer-helper">Repository</a>
-  </article>
-
-  <article class="project-card">
-    <p class="project-kicker">Realtime Communication AI</p>
-    <h3>RageZone</h3>
-    <p>WeChat Mini Program and Node/WebSocket service for an LLM-assisted argument coaching product, including persona setup, chat flow, JWT/Firebase auth planning, evaluation scripts, and monetization entry points.</p>
-    <a href="https://github.com/lycanlancelot/ragezone">Repository</a>
-  </article>
-
-  <article class="project-card">
-    <p class="project-kicker">Voice AI / Mobile Prototype</p>
-    <h3>Elder Companion</h3>
-    <p>Expo React Native prototype with elder-facing voice chat, family dashboard, Firebase persistence, ElevenLabs integration plan, Claude daily summaries, and alert workflow design.</p>
-    <a href="https://github.com/lycanlancelot/elder-companion">Repository</a>
-  </article>
-
-  <article class="project-card">
-    <p class="project-kicker">Agent Architecture Research</p>
-    <h3>Claude Code Source Map</h3>
-    <p>Technical study repository for understanding early Claude Code internals, terminal-agent command flow, and source-map based inspection of agent CLI architecture.</p>
-    <a href="https://github.com/lycanlancelot/claude-code-sourcemap">Repository</a>
   </article>
 </div>
 
