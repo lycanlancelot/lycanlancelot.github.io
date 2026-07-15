@@ -7,7 +7,8 @@ layout: default
   <h1>Liangjun (Lance) Song, PhD</h1>
   <p class="hero-copy">Senior ML Engineer · Data Scientist · PhD in Search &amp; Recommendation Systems. I build production AI across the stack: search ranking, retrieval pipelines, content understanding, LLM-powered workflows, RAG, and agentic automation.</p>
   <div class="hero-actions">
-    <a class="button primary" href="/cv.html">View CV</a>
+    <a class="button primary" href="/cv.html">CV · ML Engineer</a>
+    <a class="button primary" href="/cv-ds.html">CV · Data Scientist</a>
     <a class="button primary" href="/projects.html">Projects Dashboard</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>

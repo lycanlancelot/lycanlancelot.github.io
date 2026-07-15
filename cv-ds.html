@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liangjun (Lance) Song - Senior ML Engineer CV</title>
+<title>Liangjun (Lance) Song - Senior Data Scientist CV</title>
 <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -350,8 +350,8 @@
 
 <nav class="cv-switch">
   <a href="/" class="home-link">&larr; Home</a>
-  <a href="/cv.html" class="active">ML Engineer</a>
-  <a href="/cv-ds.html">Data Scientist</a>
+  <a href="/cv.html">ML Engineer</a>
+  <a href="/cv-ds.html" class="active">Data Scientist</a>
 </nav>
 
 <p class="print-hint">Tip: use <em>Print - Save as PDF</em> with Paper A4, Margins None, Scale 100%, and Background graphics ON.</p>
@@ -359,7 +359,7 @@
 <section class="page">
   <header class="header">
     <h1>LIANGJUN (LANCE) SONG, PHD</h1>
-    <div class="subtitle">SENIOR ML ENGINEER · SEARCH &amp; RECOMMENDATION</div>
+    <div class="subtitle">SENIOR DATA SCIENTIST &middot; SEARCH &amp; RECOMMENDATION</div>
   </header>
 
   <div class="body">
@@ -375,7 +375,7 @@
 
       <div class="section-block">
         <h2 class="section">PROFILE</h2>
-        <p class="profile">Senior ML Engineer with a PhD specialising in search and recommendation systems (RMIT). 7+ years building production search ranking, recommendation, content understanding, RAG, and LLM-powered workflow systems. Research published in VLDB Journal, DASFAA, and ADC. Strong across the full ML stack: feature pipelines, offline evaluation, A/B experimentation, vector retrieval, LLM orchestration, Docker, cloud MLOps, and CI/CD.</p>
+        <p class="profile">Senior Data Scientist with a PhD specialising in search and recommendation systems (RMIT). 7+ years turning large-scale user behaviour data into measurable product impact through A/B experimentation, offline evaluation, metric design, and statistical modeling across search ranking, recommendation, and content understanding. Research published in VLDB Journal, DASFAA, and ADC. Takes models all the way to production: feature pipelines, vector retrieval, LLM/RAG systems, and cloud MLOps.</p>
       </div>
 
       <div class="section-block">
@@ -394,14 +394,14 @@
 
       <div class="section-block">
         <h2 class="section">SKILLS</h2>
-        <div class="skill-group"><span class="label">Production ML Systems:</span>Search, recommendation, content classification, offline evaluation, feature pipelines, monitoring</div>
-        <div class="skill-group"><span class="label">Retrieval &amp; LLM Products:</span>LangGraph, LangChain, RAG architecture, Azure OpenAI, vector search, guardrails</div>
-        <div class="skill-group"><span class="label">Infrastructure:</span>Docker, GitHub Actions, dev containers, readiness checks, cloud deployment, production debugging</div>
+        <div class="skill-group"><span class="label">Experimentation &amp; Evaluation:</span>A/B testing, experiment design, offline evaluation, metric design, GA4 analytics</div>
+        <div class="skill-group"><span class="label">Machine Learning:</span>Search ranking, recommendation, content classification, embeddings, language-image models</div>
+        <div class="skill-group"><span class="label">Statistical Analysis:</span>Statistical modeling, anomaly detection, NumPy, Pandas, SciPy, Matplotlib</div>
         <div class="skill-group"><span class="label">Languages:</span>Python (Expert), SQL, TypeScript, C++</div>
-        <div class="skill-group"><span class="label">Backend Services:</span>FastAPI, Pydantic, PostgreSQL, AsyncIO, REST APIs</div>
-        <div class="skill-group"><span class="label">ML Frameworks:</span>PyTorch, TensorFlow, Keras</div>
-        <div class="skill-group"><span class="label">Cloud &amp; MLOps:</span>Azure, GCP Vertex AI, Vercel, Supabase, CI/CD</div>
-        <div class="skill-group"><span class="label">Data Science Libraries:</span>NumPy, Pandas, SciPy, Matplotlib</div>
+        <div class="skill-group"><span class="label">Data &amp; Feature Pipelines:</span>Feature pipelines, data quality, large-scale behavioural event data, monitoring</div>
+        <div class="skill-group"><span class="label">LLM &amp; Retrieval:</span>RAG, vector search, LangGraph, Azure OpenAI, guardrails</div>
+        <div class="skill-group"><span class="label">Cloud &amp; MLOps:</span>GCP Vertex AI, Azure, Docker, CI/CD</div>
+        <div class="skill-group"><span class="label">Backend Services:</span>FastAPI, Pydantic, PostgreSQL</div>
       </div>
     </aside>
 
@@ -415,12 +415,10 @@
           </div>
           <div class="tl-role">AI Engineer - AI/ML Group</div>
           <ul>
-            <li>Architected and optimized end-to-end LLM systems for production support platforms (CWBot &amp; TriageAgent), combining LangGraph orchestration, FastAPI services, Azure OpenAI, enterprise APIs, and durable PostgreSQL-backed state.</li>
-            <li>Designed RAG workflows with dynamic question rewriting, custom retriever factories, Azure Search integration, and heterogeneous internal data sources to improve how users find and act on operational knowledge.</li>
+            <li>Built and optimized end-to-end LLM systems for production support platforms (CWBot &amp; TriageAgent), combining LangGraph orchestration, FastAPI services, Azure OpenAI, and durable PostgreSQL-backed state.</li>
+            <li>Designed RAG workflows with dynamic question rewriting, custom retriever factories, and Azure Search integration over heterogeneous internal data sources to improve how users find and act on operational knowledge.</li>
             <li>Implemented guardrails for PII filtering and response steering, plus checkpointing and recovery patterns for reliable multi-turn product experiences.</li>
-            <li>Led container-first CI/CD modernization for AI services, establishing Docker dev containers, GitHub Actions pipelines, readiness checks, and environment parity across local and deployed workflows.</li>
-            <li>Debugged production-like infrastructure issues across Azure Search schemas, devcontainer networking, PostgreSQL SSL, and service configuration drift.</li>
-            <li>Maintained test coverage across backend, frontend, and system test sets, incorporating linting, type checks, quality gates, and release-readiness checks.</li>
+            <li>Maintained quality through systematic testing and evaluation: coverage across backend, frontend, and system test sets, with linting, type checks, and release-readiness quality gates.</li>
           </ul>
         </div>
 
@@ -431,9 +429,8 @@
           </div>
           <div class="tl-role">Open Source Contributor</div>
           <ul>
-            <li>Contributing core optimizations to the SGLang framework (LMSYS / UC Berkeley) to accelerate LLM inference pipelines for state-of-the-art models including DeepSeek R1, Llama 3, and Qwen.</li>
-            <li>Working on backend runtime, distributed serving, and frontend prompt-language features to improve throughput, contextual routing, and controllability.</li>
-            <li>Leveraging AI coding agents (Claude Code) to navigate the large codebase, draft PRs, and review diffs, demonstrating an effective human-in-the-loop open source contribution workflow.</li>
+            <li>Contributing core optimizations to the SGLang LLM inference framework (LMSYS / UC Berkeley) for state-of-the-art models including DeepSeek R1, Llama 3, and Qwen.</li>
+            <li>Leveraging AI coding agents (Claude Code) to navigate the large codebase, draft PRs, and review diffs in a human-in-the-loop open source workflow.</li>
           </ul>
         </div>
 
@@ -444,7 +441,7 @@
           </div>
           <div class="tl-role">Guest Instructor &amp; Curriculum Designer — RAG, Multi-Agent Systems, Fine-tuning</div>
           <ul>
-            <li>Delivered 12+ sessions on production RAG, embeddings &amp; vector search, multi-agent systems (LangGraph, AutoGen, CrewAI), QLoRA fine-tuning, RAGAS evaluation, and applied AI (UI, PDF parsing, Text-to-SQL); all notebooks and slides committed to the cohort repo.</li>
+            <li>Delivered 12+ sessions on production RAG, embeddings &amp; vector search, RAGAS evaluation, multi-agent systems (LangGraph, AutoGen, CrewAI), QLoRA fine-tuning, and applied AI (UI, PDF parsing, Text-to-SQL); all notebooks and slides committed to the cohort repo.</li>
             <li>Designed Dispatch.AI, a 6-week hands-on course project (13 students): students build a production AI booking assistant incrementally — Pydantic state + Redis persistence, LangGraph agents, MCP tool server, multi-agent routing, NeMo Guardrails, RAGAS evaluation, and Docker + Render capstone; delivered reference implementation, scaffold, and CI/CD grading pipeline.</li>
           </ul>
         </div>
@@ -456,11 +453,11 @@
           </div>
           <div class="tl-role">Data Scientist - Search &amp; Recommendation Team</div>
           <ul>
-            <li>Led search and recommendation enhancements with Marqo vector search and GCP Vertex AI MLOps pipelines, improving add-to-cart rate by 0.5% and CTR by 10%.</li>
-            <li>Owned production-shaped ML workflows from analysis and offline evaluation through experiment design, deployment coordination, and post-launch metric review.</li>
+            <li>Designed and shipped search and recommendation experiments using Marqo vector search and GCP Vertex AI MLOps pipelines, lifting add-to-cart rate by 0.5% and CTR by 10%.</li>
+            <li>Owned the full experiment lifecycle: exploratory analysis and offline evaluation through experiment design, deployment coordination, and post-launch metric review.</li>
             <li>Designed ML/data infrastructure over 100M+ user events for feature extraction, search relevance analysis, and downstream serving workflows.</li>
             <li>Drove GA4 analytics migration to ensure data reliability across internal dashboard-driven A/B testing frameworks.</li>
-            <li>Optimized search relevance for long-tail queries, balancing retrieval quality, user behavior signals, and measurable business impact.</li>
+            <li>Analysed user behaviour signals to optimize search relevance for long-tail queries, balancing retrieval quality against measurable business impact.</li>
           </ul>
         </div>
 
@@ -472,9 +469,9 @@
           <div class="tl-role">Data Scientist - AI Renovation Team</div>
           <ul>
             <li>Applied language-image models for automated content tagging and classification across a large marketplace catalog.</li>
-            <li>Enhanced content taxonomy using structured user engagement signals and measurable search/discovery outcomes.</li>
-            <li>Ran experiments for new content tags and search-engine optimization, translating model output into product-facing discovery improvements.</li>
-            <li>Developed personalization workflows that connected data science experiments with production product metrics.</li>
+            <li>Mined structured user engagement signals to enhance the content taxonomy, tied to measurable search and discovery outcomes.</li>
+            <li>Designed and ran experiments for new content tags and search-engine optimization, translating model output into product-facing discovery improvements.</li>
+            <li>Developed personalization workflows connecting data science experiments to production product metrics.</li>
           </ul>
         </div>
 
@@ -486,7 +483,7 @@
           <div class="tl-role">Data Scientist - Content Moderation Team</div>
           <ul>
             <li>Implemented production content-classification systems using language-image models for automated moderation.</li>
-            <li>Developed image duplicate-detection pipelines using ML and statistical modeling techniques.</li>
+            <li>Developed image duplicate-detection pipelines combining ML and statistical modeling techniques.</li>
             <li>Established data quality and anomaly-detection workflows for safer model and pipeline operation.</li>
             <li>Shipped classification workflows that reduced intellectual-property moderation risk and improved operational throughput.</li>
           </ul>
