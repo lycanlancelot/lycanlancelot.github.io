@@ -128,9 +128,9 @@ I'm strongest where retrieval quality, ML system design, and data engineering ma
 
 <div class="timeline">
   <div class="timeline-item">
-    <span>Apr 2025 - Present</span>
+    <span>Apr 2025 - Jun 2026</span>
     <h3>WiseTech Global - AI Engineer, AI/ML Group</h3>
-    <p>AI Engineer on CWBot and TriageAgent. Architect stateful multi-turn LLM agents with LangGraph and MCP, design RAG workflows over enterprise knowledge bases, implement guardrails and evaluation pipelines, and own CI/CD and deployment standards for production AI services.</p>
+    <p>AI Engineer on CWBot and TriageAgent. Architected stateful multi-turn LLM agents with LangGraph and MCP, designed RAG workflows over enterprise knowledge bases, implemented guardrails and evaluation pipelines, and owned CI/CD and deployment standards for production AI services.</p>
   </div>
   <div class="timeline-item">
     <span>Feb 2025 - Present</span>
