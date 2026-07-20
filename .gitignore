@@ -4,3 +4,4 @@ Gemfile.lock
 *.gem
 .gstack/
 docs/woolies_ds.md
+docs/fde-application-note.md
