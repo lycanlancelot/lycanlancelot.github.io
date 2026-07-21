@@ -44,14 +44,16 @@ Output ONLY a single JSON object — no markdown fences, no prose before or afte
     "summary": "a professional summary REWRITTEN for this JD in its vocabulary — only real facts from the bank, 2-4 sentences",
     "skillGroups": [ { "label": "group name", "items": ["a skill from the bank"] } ],
     "experience": [ { "roleId": "wisetech", "bullets": [ { "text": "a bank bullet reworded in the JD's language, same facts", "bankRef": "wt-1" } ] } ]
-  }
+  },
+  "coverLetter": "a first-person cover letter (3 short paragraphs) to the hiring team, connecting Lance's real experience to THIS role"
 }
 RULES for "cv" (the tailored résumé — match the JD as closely as the real experience allows):
 - headline: mirror the JD's role title where truthful.
 - summary: rewrite hard for the JD, but invent nothing — every claim must be supported by the bank.
 - skillGroups: select and ORDER Lance's real bank skills to lead with what the JD asks for; never add a skill that is not in the bank.
 - experience: include EVERY role from the bank (roleId must be a real role id), keep the bank's order, and rewrite each role's bullets in the JD's language while keeping the source bullet's facts; cite the source bullet id in "bankRef".
-Every bankRef (in matches and in cv.experience) MUST be a real bank bullet id. If the input is not a genuine job description, use empty arrays/objects and put the note in fitSummary.`;
+RULES for "coverLetter": first person as Lance; open by naming the role and the single strongest reason he fits; use one or two concrete, REAL examples from the bank (e.g. the onsite client engagements) in the JD's language; specific and warm, never generic; ~200-260 words; use paragraph breaks (\\n\\n); address "Dear Hiring Team," unless the JD names the company; never invent facts, metrics, employers, dates, or an address.
+Every bankRef (in matches and in cv.experience) MUST be a real bank bullet id. If the input is not a genuine job description, use empty arrays/objects, an empty coverLetter, and put the note in fitSummary.`;
 
 // ---- Helpers ----------------------------------------------------------------
 function corsHeaders(origin) {
@@ -239,6 +241,7 @@ function sanitize(result) {
     matches,
     gaps: arr(result.gaps).slice(0, 12),
     cv: sanitizeCV(result.cv, roleIds, bulletIds),
+    coverLetter: typeof result.coverLetter === "string" ? result.coverLetter : "",
   };
 }
 

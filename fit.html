@@ -192,6 +192,8 @@
 
   .summary { color: var(--text); font-size: 16px; line-height: 1.6; }
 
+  .letter { background: #f7f9fc; color: #232330; border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; font-size: 14.5px; line-height: 1.65; white-space: pre-wrap; }
+
   .match { border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; margin-bottom: 10px; background: var(--panel); }
   .match .req { font-weight: 700; color: var(--text); }
   .match .ev { color: var(--muted); font-size: 14px; margin-top: 5px; }
@@ -267,6 +269,14 @@
       <iframe id="cv-frame" title="Tailored CV preview" style="width:100%;height:660px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>
     </div>
 
+    <div class="section" id="letter-sec">
+      <h2>Cover letter
+        <button class="btn secondary" id="letter-copy" style="padding:5px 14px;font-size:13px;margin-left:8px">Copy</button>
+        <button class="btn secondary" id="letter-download" style="padding:5px 14px;font-size:13px">Download</button>
+      </h2>
+      <div class="letter" id="letter"></div>
+    </div>
+
     <div class="section" id="summary-sec">
       <h2>The read</h2>
       <p class="summary" id="summary"></p>
@@ -302,6 +312,7 @@
 
   const $ = (id) => document.getElementById(id);
   let lastCvBlobUrl = null;
+  let lastLetter = "";
   let BANK = null;
 
   const esc = (s) =>
@@ -453,6 +464,12 @@
     $("cv-frame").src = lastCvBlobUrl;
   }
 
+  function renderLetter(text) {
+    lastLetter = typeof text === "string" ? text.trim() : "";
+    $("letter-sec").style.display = lastLetter ? "" : "none";
+    $("letter").textContent = lastLetter;
+  }
+
   async function render(data) {
     const score = data.fitScore || 0;
     $("score").innerHTML = score + "<small>%</small>";
@@ -475,6 +492,7 @@
     renderMatches(data.matches || []);
     renderGaps(data.gaps || []);
     await renderCV(data.cv);
+    renderLetter(data.coverLetter);
     $("results").classList.add("show");
   }
 
@@ -515,6 +533,22 @@
     a.href = lastCvBlobUrl;
     a.download = "lance-song-cv-tailored.html";
     a.click();
+  });
+
+  $("letter-copy").addEventListener("click", (e) => {
+    if (!lastLetter) return;
+    navigator.clipboard.writeText(lastLetter);
+    e.target.textContent = "Copied";
+    setTimeout(() => (e.target.textContent = "Copy"), 1200);
+  });
+  $("letter-download").addEventListener("click", () => {
+    if (!lastLetter) return;
+    const url = URL.createObjectURL(new Blob([lastLetter], { type: "text/plain" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lance-song-cover-letter.txt";
+    a.click();
+    URL.revokeObjectURL(url);
   });
 
   refresh();
