@@ -234,7 +234,7 @@
 <div class="wrap">
   <div class="eyebrow">Interactive demo</div>
   <h1>Does your role <span>fit</span> my experience?</h1>
-  <p class="lede">Paste a job description. An AI reads my real CV against it and returns an honest read — where I match, where I don't, and bullets already worded for the role.</p>
+  <p class="lede">Paste a job description. An AI rewrites my CV to match it — a full, print-ready résumé worded for the role — plus an honest read of where I fit and where I don't.</p>
   <p class="disclaimer-top">Every claim is drawn only from my actual, verified experience. It shows gaps instead of inventing matches — that's the point.</p>
 
   <div class="card input-card">
@@ -242,7 +242,7 @@
     <div class="controls">
       <span class="seg-label">Powered by DeepSeek</span>
       <span class="count" id="count">0 / 8000</span>
-      <button class="btn" id="go" disabled>Analyze fit</button>
+      <button class="btn" id="go" disabled>Tailor my CV</button>
     </div>
     <div id="status"></div>
   </div>
@@ -256,6 +256,15 @@
           <div class="score-note" id="score-note"></div>
         </div>
       </div>
+    </div>
+
+    <div class="section" id="cv-sec">
+      <h2>Your tailored CV
+        <button class="btn" id="cv-open" style="padding:5px 14px;font-size:13px;margin-left:8px">Open · Save as PDF</button>
+        <button class="btn secondary" id="cv-download" style="padding:5px 14px;font-size:13px">Download</button>
+      </h2>
+      <p class="cv-hint" style="color:var(--dim);font-size:13px;margin:-4px 0 12px">Rewritten to match this JD, drawn only from real experience. Single-column and ATS-safe — open it and Save as PDF.</p>
+      <iframe id="cv-frame" title="Tailored CV preview" style="width:100%;height:660px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>
     </div>
 
     <div class="section" id="summary-sec">
@@ -274,15 +283,6 @@
       <div id="gaps"></div>
     </div>
 
-    <div class="section" id="bullets-sec">
-      <h2>Tailored bullets <button class="btn secondary" id="copy-all" style="padding:4px 12px;font-size:12px;margin-left:8px">Copy all</button></h2>
-      <div id="bullets"></div>
-    </div>
-
-    <div class="section" id="skills-sec">
-      <h2>Skills to surface</h2>
-      <div class="skills" id="skills"></div>
-    </div>
   </div>
 
   <div class="footer-note">
@@ -301,11 +301,24 @@
   const WORKER_URL = new URLSearchParams(location.search).get("api") || DEFAULT_WORKER_URL;
 
   const $ = (id) => document.getElementById(id);
-  let lastBullets = [];
+  let lastCvBlobUrl = null;
+  let BANK = null;
 
   const esc = (s) =>
     String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // The full bank (same-origin static file) supplies the CV's static sections
+  // (contact, dates, education, awards…) so the model only rewords, never invents them.
+  async function loadBank() {
+    if (BANK) return BANK;
+    try {
+      const r = await fetch("/data/experience-bank.json");
+      if (r.ok) BANK = await r.json();
+    } catch { /* file:// or offline — CV assembly degrades gracefully */ }
+    return BANK;
+  }
+  loadBank();
 
   // ---- input state ----
   const jd = $("jd");
@@ -345,33 +358,102 @@
       .join("");
   }
 
-  function renderBullets(bullets) {
-    lastBullets = bullets.map((b) => b.text);
-    $("bullets-sec").style.display = bullets.length ? "" : "none";
-    $("bullets").innerHTML = bullets
-      .map(
-        (b, i) => `<div class="bullet">
-          <button class="copy" data-i="${i}">Copy</button>
-          ${b.section ? `<div class="sec">${esc(b.section)}</div>` : ""}
-          <div class="txt">${esc(b.text)}</div>
-        </div>`
-      )
+  // Build a complete, print-ready single-column CV document (standalone HTML).
+  // Model-generated: headline, summary, skill grouping/order, reworded bullets.
+  // From the verified bank: name, contact, company/title/dates, projects, education, awards, certs, pubs.
+  function buildCvDocument(cv, bank) {
+    const p = bank.profile;
+    const roleById = Object.fromEntries(bank.roles.map((r) => [r.id, r]));
+    const dateRange = (a, b) => (a === b ? esc(a) : `${esc(a)} – ${esc(b)}`);
+    const contact = [p.contact.email, p.contact.phone, p.location, p.workRights]
+      .filter(Boolean).map(esc).join("&nbsp;&nbsp;·&nbsp;&nbsp;");
+
+    const skills = cv.skillGroups
+      .map((g) => `<div class="sk"><span class="skl">${esc(g.label)}:</span> ${esc(g.items.join(", "))}</div>`)
       .join("");
-    $("bullets").querySelectorAll(".copy").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        navigator.clipboard.writeText(lastBullets[+btn.dataset.i]);
-        btn.textContent = "Copied";
-        setTimeout(() => (btn.textContent = "Copy"), 1200);
+
+    const entry = (co, ctx, dt, role, bullets) =>
+      `<div class="entry">
+        <div class="ehead"><span class="co">${esc(co)}${ctx ? ` <span class="ctx">(${esc(ctx)})</span>` : ""}</span><span class="dt">${dt}</span></div>
+        ${role ? `<div class="ro">${esc(role)}</div>` : ""}
+        ${bullets.length ? `<ul>${bullets.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+      </div>`;
+
+    const experience = cv.experience
+      .map((e) => {
+        const r = roleById[e.roleId];
+        if (!r) return "";
+        return entry(r.company, r.context, dateRange(r.start, r.end), r.title, e.bullets.map((b) => b.text));
       })
-    );
+      .join("");
+
+    const projects = (bank.projects || [])
+      .map((pr) => entry(pr.name, "", esc(pr.year || ""), pr.role, (pr.bullets || []).map((b) => b.text)))
+      .join("");
+
+    const education = (bank.education || [])
+      .map((e) => entry(e.degree, "", dateRange(e.start, e.end), e.school, []))
+      .join("");
+
+    const list = (arr, f) => (arr || []).map((x) => `<li>${esc(f(x))}</li>`).join("");
+    const certs = list(bank.certifications, (c) => c.text);
+    const awards = list(bank.awards, (a) => a.text);
+    const pubs = (bank.publications || [])
+      .map((pb) => `<div class="pub"><b>${esc(pb.title)}</b> — <em>${esc(pb.venue)}</em> (${esc(pb.year)})</div>`)
+      .join("");
+
+    const sec = (title, body) => (body ? `<h2>${title}</h2>${body}` : "");
+    return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>${esc(p.name)} — ${esc(cv.headline)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; font-variant-ligatures:none; font-feature-settings:"liga" 0,"clig" 0,"dlig" 0; }
+  html,body { margin:0; background:#fff; color:#232330; font-family:"Source Sans 3",system-ui,-apple-system,sans-serif; font-size:10.5pt; line-height:1.45; }
+  .wrap { max-width:820px; margin:0 auto; padding:34px 44px; }
+  h1 { font-family:"Source Serif 4",Georgia,serif; font-size:23pt; margin:0 0 2px; color:#282850; }
+  .headline { font-size:12.5pt; font-weight:600; color:#3a3a70; margin-bottom:6px; }
+  .contact { font-size:9pt; color:#5a5a6e; margin-bottom:12px; }
+  h2 { font-family:"Source Serif 4",Georgia,serif; font-size:11.5pt; text-transform:uppercase; letter-spacing:.05em; color:#282850; border-bottom:1.5px solid #ccd3e0; padding-bottom:3px; margin:15px 0 8px; }
+  .summary { margin:0; }
+  .sk { margin:2px 0; } .skl { font-weight:700; color:#282850; }
+  .entry { margin:0 0 9px; break-inside:avoid; }
+  .ehead { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .co { font-weight:700; color:#282850; } .ctx { font-weight:400; color:#6a6a7e; font-size:9pt; }
+  .dt { font-size:9pt; color:#6a6a7e; white-space:nowrap; }
+  .ro { font-style:italic; color:#4a4a68; font-size:9.5pt; margin-bottom:2px; }
+  ul { margin:3px 0 0; padding-left:16px; } li { margin:2px 0; }
+  .cols { display:flex; gap:28px; } .cols > div { flex:1; }
+  .pub { margin:3px 0; font-size:9.5pt; }
+  @media print { @page { size:A4; margin:13mm; } .wrap { padding:0; max-width:none; } }
+</style></head>
+<body><div class="wrap">
+  <h1>${esc(p.name)}</h1>
+  <div class="headline">${esc(cv.headline)}</div>
+  <div class="contact">${contact}</div>
+  ${sec("Summary", cv.summary ? `<p class="summary">${esc(cv.summary)}</p>` : "")}
+  ${sec("Skills", skills)}
+  ${sec("Experience", experience)}
+  ${sec("Selected AI Systems", projects)}
+  ${sec("Education", education)}
+  <div class="cols">${certs ? `<div>${sec("Certifications", `<ul>${certs}</ul>`)}</div>` : ""}${awards ? `<div>${sec("Awards", `<ul>${awards}</ul>`)}</div>` : ""}</div>
+  ${sec("Publications", pubs)}
+</div></body></html>`;
   }
 
-  function renderSkills(skills) {
-    $("skills-sec").style.display = skills.length ? "" : "none";
-    $("skills").innerHTML = skills.map((s) => `<span class="pill">${esc(s)}</span>`).join("");
+  async function renderCV(cv) {
+    const has = cv && ((cv.experience && cv.experience.length) || cv.summary);
+    const bank = has ? await loadBank() : null;
+    if (!has || !bank) {
+      $("cv-sec").style.display = "none";
+      return;
+    }
+    $("cv-sec").style.display = "";
+    if (lastCvBlobUrl) URL.revokeObjectURL(lastCvBlobUrl);
+    lastCvBlobUrl = URL.createObjectURL(new Blob([buildCvDocument(cv, bank)], { type: "text/html" }));
+    $("cv-frame").src = lastCvBlobUrl;
   }
 
-  function render(data) {
+  async function render(data) {
     const score = data.fitScore || 0;
     $("score").innerHTML = score + "<small>%</small>";
     $("bar").style.width = score + "%";
@@ -392,8 +474,7 @@
 
     renderMatches(data.matches || []);
     renderGaps(data.gaps || []);
-    renderBullets(data.tailoredBullets || []);
-    renderSkills(data.tailoredSkills || []);
+    await renderCV(data.cv);
     $("results").classList.add("show");
   }
 
@@ -414,7 +495,7 @@
         throw new Error(data.error || `Request failed (${res.status})`);
       }
       $("status").textContent = "";
-      render(data);
+      await render(data);
       $("results").scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       $("status").className = "error";
@@ -425,12 +506,15 @@
   }
   $("go").addEventListener("click", checkFit);
 
-  $("copy-all").addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (!lastBullets.length) return;
-    navigator.clipboard.writeText(lastBullets.map((b) => "• " + b).join("\n"));
-    e.target.textContent = "Copied";
-    setTimeout(() => (e.target.textContent = "Copy all"), 1200);
+  $("cv-open").addEventListener("click", () => {
+    if (lastCvBlobUrl) window.open(lastCvBlobUrl, "_blank");
+  });
+  $("cv-download").addEventListener("click", () => {
+    if (!lastCvBlobUrl) return;
+    const a = document.createElement("a");
+    a.href = lastCvBlobUrl;
+    a.download = "lance-song-cv-tailored.html";
+    a.click();
   });
 
   refresh();

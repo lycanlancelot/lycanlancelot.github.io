@@ -8,7 +8,7 @@ import { scoreCoverage } from "./scorer.js";
 // ---- Config (tune to taste) -------------------------------------------------
 const JD_MIN = 50;
 const JD_MAX = 8000;
-const MAX_TOKENS = 4000; // full structured output for a rich JD (repeated JSON keys are token-heavy)
+const MAX_TOKENS = 8000; // analysis + a full reworded CV is large; deepseek-chat allows up to 8192
 const PER_IP_DAILY = 25; // per-IP generations/day (shared NATs mean many people can share one IP)
 const GLOBAL_DAILY = 300; // hard ceiling on total generations/day
 const KV_TTL = 172800; // 48h
@@ -39,10 +39,19 @@ Output ONLY a single JSON object — no markdown fences, no prose before or afte
   "fitSummary": "2-3 sentences on how Lance fits THIS role; if the input is not a real JD, one sentence saying so",
   "matches": [ { "requirement": "JD requirement in the JD's words", "jdKeyword": "key term from the JD", "evidence": "matching experience, reworded from the bank bullet", "bankRef": "id of the backing bank bullet, e.g. wt-2" } ],
   "gaps": [ { "requirement": "JD requirement the bank cannot support", "note": "honest note, or the closest partial evidence" } ],
-  "tailoredBullets": [ { "section": "suggested CV section", "text": "copy-ready bullet reworded from a bank bullet" } ],
-  "tailoredSkills": [ "skill label from the bank" ]
+  "cv": {
+    "headline": "the role title aligned to the JD, e.g. 'Forward Deployed AI Engineer'",
+    "summary": "a professional summary REWRITTEN for this JD in its vocabulary — only real facts from the bank, 2-4 sentences",
+    "skillGroups": [ { "label": "group name", "items": ["a skill from the bank"] } ],
+    "experience": [ { "roleId": "wisetech", "bullets": [ { "text": "a bank bullet reworded in the JD's language, same facts", "bankRef": "wt-1" } ] } ]
+  }
 }
-Every matches[].bankRef MUST be a real bank bullet id. If the input is not a genuine job description, use empty arrays and put the note in fitSummary.`;
+RULES for "cv" (the tailored résumé — match the JD as closely as the real experience allows):
+- headline: mirror the JD's role title where truthful.
+- summary: rewrite hard for the JD, but invent nothing — every claim must be supported by the bank.
+- skillGroups: select and ORDER Lance's real bank skills to lead with what the JD asks for; never add a skill that is not in the bank.
+- experience: include EVERY role from the bank (roleId must be a real role id), keep the bank's order, and rewrite each role's bullets in the JD's language while keeping the source bullet's facts; cite the source bullet id in "bankRef".
+Every bankRef (in matches and in cv.experience) MUST be a real bank bullet id. If the input is not a genuine job description, use empty arrays/objects and put the note in fitSummary.`;
 
 // ---- Helpers ----------------------------------------------------------------
 function corsHeaders(origin) {
@@ -188,19 +197,48 @@ async function callDeepSeek(env, jd, coverage) {
   }
 }
 
-// Drop any match whose bankRef is not a real bank id — the anti-fabrication gate.
+// Validate the tailored CV against the bank — every role and every bullet ref
+// must be real, so the generated résumé cannot contain invented experience.
+function sanitizeCV(cv, roleIds, bulletIds) {
+  const str = (x) => (typeof x === "string" ? x : "");
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  if (!cv || typeof cv !== "object") {
+    return { headline: "", summary: "", skillGroups: [], experience: [] };
+  }
+  const skillGroups = arr(cv.skillGroups)
+    .map((g) => ({
+      label: str(g && g.label),
+      items: arr(g && g.items).filter((s) => typeof s === "string" && s.trim()).slice(0, 24),
+    }))
+    .filter((g) => g.items.length)
+    .slice(0, 10);
+  const experience = arr(cv.experience)
+    .filter((e) => e && roleIds.has(e.roleId))
+    .map((e) => ({
+      roleId: e.roleId,
+      bullets: arr(e.bullets)
+        .filter((b) => b && typeof b.text === "string" && b.text.trim() && bulletIds.has(b.bankRef))
+        .map((b) => ({ text: b.text.trim(), bankRef: b.bankRef }))
+        .slice(0, 8),
+    }))
+    .filter((e) => e.bullets.length)
+    .slice(0, 12);
+  return { headline: str(cv.headline), summary: str(cv.summary), skillGroups, experience };
+}
+
+// Drop any match/bullet whose ref is not a real bank id — the anti-fabrication gate.
 function sanitize(result) {
-  const ids = validBankIds();
+  const bulletIds = validBankIds();
+  const roleIds = new Set(bank.roles.map((r) => r.id));
   const arr = (x) => (Array.isArray(x) ? x : []);
   const matches = arr(result.matches)
-    .filter((m) => m && typeof m.bankRef === "string" && ids.has(m.bankRef))
+    .filter((m) => m && typeof m.bankRef === "string" && bulletIds.has(m.bankRef))
     .slice(0, 20);
   return {
     fitSummary: typeof result.fitSummary === "string" ? result.fitSummary : "",
     matches,
     gaps: arr(result.gaps).slice(0, 12),
-    tailoredBullets: arr(result.tailoredBullets).slice(0, 12),
-    tailoredSkills: arr(result.tailoredSkills).slice(0, 20),
+    cv: sanitizeCV(result.cv, roleIds, bulletIds),
   };
 }
 
