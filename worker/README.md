@@ -58,8 +58,8 @@ npm test             # deterministic scorer unit tests (node --test, no network)
 
 | Const | Default | Meaning |
 |-------|---------|---------|
-| `PER_IP_DAILY` | 5 | generations per visitor IP per day |
-| `GLOBAL_DAILY` | 200 | hard ceiling on total generations per day |
+| `PER_IP_DAILY` | 25 | generations per visitor IP per day (shared NATs share an IP) |
+| `GLOBAL_DAILY` | 300 | hard ceiling on total generations per day |
 | `JD_MAX` | 8000 | max JD chars accepted |
 | `MAX_TOKENS` | 4000 | max output tokens (full JSON for a rich JD) |
 | `MODEL` | `deepseek-chat` | DeepSeek V3, called in JSON mode (`response_format`) |

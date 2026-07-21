@@ -9,8 +9,8 @@ import { scoreCoverage } from "./scorer.js";
 const JD_MIN = 50;
 const JD_MAX = 8000;
 const MAX_TOKENS = 4000; // full structured output for a rich JD (repeated JSON keys are token-heavy)
-const PER_IP_DAILY = 5; // per-IP generations/day
-const GLOBAL_DAILY = 200; // hard ceiling on total generations/day
+const PER_IP_DAILY = 25; // per-IP generations/day (shared NATs mean many people can share one IP)
+const GLOBAL_DAILY = 300; // hard ceiling on total generations/day
 const KV_TTL = 172800; // 48h
 
 // DeepSeek is OpenAI-compatible. deepseek-chat (V3) supports function calling;
