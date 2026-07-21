@@ -1,0 +1,344 @@
+{
+  "_meta": {
+    "purpose": "Verified source of truth for JD-tailored CV generation. The LLM may ONLY select and reword from bullets here; it must never invent employers, dates, metrics, titles, or skills. Every bullet has a stable id used as bankRef.",
+    "lastUpdated": "2026-07-21",
+    "owner": "Liangjun (Lance) Song"
+  },
+  "profile": {
+    "name": "Liangjun (Lance) Song, PhD",
+    "location": "Melbourne, VIC, Australia",
+    "workRights": "Australian Permanent Resident",
+    "travel": "Available for customer-site travel",
+    "yearsExperience": 7,
+    "titleVariants": [
+      "Forward Deployed AI Engineer",
+      "Senior ML Engineer",
+      "Senior Data Scientist",
+      "AI Engineer"
+    ],
+    "oneLine": "Forward-deployed AI engineer who sits with users, turns unclear operational problems into scoped production releases, and builds and ships them — owning the production layer around the model, not just the prototype.",
+    "contact": {
+      "email": "liangjun.song@outlook.com",
+      "phone": "0432 203 278",
+      "linkedin": "https://linkedin.com/in/liangjun-lance-song-50376055",
+      "github": "https://github.com/lycanlancelot"
+    }
+  },
+  "roles": [
+    {
+      "id": "ultra-ot",
+      "company": "Ultra OT",
+      "context": "occupational therapy practice",
+      "title": "Lead Engineer — onsite client engagement",
+      "type": "client-engagement",
+      "start": "2026",
+      "end": "2026",
+      "bullets": [
+        { "id": "uot-1", "verified": true, "themes": ["forward-deployed", "discovery", "stakeholder", "product-judgement"], "text": "Engaged onsite with a practice that had no single view of its operations — case status, scheduling and billable time lived across spreadsheets, calendars and email — running discovery with clinicians and admin staff to map the real workflow before committing to a build." },
+        { "id": "uot-2", "verified": true, "themes": ["forward-deployed", "full-stack", "nextjs", "typescript", "supabase", "scope-reduction"], "text": "Scoped and shipped the practice's internal operations system as sole engineer: case flow, Jira-style ticketing, calendar scheduling, client intake imports, and time/finance visibility (Next.js, TypeScript, Supabase)." },
+        { "id": "uot-3", "verified": true, "themes": ["forward-deployed", "integration", "api", "geospatial", "adoption", "product-judgement"], "text": "Solved the practice's hardest scheduling problem by clustering clients geospatially on driving distance via the Google Routes API, turning ad-hoc visit planning into route-aware scheduling, and iterated on it in place as the team used it." },
+        { "id": "uot-4", "verified": true, "themes": ["supabase", "row-level-security", "multi-tenant"], "text": "Modeled multi-tenant access with Supabase row-level security so practice roles saw only their own client data (Supabase RLS; not full enterprise SSO)." }
+      ]
+    },
+    {
+      "id": "termly",
+      "company": "Termly",
+      "context": "regulated healthcare",
+      "title": "Lead Engineer — onsite client engagement",
+      "type": "client-engagement",
+      "start": "2026",
+      "end": "2026",
+      "bullets": [
+        { "id": "tm-1", "verified": true, "themes": ["forward-deployed", "healthcare", "regulated", "document-ai", "product-judgement"], "text": "Delivered a document AI system for Australian medical contract automation, replacing slow and inconsistent manual contract review in a regulated healthcare setting." },
+        { "id": "tm-2", "verified": true, "themes": ["document-ai", "ocr", "extraction", "fastapi", "pydantic", "llm", "azure", "document-intelligence", "docker", "validation"], "text": "Built the full pipeline as sole engineer: scanned PDF extraction, OCR correction, structured clause and entity extraction, Medicare/PBS identifier validation, and automated risk scoring (FastAPI/Pydantic, Claude Sonnet, Azure Document Intelligence, Tesseract, Docker)." },
+        { "id": "tm-3", "verified": true, "themes": ["llm", "cost", "token", "guardrails", "human-oversight", "validation"], "text": "Designed a provider-switchable LLM layer with token and cost tracking, plus domain validation rules and human review points, so output was checkable rather than trusted blindly." }
+      ]
+    },
+    {
+      "id": "wisetech",
+      "company": "WiseTech Global",
+      "context": "enterprise logistics software",
+      "title": "AI Engineer - AI/ML Group",
+      "type": "employment",
+      "start": "2025-04",
+      "end": "2026-06",
+      "bullets": [
+        { "id": "wt-1", "verified": true, "themes": ["llm", "agents", "agentic", "langgraph", "orchestration", "fastapi", "azure-openai", "postgres", "production"], "text": "Architected end-to-end LLM systems for production support platforms (CWBot & TriageAgent), combining LangGraph orchestration, FastAPI services, Azure OpenAI, enterprise APIs, and durable PostgreSQL-backed state." },
+        { "id": "wt-2", "verified": true, "themes": ["rag", "retrieval", "azure-ai-search", "vector-search", "enterprise-data"], "text": "Designed RAG workflows with dynamic question rewriting, custom retriever factories, Azure AI Search integration, and heterogeneous internal data sources to improve how users find and act on operational knowledge." },
+        { "id": "wt-3", "verified": true, "themes": ["guardrails", "pii", "safety", "human-oversight", "reliability"], "text": "Implemented guardrails for PII filtering and response steering, plus checkpointing and recovery patterns for reliable multi-turn product experiences." },
+        { "id": "wt-4", "verified": true, "themes": ["observability", "tracing", "monitoring", "cost", "token", "logging", "production"], "text": "Instrumented the production layer around the model: request tracing, structured logging, and token/cost accounting to keep behaviour and spend observable once deployed." },
+        { "id": "wt-5", "verified": true, "themes": ["cicd", "docker", "github-actions", "testing", "evaluation", "infrastructure", "production"], "text": "Led container-first CI/CD modernization for AI services (Docker dev containers, GitHub Actions, readiness checks, environment parity), with test coverage and release-readiness gates across backend, frontend and system suites." },
+        { "id": "wt-6", "verified": true, "themes": ["evaluation", "testing", "ragas", "quality"], "text": "Maintained quality through systematic testing and evaluation across backend, frontend and system test sets, with linting, type checks, and release-readiness quality gates." }
+      ]
+    },
+    {
+      "id": "redbubble-sr",
+      "company": "Redbubble",
+      "context": "global e-commerce marketplace",
+      "title": "Data Scientist - Search & Recommendation Team",
+      "type": "employment",
+      "start": "2023-03",
+      "end": "2025-01",
+      "bullets": [
+        { "id": "rbs-1", "verified": true, "themes": ["search-ranking", "recommendation", "vector-search", "gcp", "vertex-ai", "mlops", "metrics", "ecommerce"], "text": "Led search and recommendation enhancements with Marqo vector search and GCP Vertex AI MLOps pipelines, improving add-to-cart rate by 0.5% and CTR by 10%." },
+        { "id": "rbs-2", "verified": true, "themes": ["experimentation", "ab-testing", "evaluation", "deployment", "stakeholder", "metrics"], "text": "Owned production ML workflows end to end — offline evaluation, experiment design, deployment coordination and post-launch metric review — communicating results and model logic to product stakeholders." },
+        { "id": "rbs-3", "verified": true, "themes": ["feature-engineering", "data-pipelines", "scale", "search-ranking"], "text": "Designed ML/data infrastructure over 100M+ user events for feature extraction, search relevance analysis, and downstream serving workflows." },
+        { "id": "rbs-4", "verified": true, "themes": ["ga4", "bigquery", "data-quality", "ab-testing", "analytics"], "text": "Drove GA4 analytics migration on BigQuery to ensure data reliability across internal dashboard-driven A/B testing frameworks." },
+        { "id": "rbs-5", "verified": true, "themes": ["search-ranking", "relevance", "user-signals", "metrics"], "text": "Analysed user behaviour signals to optimize search relevance for long-tail queries, balancing retrieval quality against measurable business impact." }
+      ]
+    },
+    {
+      "id": "redbubble-cd",
+      "company": "Redbubble",
+      "context": "global e-commerce marketplace",
+      "title": "Data Scientist - Content & Discovery",
+      "type": "employment",
+      "start": "2021-01",
+      "end": "2023-03",
+      "bullets": [
+        { "id": "rbc-1", "verified": true, "themes": ["classification", "content-moderation", "language-image", "production", "risk"], "text": "Shipped production content-classification and moderation systems using language-image models, reducing intellectual-property moderation risk and improving operational throughput." },
+        { "id": "rbc-2", "verified": true, "themes": ["classification", "anomaly-detection", "data-quality", "statistical-modeling"], "text": "Built image duplicate-detection pipelines and data quality/anomaly-detection workflows for safer model and pipeline operation." },
+        { "id": "rbc-3", "verified": true, "themes": ["experimentation", "classification", "seo", "taxonomy", "discovery"], "text": "Ran content tagging, taxonomy and search-engine optimization experiments to improve product discovery." },
+        { "id": "rbc-4", "verified": true, "themes": ["personalisation", "experimentation", "metrics"], "text": "Developed personalization workflows connecting data science experiments to production product metrics." }
+      ]
+    },
+    {
+      "id": "teaching",
+      "company": "Australia IT Group · ANZCC",
+      "context": "instruction and stakeholder enablement",
+      "title": "Guest Instructor & Workshop Facilitator",
+      "type": "teaching",
+      "start": "2026-02",
+      "end": "2026-06",
+      "bullets": [
+        { "id": "tea-1", "verified": true, "themes": ["teaching", "mentoring", "rag", "vector-search", "agents", "fine-tuning", "qlora", "evaluation", "ragas"], "text": "AI Engineer Bootcamp: delivered 12+ sessions on production RAG, vector search, multi-agent systems (LangGraph, AutoGen, CrewAI), QLoRA fine-tuning and RAGAS evaluation." },
+        { "id": "tea-2", "verified": true, "themes": ["teaching", "mentoring", "agents", "mcp", "guardrails", "cicd", "curriculum"], "text": "Designed Dispatch.AI, a 6-week project taking 13 students from scaffold to a deployed AI booking assistant — Pydantic state, LangGraph agents, MCP tool server, multi-agent routing, NeMo Guardrails, RAGAS evaluation, Docker + Render capstone, with reference implementation and CI/CD grading pipeline." },
+        { "id": "tea-3", "verified": true, "themes": ["workshops", "stakeholder", "non-technical", "discovery", "agents"], "text": "ANZCC AI workshop: designed and delivered a hands-on workshop introducing agentic AI workflows to accounting professionals, adapting technical content for a non-technical business audience." }
+      ]
+    },
+    {
+      "id": "sglang",
+      "company": "SGLang Framework",
+      "context": "LMSYS / UC Berkeley open source",
+      "title": "Open Source Contributor",
+      "type": "open-source",
+      "start": "2025-02",
+      "end": "Present",
+      "bullets": [
+        { "id": "sgl-1", "verified": true, "themes": ["open-source", "llm", "inference", "distributed", "performance", "python", "cuda"], "text": "Contributing runtime and serving optimizations to the SGLang LLM inference framework for state-of-the-art models including DeepSeek R1, Llama 3 and Qwen, spanning backend runtime, distributed serving and prompt-language features." },
+        { "id": "sgl-2", "verified": true, "themes": ["ai-assisted", "open-source", "workflow"], "text": "Using AI coding agents (Claude Code) to navigate a large unfamiliar codebase, draft PRs and review diffs — a human-in-the-loop workflow for getting productive in someone else's system quickly." }
+      ]
+    },
+    {
+      "id": "msra",
+      "company": "Microsoft Research Asia",
+      "context": "Web Search and Data Mining Group",
+      "title": "Research Intern",
+      "type": "research",
+      "start": "2012-07",
+      "end": "2013-06",
+      "bullets": [
+        { "id": "msra-1", "verified": true, "themes": ["speech", "research", "data-mining"], "text": "Developed Autosub, a collaborative project for generating video subtitles using advanced speech-to-text APIs." },
+        { "id": "msra-2", "verified": true, "themes": ["data-mining", "research", "time-series"], "text": "Contributed to web page mining projects using data mining and time-series analysis techniques." }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "callforme",
+      "name": "CallForMe",
+      "year": "2026",
+      "role": "Co-Creator & Lead Developer",
+      "bullets": [
+        { "id": "proj-cfm-1", "verified": true, "themes": ["voice", "realtime", "nextjs", "typescript", "websockets", "llm", "collaboration"], "text": "Collaborating with a partner developer on an AI phone assistant MVP — call records, transcripts and summaries, AI risk analysis, and interactive hold-for-me call flows — built on Next.js/TypeScript with WebSocket realtime services." }
+      ]
+    },
+    {
+      "id": "agentic-workbench",
+      "name": "Agentic Workbench (Remote Agent Workbench + AgentForge + BranchFlow)",
+      "year": "2026",
+      "role": "Creator & Lead Developer",
+      "bullets": [
+        { "id": "proj-aw-1", "verified": true, "themes": ["agents", "multi-agent", "orchestration", "react", "typescript", "pty", "git-worktrees", "developer-tooling"], "text": "Built a multi-agent coding-agent collaboration system: Remote Agent Workbench (browser orchestration for Claude Code and Codex with live PTY terminal streaming, task persistence, and allowed-directory safety boundaries) and AgentForge (control plane running coding agents in parallel across isolated git worktrees, with PM2 management and auto-commit scheduling)." },
+        { "id": "proj-aw-2", "verified": true, "themes": ["react", "typescript", "prompt-orchestration", "developer-tooling"], "text": "Built BranchFlow, a React/TypeScript nonlinear writing and prompt-orchestration workbench with branching story state, React Flow mind maps, and Obsidian Canvas export." }
+      ]
+    },
+    {
+      "id": "voice-ai",
+      "name": "Voice AI Companions (Elder Companion · RageZone)",
+      "year": "2026",
+      "role": "Creator & Prototype Builder",
+      "bullets": [
+        { "id": "proj-va-1", "verified": true, "themes": ["voice", "speech", "mobile", "expo", "llm", "prototype"], "text": "Built two voice-first AI companions: Elder Companion, an Expo voice app with ElevenLabs speech, family dashboard and daily summary workflow; and RageZone, a WeChat Mini Program realtime communication assistant with Deepgram speech recognition, plus corpus and evaluation scripts for conversation quality." }
+      ]
+    }
+  ],
+  "skills": [
+    { "label": "Onsite discovery & workflow mapping", "themes": ["forward-deployed", "discovery"] },
+    { "label": "Scope reduction & product judgement", "themes": ["scope-reduction", "product-judgement"] },
+    { "label": "Stakeholder communication (technical & non-technical)", "themes": ["stakeholder", "non-technical"] },
+    { "label": "LangGraph", "themes": ["agents", "orchestration", "langgraph"] },
+    { "label": "RAG architecture", "themes": ["rag", "retrieval"] },
+    { "label": "Tool calling & MCP servers", "themes": ["agents", "mcp", "tool-calling"] },
+    { "label": "Multi-agent orchestration", "themes": ["agents", "multi-agent", "orchestration"] },
+    { "label": "Prompt engineering", "themes": ["llm", "prompt-engineering"] },
+    { "label": "RAGAS evaluation", "themes": ["evaluation", "ragas"] },
+    { "label": "Guardrails & PII filtering", "themes": ["guardrails", "pii", "safety"] },
+    { "label": "Langfuse / OpenTelemetry tracing", "themes": ["observability", "tracing"] },
+    { "label": "Token & cost monitoring", "themes": ["cost", "token", "monitoring"] },
+    { "label": "Human oversight / human-in-the-loop", "themes": ["human-oversight"] },
+    { "label": "REST APIs & third-party integration", "themes": ["api", "integration"] },
+    { "label": "Azure AI Search", "themes": ["azure-ai-search", "vector-search"] },
+    { "label": "PostgreSQL", "themes": ["postgres"] },
+    { "label": "Supabase (incl. row-level security)", "themes": ["supabase", "row-level-security"] },
+    { "label": "Python (Expert)", "themes": ["python"] },
+    { "label": "TypeScript", "themes": ["typescript"] },
+    { "label": "SQL", "themes": ["sql"] },
+    { "label": "C++", "themes": ["cpp"] },
+    { "label": "FastAPI", "themes": ["fastapi"] },
+    { "label": "Pydantic", "themes": ["pydantic"] },
+    { "label": "Next.js", "themes": ["nextjs", "full-stack"] },
+    { "label": "React", "themes": ["react", "full-stack"] },
+    { "label": "AsyncIO", "themes": ["async"] },
+    { "label": "WebSockets", "themes": ["websockets", "realtime"] },
+    { "label": "Azure (OpenAI, AI Search, Document Intelligence)", "themes": ["azure", "azure-openai", "document-intelligence"] },
+    { "label": "GCP (Vertex AI, BigQuery)", "themes": ["gcp", "vertex-ai", "bigquery"] },
+    { "label": "Docker", "themes": ["docker"] },
+    { "label": "GitHub Actions / CI/CD", "themes": ["cicd", "github-actions"] },
+    { "label": "Search ranking", "themes": ["search-ranking"] },
+    { "label": "Recommendation", "themes": ["recommendation"] },
+    { "label": "Classification & content moderation", "themes": ["classification", "content-moderation"] },
+    { "label": "Embeddings & vector search", "themes": ["embeddings", "vector-search"] },
+    { "label": "A/B experimentation", "themes": ["ab-testing", "experimentation"] },
+    { "label": "XGBoost / GLMs / clustering", "themes": ["xgboost", "glms", "clustering", "statistical-modeling"] },
+    { "label": "Feature engineering", "themes": ["feature-engineering"] },
+    { "label": "Anomaly detection", "themes": ["anomaly-detection"] },
+    { "label": "PyTorch", "themes": ["pytorch", "deep-learning"] },
+    { "label": "OCR & document AI", "themes": ["ocr", "document-ai"] },
+    { "label": "GA4 analytics", "themes": ["ga4", "analytics"] }
+  ],
+  "education": [
+    { "id": "edu-phd", "degree": "PhD — Search & Recommendation Systems", "school": "RMIT University", "start": "2015", "end": "2020" },
+    { "id": "edu-bsc", "degree": "B.Sc. in Computer Science", "school": "Harbin Institute of Technology", "start": "2009", "end": "2013" }
+  ],
+  "awards": [
+    { "id": "aw-adc", "text": "Best Student Paper Award, ADC 2016" },
+    { "id": "aw-dasfaa", "text": "Best Student Paper Runner Up, DASFAA 2017" },
+    { "id": "aw-gcj", "text": "Google Code Jam Top 1000 Worldwide" },
+    { "id": "aw-icpc", "text": "ACM-ICPC Asia Regional Silver Medal" }
+  ],
+  "certifications": [
+    { "id": "cert-gcp-de", "text": "Google Cloud Professional Data Engineer (2023)", "themes": ["gcp"] },
+    { "id": "cert-ai900", "text": "Microsoft Azure AI Fundamentals (AI-900) (2022)", "themes": ["azure"] },
+    { "id": "cert-gcp-dl", "text": "Modernizing Data Lakes and Data Warehouses with GCP", "themes": ["gcp", "bigquery"] },
+    { "id": "cert-nn", "text": "Neural Networks and Deep Learning", "themes": ["deep-learning"] },
+    { "id": "cert-nlp1", "text": "NLP with Classification and Vector Spaces", "themes": ["classification", "vector-search"] },
+    { "id": "cert-nlp2", "text": "NLP with Probabilistic Models", "themes": ["statistical-modeling"] }
+  ],
+  "publications": [
+    { "id": "pub-thesis", "title": "Towards Efficient Personalized Ranking", "venue": "PhD Thesis, RMIT University", "year": "2020" },
+    { "id": "pub-vldb", "title": "Incremental Preference Adjustment: a Graph Theoretical Approach", "venue": "The VLDB Journal (Core Rank A*)", "year": "2020" },
+    { "id": "pub-dasfaa", "title": "Continuous Summarization over Microblog Threads", "venue": "DASFAA (Best Student Paper Award Runner Up)", "year": "2017" }
+  ],
+  "synonyms": {
+    "forward-deployed": ["forward deployed", "forward-deployed", "onsite", "on-site", "embedded engineer", "in the room", "customer-facing", "field engineer"],
+    "discovery": ["discovery", "discovery workshop", "workflow mapping", "map the workflow", "requirements", "scoping"],
+    "scope-reduction": ["scope", "reduce scope", "smallest useful", "mvp", "minimum viable", "trade-off", "tradeoff"],
+    "product-judgement": ["product judgement", "product judgment", "what to build", "decide what should be built", "product call"],
+    "stakeholder": ["stakeholder", "business leader", "end user", "customer", "non-technical", "cross-functional"],
+    "non-technical": ["non-technical", "business audience", "non technical"],
+    "rag": ["rag", "retrieval augmented generation", "retrieval-augmented generation", "retrieval pipeline", "retrieval pipelines"],
+    "retrieval": ["retrieval", "retriever", "knowledge base"],
+    "agents": ["agent", "agents", "agentic", "agentic workflow", "agentic workflows", "tool use", "tool calling", "tool-calling"],
+    "agentic": ["agentic"],
+    "multi-agent": ["multi-agent", "multi agent", "multiagent"],
+    "orchestration": ["orchestration", "orchestrate", "workflow automation"],
+    "langgraph": ["langgraph", "langchain", "semantic kernel", "google adk", "autogen", "crewai"],
+    "mcp": ["mcp", "mcp server", "model context protocol"],
+    "tool-calling": ["tool calling", "tool use", "function calling"],
+    "llm": ["llm", "large language model", "generative ai", "gen ai", "genai", "foundation model"],
+    "evaluation": ["evaluation", "eval", "evals", "evaluation pipeline", "offline evaluation"],
+    "ragas": ["ragas"],
+    "guardrails": ["guardrail", "guardrails", "safety testing", "safety"],
+    "pii": ["pii", "redaction", "data privacy"],
+    "safety": ["safety", "responsible ai"],
+    "observability": ["observability", "monitor", "monitoring", "production monitoring"],
+    "tracing": ["tracing", "trace", "langsmith", "langfuse", "opentelemetry", "otel"],
+    "monitoring": ["monitoring", "monitor"],
+    "cost": ["cost", "cost control", "cost optimization", "unit economics", "spend"],
+    "token": ["token", "tokens", "token usage"],
+    "human-oversight": ["human oversight", "human-in-the-loop", "human in the loop", "review"],
+    "api": ["api", "apis", "rest", "rest api", "integration"],
+    "integration": ["integration", "integrate", "connect systems", "enterprise systems"],
+    "azure": ["azure", "azure ai foundry", "microsoft azure"],
+    "azure-openai": ["azure openai"],
+    "azure-ai-search": ["azure ai search", "azure search", "azure cognitive search"],
+    "document-intelligence": ["document intelligence", "form recognizer"],
+    "document-ai": ["document ai", "document processing", "contract automation", "idp"],
+    "ocr": ["ocr", "tesseract", "optical character recognition"],
+    "vector-search": ["vector search", "vector database", "vector db", "semantic search", "embeddings search"],
+    "embeddings": ["embedding", "embeddings"],
+    "gcp": ["gcp", "google cloud", "vertex", "google vertex"],
+    "vertex-ai": ["vertex ai", "vertex"],
+    "bigquery": ["bigquery", "big query"],
+    "aws": ["aws", "bedrock", "aws bedrock"],
+    "docker": ["docker", "container", "containerized", "containerised"],
+    "cicd": ["ci/cd", "cicd", "continuous integration", "continuous delivery", "pipeline"],
+    "github-actions": ["github actions"],
+    "postgres": ["postgres", "postgresql"],
+    "supabase": ["supabase"],
+    "auth": ["authentication", "authorization", "oauth", "saml", "sso", "single sign-on"],
+    "rbac": ["rbac", "role-based access", "role based access", "permissions", "access control"],
+    "row-level-security": ["row-level security", "row level security", "rls", "multi-tenant", "multi tenant", "tenant isolation"],
+    "python": ["python"],
+    "typescript": ["typescript", "javascript", "node", "node.js", "nodejs"],
+    "sql": ["sql"],
+    "cpp": ["c++", "cpp"],
+    "fastapi": ["fastapi"],
+    "pydantic": ["pydantic"],
+    "nextjs": ["next.js", "nextjs", "next js"],
+    "react": ["react", "react.js"],
+    "async": ["asyncio", "async"],
+    "websockets": ["websocket", "websockets", "socket.io"],
+    "realtime": ["realtime", "real-time", "real time"],
+    "full-stack": ["full-stack", "full stack", "fullstack", "frontend", "front-end", "backend", "back-end"],
+    "search-ranking": ["search ranking", "ranking", "search relevance", "learning to rank"],
+    "recommendation": ["recommendation", "recommender", "personalization", "personalisation"],
+    "personalisation": ["personalisation", "personalization"],
+    "classification": ["classification", "classifier", "content classification"],
+    "content-moderation": ["content moderation", "moderation", "trust and safety", "trust & safety"],
+    "language-image": ["language-image", "clip", "multimodal", "vision-language"],
+    "ab-testing": ["a/b testing", "ab testing", "a/b test", "experimentation", "experiment design"],
+    "experimentation": ["experimentation", "experiment"],
+    "metrics": ["metric", "metrics", "measure", "impact", "kpi"],
+    "ga4": ["ga4", "google analytics"],
+    "analytics": ["analytics"],
+    "feature-engineering": ["feature engineering", "feature extraction", "feature pipeline", "feature pipelines"],
+    "data-pipelines": ["data pipeline", "data pipelines", "etl", "data platform"],
+    "data-quality": ["data quality", "data reliability"],
+    "statistical-modeling": ["statistical modeling", "statistical modelling", "statistics", "glm", "glms"],
+    "xgboost": ["xgboost", "gradient boosting"],
+    "glms": ["glm", "glms", "generalized linear"],
+    "clustering": ["clustering", "cluster"],
+    "anomaly-detection": ["anomaly detection", "anomaly"],
+    "deep-learning": ["deep learning", "neural network", "neural networks"],
+    "pytorch": ["pytorch", "tensorflow", "keras"],
+    "fine-tuning": ["fine-tuning", "fine tuning", "finetuning", "sft"],
+    "qlora": ["qlora", "lora", "peft"],
+    "teaching": ["teaching", "instructor", "training", "enablement"],
+    "mentoring": ["mentoring", "mentor", "coaching"],
+    "workshops": ["workshop", "workshops", "discovery workshop"],
+    "healthcare": ["healthcare", "health care", "medical", "clinical", "medicare"],
+    "regulated": ["regulated", "regulation", "compliance", "financial services", "government", "critical infrastructure"],
+    "production": ["production", "prototype to production", "productionize", "productionise", "shipped"],
+    "scale": ["scale", "large-scale", "high-volume"],
+    "distributed": ["distributed", "distributed serving"],
+    "inference": ["inference", "serving", "model serving"],
+    "performance": ["performance", "throughput", "latency", "optimization"],
+    "open-source": ["open source", "open-source", "oss"],
+    "developer-tooling": ["developer tooling", "internal tools", "internal tooling"],
+    "geospatial": ["geospatial", "routing", "route", "mapping", "distance"],
+    "voice": ["voice", "speech", "conversational"],
+    "speech": ["speech", "speech-to-text", "stt", "asr"]
+  }
+}

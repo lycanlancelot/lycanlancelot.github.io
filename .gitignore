@@ -1,7 +1,13 @@
 _site
 .sass-cache
+.env
+.env.*
 Gemfile.lock
 *.gem
 .gstack/
-docs/woolies_ds.md
-docs/fde-application-note.md
+# docs/ holds private job-application material (JDs, notes, drafts).
+# Ignore all of it except the public theme docs.
+docs/*.md
+!docs/CODE_OF_CONDUCT.md
+!docs/CONTRIBUTING.md
+!docs/SUPPORT.md

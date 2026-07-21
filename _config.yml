@@ -3,3 +3,8 @@ description: Forward-Deployed AI Engineer building production agentic workflows,
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-hacker
+
+# Worker backend for the JD Fit Checker is deployed separately via wrangler.
+# Keep its source out of the published site.
+exclude:
+  - worker/

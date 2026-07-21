@@ -10,6 +10,7 @@ layout: default
     <a class="button primary" href="/cv.html">CV · ML Engineer</a>
     <a class="button primary" href="/cv-ds.html">CV · Data Scientist</a>
     <a class="button primary" href="/projects.html">Projects Dashboard</a>
+    <a class="button primary" href="/fit.html">JD Fit Checker</a>
     <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
     <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
     <a class="button" href="https://github.com/lycanlancelot">GitHub</a>

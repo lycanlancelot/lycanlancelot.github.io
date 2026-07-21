@@ -1,0 +1,12 @@
+name = "lance-fit-checker"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Rate-limit store (created in Cloudflare account "Lycanlancelot@gmail.com's Account").
+# Local `wrangler dev` works without it (the Worker skips rate limiting when unbound).
+[[kv_namespaces]]
+binding = "RATELIMIT"
+id = "20d3680b8e3c4df3935135be8feb6120"
+
+# Set the API key as a secret (never commit it):
+#   npx wrangler secret put DEEPSEEK_API_KEY
