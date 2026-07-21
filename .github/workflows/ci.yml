@@ -1,0 +1,42 @@
+name: CI
+
+# Tests the fit-checker Worker: syntax, unit tests (deterministic scorer +
+# experience-bank integrity), and a bundle check (the Worker builds and the
+# ../../data import resolves). Runs only when the relevant files change.
+on:
+  push:
+    branches: [master]
+    paths:
+      - "worker/**"
+      - "data/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    paths:
+      - "worker/**"
+      - "data/**"
+      - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+jobs:
+  worker-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntax check
+        run: |
+          node --check src/index.js
+          node --check src/scorer.js
+
+      - name: Unit tests (scorer + bank integrity)
+        run: node --test test/*.test.mjs
+
+      - name: Bundle check (Worker builds, data import resolves)
+        run: npx --yes esbuild@0.24.0 src/index.js --bundle --format=esm --platform=browser --outfile=/dev/null
