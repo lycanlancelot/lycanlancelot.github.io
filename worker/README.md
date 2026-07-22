@@ -4,6 +4,14 @@ Serverless backend for the JD Fit Checker (`/fit.html`). Holds the DeepSeek key
 server-side, scores JD↔CV coverage deterministically, and calls DeepSeek
 (`deepseek-chat`, OpenAI-compatible) in JSON mode (`response_format`), with output
 constrained to — and validated against — the verified experience bank.
+Two OpenAI-compatible providers are supported: Kimi K3 (`kimi-k3`, stronger
+reasoning, higher cost) and DeepSeek V3 (`deepseek-chat`, cheap). With both keys
+set, Kimi is primary and DeepSeek the fallback (force the order with the
+`LLM_PRIMARY` var); each provider gets one retry on transient failures before
+falling through. Identical JDs are served from a KV result cache (7d TTL, no
+model call, no quota spent); upstream calls time out (50s DeepSeek / 90s Kimi,
+K3 is a reasoning model), and rate-limit quota is only consumed by successful
+generations.
 
 - Source of truth: `../data/experience-bank.json` (bundled in at build).
 - The browser never sees the key. CORS is locked to `lance-song.com`.
@@ -19,8 +27,9 @@ npx wrangler login
 npx wrangler kv namespace create RATELIMIT
 #   → paste the printed id into wrangler.toml and uncomment the [[kv_namespaces]] block
 
-# 2. API key as a secret (never commit it) — get one at platform.deepseek.com
-npx wrangler secret put DEEPSEEK_API_KEY
+# 2. API keys as secrets (never commit them) — either or both providers
+npx wrangler secret put DEEPSEEK_API_KEY   # platform.deepseek.com
+npx wrangler secret put KIMI_API_KEY       # platform.moonshot.ai — optional; primary when set
 
 # 3. Ship it
 npm run deploy
@@ -41,9 +50,10 @@ npm run dev          # wrangler dev on http://localhost:8787
 #   file://…/fit.html?api=http://localhost:8787
 ```
 
-For a live LLM run locally, put the key in `worker/.dev.vars` (gitignored):
+For a live LLM run locally, put the keys in `worker/.dev.vars` (gitignored):
 ```
 DEEPSEEK_API_KEY=sk-...
+KIMI_API_KEY=sk-...     # optional; when present, Kimi K3 is primary locally too
 ```
 Without a key, `wrangler dev` still serves and validates; generation returns 500.
 Without the KV namespace bound, rate limiting is skipped (fine for local).
@@ -61,8 +71,11 @@ npm test             # deterministic scorer unit tests (node --test, no network)
 | `PER_IP_DAILY` | 25 | generations per visitor IP per day (shared NATs share an IP) |
 | `GLOBAL_DAILY` | 300 | hard ceiling on total generations per day |
 | `JD_MAX` | 8000 | max JD chars accepted |
-| `MAX_TOKENS` | 4000 | max output tokens (full JSON for a rich JD) |
-| `MODEL` | `deepseek-chat` | DeepSeek V3, called in JSON mode (`response_format`) |
+| `MAX_TOKENS` | 8000 | max output tokens (analysis + a full reworded CV is large) |
+| Providers | Kimi K3 → DeepSeek | both OpenAI-compatible JSON mode; order via `LLM_PRIMARY` var, Kimi model via `KIMI_MODEL` |
+| `CACHE_TTL` | 604800 | KV result-cache TTL for identical JDs (7 days) |
+| `DEEPSEEK_TIMEOUT_MS` | 50000 | upstream timeout for DeepSeek; one retry on transient failures |
+| `KIMI_TIMEOUT_MS` | 90000 | upstream timeout for Kimi K3 (reasoning model, slower) |
 
 ## Guarantees
 

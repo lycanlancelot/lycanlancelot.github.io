@@ -12,11 +12,17 @@ const MAX_TOKENS = 8000; // analysis + a full reworded CV is large; deepseek-cha
 const PER_IP_DAILY = 25; // per-IP generations/day (shared NATs mean many people can share one IP)
 const GLOBAL_DAILY = 300; // hard ceiling on total generations/day
 const KV_TTL = 172800; // 48h
+const CACHE_TTL = 604800; // 7d — identical JDs are served from KV, no model call
+const DEEPSEEK_TIMEOUT_MS = 50000; // abort a hung upstream call, then retry once
 
-// DeepSeek is OpenAI-compatible. deepseek-chat (V3) supports function calling;
-// deepseek-reasoner does not, so we use chat as the single workhorse.
+// Both providers are OpenAI-compatible. Kimi K3 is the stronger reasoner;
+// DeepSeek V3 is much cheaper. Whichever keys are configured get chained
+// (Kimi first unless LLM_PRIMARY=deepseek); the other is the fallback.
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
-const MODEL = "deepseek-chat";
+const DEEPSEEK_MODEL = "deepseek-chat";
+const KIMI_DEFAULT_URL = "https://api.moonshot.ai/v1/chat/completions";
+const KIMI_DEFAULT_MODEL = "kimi-k3";
+const KIMI_TIMEOUT_MS = 90000; // K3 is a reasoning model — slower than chat models
 
 const ALLOWED_ORIGINS = new Set([
   "https://lance-song.com",
@@ -80,10 +86,10 @@ function json(body, status, origin) {
   });
 }
 
-async function hashIp(ip) {
+async function sha256Hex(s) {
   const digest = await crypto.subtle.digest(
     "SHA-256",
-    new TextEncoder().encode(ip || "none"),
+    new TextEncoder().encode(s || "none"),
   );
   return [...new Uint8Array(digest)]
     .slice(0, 8)
@@ -91,8 +97,9 @@ async function hashIp(ip) {
     .join("");
 }
 
-// Check-and-increment rate limit. Skips silently if KV is not bound (local dev).
-async function rateLimit(env, ipHash) {
+// Rate limit as check-then-increment-after-success, so a failed generation
+// never burns a visitor's quota. Skips silently if KV is not bound (local dev).
+async function rateLimitCheck(env, ipHash) {
   if (!env.RATELIMIT) return { ok: true };
   const date = new Date().toISOString().slice(0, 10);
   const gk = `g:${date}`;
@@ -102,11 +109,15 @@ async function rateLimit(env, ipHash) {
   const ic = parseInt(i || "0", 10);
   if (gc >= GLOBAL_DAILY) return { ok: false, reason: "global" };
   if (ic >= PER_IP_DAILY) return { ok: false, reason: "ip" };
+  return { ok: true, gk, ik, gc, ic };
+}
+
+async function rateLimitIncrement(env, state) {
+  if (!env.RATELIMIT || !state.gk) return;
   await Promise.all([
-    env.RATELIMIT.put(gk, String(gc + 1), { expirationTtl: KV_TTL }),
-    env.RATELIMIT.put(ik, String(ic + 1), { expirationTtl: KV_TTL }),
+    env.RATELIMIT.put(state.gk, String(state.gc + 1), { expirationTtl: KV_TTL }),
+    env.RATELIMIT.put(state.ik, String(state.ic + 1), { expirationTtl: KV_TTL }),
   ]);
-  return { ok: true };
 }
 
 // Trimmed bank for the model: ids + text only, no synonyms/themes (saves tokens).
@@ -152,7 +163,35 @@ function extractJson(s) {
   return a >= 0 && b > a ? s.slice(a, b + 1) : s;
 }
 
-async function callDeepSeek(env, jd, coverage) {
+// Configured LLM providers, primary first. Kimi K3 leads when its key is
+// present (unless LLM_PRIMARY=deepseek); DeepSeek is the cheap fallback.
+function llmProviders(env) {
+  const kimi = env.KIMI_API_KEY
+    ? {
+        url: env.KIMI_BASE_URL || KIMI_DEFAULT_URL,
+        key: env.KIMI_API_KEY,
+        model: env.KIMI_MODEL || KIMI_DEFAULT_MODEL,
+        timeout: KIMI_TIMEOUT_MS,
+      }
+    : null;
+  const deepseek = env.DEEPSEEK_API_KEY
+    ? { url: DEEPSEEK_URL, key: env.DEEPSEEK_API_KEY, model: DEEPSEEK_MODEL, timeout: DEEPSEEK_TIMEOUT_MS }
+    : null;
+  const list =
+    (env.LLM_PRIMARY || "").toLowerCase() === "deepseek"
+      ? [deepseek, kimi]
+      : [kimi, deepseek];
+  return list.filter(Boolean);
+}
+
+class UpstreamError extends Error {
+  constructor(message, retryable) {
+    super(message);
+    this.retryable = retryable;
+  }
+}
+
+async function callLlmOnce(provider, jd, coverage) {
   const system =
     GUARDRAILS +
     "\n\nEXPERIENCE_BANK (the ONLY source of truth):\n" +
@@ -165,38 +204,67 @@ async function callDeepSeek(env, jd, coverage) {
     `- JD mentions and Lance may LACK: ${coverage.misses.join(", ") || "(none detected)"}\n\n` +
     `Output the JSON object now.`;
 
-  // DeepSeek's function calling is unreliable; JSON mode (response_format) is not.
-  const resp = await fetch(DEEPSEEK_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      temperature: 0,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: userMessage },
-      ],
-    }),
-  });
+  // Function calling is unreliable on both providers; JSON mode
+  // (response_format) is not, so the output contract rides on that.
+  let resp;
+  try {
+    resp = await fetch(provider.url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${provider.key}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        max_tokens: MAX_TOKENS,
+        temperature: 0,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: userMessage },
+        ],
+      }),
+      signal: AbortSignal.timeout(provider.timeout),
+    });
+  } catch (err) {
+    throw new UpstreamError(`upstream fetch failed: ${String(err).slice(0, 200)}`, true);
+  }
 
   if (!resp.ok) {
     const detail = await resp.text().catch(() => "");
-    throw new Error(`deepseek ${resp.status}: ${detail.slice(0, 500)}`);
+    throw new UpstreamError(
+      `${provider.model} ${resp.status}: ${detail.slice(0, 500)}`,
+      resp.status >= 500 || resp.status === 429,
+    );
   }
   const data = await resp.json();
   const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-  if (!content) throw new Error("empty content in DeepSeek response");
+  if (!content) throw new UpstreamError("empty content in DeepSeek response", true);
   try {
     return JSON.parse(extractJson(content));
   } catch {
     const fr = data.choices[0].finish_reason;
-    throw new Error(`could not parse model output as JSON (fr=${fr}, len=${content.length})`);
+    throw new UpstreamError(`could not parse model output as JSON (fr=${fr}, len=${content.length})`, true);
   }
+}
+
+// Try each configured provider in order — one immediate retry on transient
+// failures (timeout, network, 5xx/429, truncated JSON), then fall through to
+// the next provider. A 4xx means this provider is misconfigured; skip it.
+async function callLlm(env, jd, coverage) {
+  let lastErr;
+  for (const provider of llmProviders(env)) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const parsed = await callLlmOnce(provider, jd, coverage);
+        return { parsed, model: provider.model };
+      } catch (err) {
+        lastErr = err;
+        if (!err.retryable) break;
+      }
+    }
+  }
+  throw lastErr;
 }
 
 // Validate the tailored CV against the bank — every role and every bullet ref
@@ -272,12 +340,20 @@ export default {
       return json({ error: `job description too long (max ${JD_MAX} chars)` }, 400, origin);
     }
 
-    if (!env.DEEPSEEK_API_KEY) {
+    const providers = llmProviders(env);
+    if (!providers.length) {
       return json({ error: "server not configured" }, 500, origin);
     }
 
-    const ipHash = await hashIp(request.headers.get("CF-Connecting-IP"));
-    const limit = await rateLimit(env, ipHash);
+    // Result cache: an identical JD is served from KV — no model call, no quota spent.
+    const cacheKey = `cache:${providers.map((p) => p.model).join("+")}:${await sha256Hex(jd.toLowerCase().replace(/\s+/g, " "))}`;
+    if (env.RATELIMIT) {
+      const cached = await env.RATELIMIT.get(cacheKey, { type: "json" });
+      if (cached) return json({ ...cached, cached: true }, 200, origin);
+    }
+
+    const ipHash = await sha256Hex(request.headers.get("CF-Connecting-IP"));
+    const limit = await rateLimitCheck(env, ipHash);
     if (!limit.ok) {
       return json(
         {
@@ -294,22 +370,27 @@ export default {
     const coverage = scoreCoverage(jd, bank);
 
     let result;
+    let usedModel;
     try {
-      const raw = await callDeepSeek(env, jd, coverage);
-      result = sanitize(raw);
+      const { parsed, model } = await callLlm(env, jd, coverage);
+      result = sanitize(parsed);
+      usedModel = model;
     } catch (err) {
       return json({ error: "generation failed", detail: String(err).slice(0, 200) }, 502, origin);
     }
 
-    return json(
-      {
-        fitScore: Math.round(coverage.score * 100),
-        coverage: { hits: coverage.hits, misses: coverage.misses, mentioned: coverage.mentioned },
-        model: MODEL,
-        ...result,
-      },
-      200,
-      origin,
-    );
+    // Quota is consumed only by successful generations.
+    await rateLimitIncrement(env, limit);
+
+    const body = {
+      fitScore: Math.round(coverage.score * 100),
+      coverage: { hits: coverage.hits, misses: coverage.misses, mentioned: coverage.mentioned },
+      model: usedModel,
+      ...result,
+    };
+    if (env.RATELIMIT) {
+      await env.RATELIMIT.put(cacheKey, JSON.stringify(body), { expirationTtl: CACHE_TTL });
+    }
+    return json(body, 200, origin);
   },
 };

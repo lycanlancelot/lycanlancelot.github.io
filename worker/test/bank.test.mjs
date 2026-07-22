@@ -57,3 +57,24 @@ test("enterprise auth is NOT claimed as an owned theme (honesty guard)", () => {
   assert.ok(!owned.has("auth"), "'auth' must not be an owned theme (enterprise auth is not claimed)");
   assert.ok(!owned.has("rbac"), "'rbac' must not be an owned theme (RBAC is not claimed)");
 });
+
+
+test("no synonym phrase is claimed by two themes (double-count guard)", () => {
+  // A phrase listed under two themes makes one JD mention score twice.
+  const norm = (s) =>
+    " " + s.toLowerCase().replace(/[^a-z0-9+# ]/g, " ").replace(/\s+/g, " ").trim() + " ";
+  const seen = new Map();
+  const dupes = [];
+  for (const [theme, syns] of Object.entries(bank.synonyms)) {
+    for (const syn of syns) {
+      const k = norm(syn);
+      const prev = seen.get(k);
+      if (prev && prev !== theme) {
+        dupes.push(`"${syn}" claimed by both "${prev}" and "${theme}"`);
+      } else {
+        seen.set(k, theme);
+      }
+    }
+  }
+  assert.deepEqual(dupes, [], dupes.join("\n"));
+});

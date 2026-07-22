@@ -52,3 +52,17 @@ test("empty / irrelevant JD yields zero mentioned", () => {
   assert.equal(mentioned, 0);
   assert.equal(score, 0);
 });
+
+
+test("JD technologies the bank lacks surface as misses", () => {
+  const jd =
+    "Our stack: Kubernetes, Databricks, Spark, Snowflake, dbt, Airflow, Kafka, Terraform, MLflow, Tableau, Power BI, Looker, Java, Scala, Golang.";
+  const { hits, misses } = scoreCoverage(jd, bank);
+  for (const t of [
+    "kubernetes", "databricks", "spark", "snowflake", "dbt", "airflow", "kafka",
+    "terraform", "mlflow", "tableau", "power-bi", "looker", "java", "scala", "golang",
+  ]) {
+    assert.ok(misses.includes(t), `expected miss: ${t} (got ${misses.join(",")})`);
+    assert.ok(!hits.includes(t), `${t} must not be a hit`);
+  }
+});

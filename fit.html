@@ -185,6 +185,7 @@
   .score-card { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
   .score-num { font-family: var(--mono); font-size: 52px; font-weight: 700; line-height: 1; color: var(--accent); }
   .score-num small { font-size: 22px; color: var(--dim); }
+  .score-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
   .score-body { flex: 1; min-width: 240px; }
   .bar { height: 9px; background: var(--panel-3); border-radius: 999px; overflow: hidden; margin: 10px 0 8px; }
   .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; }
@@ -243,6 +244,7 @@
     <textarea id="jd" placeholder="Paste the full job description here…" maxlength="8000"></textarea>
     <div class="controls">
       <span class="seg-label">Powered by DeepSeek</span>
+      <button class="btn secondary" id="sample" type="button" style="padding:7px 14px;font-size:13px">Try a sample JD</button>
       <span class="count" id="count">0 / 8000</span>
       <button class="btn" id="go" disabled>Tailor my CV</button>
     </div>
@@ -252,7 +254,10 @@
   <div id="results">
     <div class="section">
       <div class="card score-card">
-        <div class="score-num" id="score">0<small>%</small></div>
+        <div>
+          <div class="score-num" id="score">0<small>%</small></div>
+          <div class="score-label">Keyword coverage</div>
+        </div>
         <div class="score-body">
           <div class="bar"><i id="bar" style="width:0%"></i></div>
           <div class="score-note" id="score-note"></div>
@@ -265,7 +270,7 @@
         <button class="btn" id="cv-open" style="padding:5px 14px;font-size:13px;margin-left:8px">Open · Save as PDF</button>
         <button class="btn secondary" id="cv-download" style="padding:5px 14px;font-size:13px">Download</button>
       </h2>
-      <p class="cv-hint" style="color:var(--dim);font-size:13px;margin:-4px 0 12px">Rewritten to match this JD, drawn only from real experience. Single-column and ATS-safe — open it and Save as PDF.</p>
+      <p class="cv-hint" style="color:var(--dim);font-size:13px;margin:-4px 0 12px">Rewritten to match this JD, drawn only from real experience. Single-column and ATS-safe — open it and Save as PDF. Hover any bullet to see the verified experience-bank entry it comes from.</p>
       <iframe id="cv-frame" title="Tailored CV preview" style="width:100%;height:660px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>
     </div>
 
@@ -333,6 +338,30 @@
 
   // ---- input state ----
   const jd = $("jd");
+
+  // A realistic role that mixes strengths (RAG, evaluation, A/B testing) with
+  // honest gaps (Kubernetes, Spark) so first-time visitors see both sides.
+  const SAMPLE_JD = `Senior Machine Learning Engineer — Melbourne (hybrid)
+
+We're looking for a Senior ML Engineer to design, build, and operate production machine learning systems, from classical ML through to LLM and agentic applications.
+
+What you'll do:
+- Build scalable ML pipelines for training, evaluation, deployment, and monitoring
+- Design RAG and multi-agent systems on Azure OpenAI, with guardrails and human-in-the-loop review
+- Own model quality end to end: offline evaluation, A/B testing, and post-launch metric review
+- Partner with data scientists, engineers, and product stakeholders to ship measurable impact
+
+What you'll bring:
+- 5+ years in ML engineering with strong Python and SQL
+- Experience with vector search, embeddings, and prompt engineering
+- GCP (Vertex AI, BigQuery) or Azure; Docker and CI/CD; Kubernetes and Spark a plus`;
+
+  $("sample").addEventListener("click", () => {
+    jd.value = SAMPLE_JD;
+    refresh();
+    jd.focus();
+  });
+
   function refresh() {
     const n = jd.value.trim().length;
     $("count").textContent = jd.value.length + " / 8000";
@@ -383,23 +412,30 @@
       .map((g) => `<div class="sk"><span class="skl">${esc(g.label)}:</span> ${esc(g.items.join(", "))}</div>`)
       .join("");
 
+    // Bullets may be plain strings or {text, bankRef}/{text, id}; refs render as a
+    // hover-only provenance tag so every generated line is traceable to the bank.
+    const li = (b) => {
+      const text = typeof b === "string" ? b : b.text;
+      const ref = typeof b === "object" && b && (b.bankRef || b.id);
+      return `<li>${esc(text)}${ref ? `<span class="bref" title="verified experience-bank bullet">${esc(ref)}</span>` : ""}</li>`;
+    };
     const entry = (co, ctx, dt, role, bullets) =>
       `<div class="entry">
         <div class="ehead"><span class="co">${esc(co)}${ctx ? ` <span class="ctx">(${esc(ctx)})</span>` : ""}</span><span class="dt">${dt}</span></div>
         ${role ? `<div class="ro">${esc(role)}</div>` : ""}
-        ${bullets.length ? `<ul>${bullets.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+        ${bullets.length ? `<ul>${bullets.map(li).join("")}</ul>` : ""}
       </div>`;
 
     const experience = cv.experience
       .map((e) => {
         const r = roleById[e.roleId];
         if (!r) return "";
-        return entry(r.company, r.context, dateRange(r.start, r.end), r.title, e.bullets.map((b) => b.text));
+        return entry(r.company, r.context, dateRange(r.start, r.end), r.title, e.bullets);
       })
       .join("");
 
     const projects = (bank.projects || [])
-      .map((pr) => entry(pr.name, "", esc(pr.year || ""), pr.role, (pr.bullets || []).map((b) => b.text)))
+      .map((pr) => entry(pr.name, "", esc(pr.year || ""), pr.role, pr.bullets || []))
       .join("");
 
     const education = (bank.education || [])
@@ -433,9 +469,11 @@
   .dt { font-size:9pt; color:#6a6a7e; white-space:nowrap; }
   .ro { font-style:italic; color:#4a4a68; font-size:9.5pt; margin-bottom:2px; }
   ul { margin:3px 0 0; padding-left:16px; } li { margin:2px 0; }
+  .bref { display:none; font-size:7.5pt; color:#9aa3b5; margin-left:6px; }
+  li:hover .bref { display:inline; }
   .cols { display:flex; gap:28px; } .cols > div { flex:1; }
   .pub { margin:3px 0; font-size:9.5pt; }
-  @media print { @page { size:A4; margin:13mm; } .wrap { padding:0; max-width:none; } }
+  @media print { @page { size:A4; margin:13mm; } .wrap { padding:0; max-width:none; } .bref { display:none !important; } }
 </style></head>
 <body><div class="wrap">
   <h1>${esc(p.name)}</h1>
@@ -476,9 +514,17 @@
     $("bar").style.width = score + "%";
     const hits = (data.coverage && data.coverage.hits) || [];
     const misses = (data.coverage && data.coverage.misses) || [];
-    $("score-note").textContent =
-      `Covers ${hits.length} of ${hits.length + misses.length} role keywords detected` +
-      (misses.length ? ` · not detected: ${misses.join(", ")}` : "");
+    const total = hits.length + misses.length;
+    if (!total) {
+      $("score-note").textContent = "No recognizable role keywords detected in this JD.";
+    } else {
+      const cap = (arr) =>
+        arr.length > 10 ? arr.slice(0, 10).join(", ") + ` +${arr.length - 10} more` : arr.join(", ");
+      $("score-note").textContent =
+        `Covers ${hits.length} of ${total} role keywords detected` +
+        (hits.length ? ` · matched: ${cap(hits)}` : "") +
+        (misses.length ? ` · not detected: ${cap(misses)}` : "");
+    }
 
     const noJd = !data.matches || data.matches.length === 0;
     $("summary").style.display = noJd ? "none" : "";
@@ -502,6 +548,9 @@
     $("go").disabled = true;
     $("status").className = "";
     $("status").innerHTML = `<span class="spinner"></span>Reading the JD against my CV…`;
+    const slowTimer = setTimeout(() => {
+      $("status").innerHTML = `<span class="spinner"></span>Still reading — a full tailored CV takes 10–30 seconds…`;
+    }, 10000);
     try {
       const res = await fetch(WORKER_URL, {
         method: "POST",
@@ -519,6 +568,7 @@
       $("status").className = "error";
       $("status").textContent = err.message || "Something went wrong. Try again.";
     } finally {
+      clearTimeout(slowTimer);
       refresh();
     }
   }

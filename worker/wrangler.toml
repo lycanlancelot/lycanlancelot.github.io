@@ -2,11 +2,18 @@ name = "lance-fit-checker"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# Rate-limit store (created in Cloudflare account "Lycanlancelot@gmail.com's Account").
+# Rate-limit + result-cache store (created in Cloudflare account "Lycanlancelot@gmail.com's Account").
 # Local `wrangler dev` works without it (the Worker skips rate limiting when unbound).
 [[kv_namespaces]]
 binding = "RATELIMIT"
 id = "20d3680b8e3c4df3935135be8feb6120"
 
-# Set the API key as a secret (never commit it):
+# Set the API keys as secrets (never commit them):
 #   npx wrangler secret put DEEPSEEK_API_KEY
+#   npx wrangler secret put KIMI_API_KEY   # optional — when set, Kimi K3 is primary
+#
+# Optional provider tuning:
+# [vars]
+# LLM_PRIMARY = "kimi"                     # or "deepseek" to make DeepSeek primary
+# KIMI_BASE_URL = "https://api.moonshot.ai/v1/chat/completions"
+# KIMI_MODEL = "kimi-k3"
