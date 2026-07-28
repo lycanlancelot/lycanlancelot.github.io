@@ -1,0 +1,29 @@
+# Dashboard categories, in display order. `all` is prepended in JS, not stored here.
+#
+# `id` must match the `category:` field of entries in _data/projects.yml —
+# script/validate-projects.py enforces that. Reordering this file reorders the
+# filter bar and the grouped sections on the projects dashboard.
+
+- id: ds-ml
+  label: Data Science & ML
+  blurb: Search ranking, retrieval, experimentation and content understanding over production-scale data.
+
+- id: ai-systems
+  label: AI Systems
+  blurb: Production LLM and document-AI systems.
+
+- id: enablement
+  label: Communication & Enablement
+  blurb: Teaching, workshops, and the discovery work that scopes a client system before it exists.
+
+- id: dev-tools
+  label: Dev Tools & Agents
+  blurb: Agentic developer tooling.
+
+- id: product-eng
+  label: Product Engineering
+  blurb: Client engagements and consumer applications.
+
+- id: contributions
+  label: Open Source
+  blurb: Upstream contributions to frameworks I use.

@@ -1,0 +1,152 @@
+// ─── MOTION PRIMITIVES ───────────────────────────────────────────────────────
+// Keyframes and utility classes shared by the homepage and the dashboard.
+// Driven by assets/js/motion.js (reveal / countUp / tilt).
+//
+// The reduced-motion block at the bottom is defined ONCE, here, for both
+// surfaces. It must leave .reveal content VISIBLE — killing the animation
+// without resetting opacity would hide the page from anyone who opts out.
+
+@keyframes auroraDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(6%, 4%, 0) scale(1.18); }
+}
+
+@keyframes auroraDrift2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1.1); }
+  100% { transform: translate3d(-7%, -5%, 0) scale(1); }
+}
+
+@keyframes revealIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes borderHue {
+  0%   { opacity: 0.55; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+
+// ── Scroll reveal ────────────────────────────────────────────────────────────
+// JS adds .is-in when the element enters the viewport and sets --i for stagger.
+//
+// Content is visible by DEFAULT and only hidden once `html.js` is set by an
+// inline head script. That ordering matters: gating on a class JS *removes*
+// later would flash the content in and back out, and gating on nothing would
+// hide the whole page from anyone without JS.
+.reveal {
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  transition-delay: calc(var(--i, 0) * 55ms);
+}
+
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+html.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+// ── Pointer tilt ─────────────────────────────────────────────────────────────
+// JS writes --rx/--ry on pointermove, capped at ±6deg, and clears on leave.
+// It skips touch devices entirely so a card can never get stuck tilted.
+[data-tilt] {
+  transform: perspective(760px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0));
+  transition: transform var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease),
+              box-shadow var(--dur-base) var(--ease);
+  transform-style: preserve-3d;
+}
+
+[data-tilt]:hover { --ty: -3px; }
+
+// ── Animated gradient border ─────────────────────────────────────────────────
+// Masked ::before ring so the gradient sits on the border, not the fill.
+.grad-border {
+  position: relative;
+}
+
+.grad-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--purple));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: borderHue 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+// ── Aurora hero backdrop ─────────────────────────────────────────────────────
+// Three blurred blobs drifting behind the hero. The parent must set
+// `position: relative; overflow: hidden; isolation: isolate`.
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(64px);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.aurora span:nth-child(1) {
+  width: 46%; padding-bottom: 46%;
+  top: -12%; left: -6%;
+  background: radial-gradient(circle, rgba(61, 214, 180, 0.55), transparent 68%);
+  animation: auroraDrift 26s var(--ease) infinite alternate;
+}
+
+.aurora span:nth-child(2) {
+  width: 52%; padding-bottom: 52%;
+  top: -20%; right: -10%;
+  background: radial-gradient(circle, rgba(97, 165, 255, 0.50), transparent 68%);
+  animation: auroraDrift2 34s var(--ease) infinite alternate;
+}
+
+.aurora span:nth-child(3) {
+  width: 40%; padding-bottom: 40%;
+  bottom: -24%; left: 32%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.36), transparent 70%);
+  animation: auroraDrift 40s var(--ease) infinite alternate;
+}
+
+// ── Reduced motion ───────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  // Content must remain visible — the reveal transition is what normally
+  // brings it in, and we have just disabled that.
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [data-tilt] { transform: none !important; }
+
+  .aurora span { animation: none !important; }
+}

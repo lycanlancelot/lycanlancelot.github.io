@@ -1,0 +1,236 @@
+// ─── BASE ────────────────────────────────────────────────────────────────────
+// Replaces the vendored jekyll-theme-hacker base. That theme applied a tiled
+// bkg.png body, a green-on-black header with a "./ " pseudo-element, monospace
+// for all text, and list-style-image: url(bullet.png) — all of which the site's
+// own design system then had to fight.
+//
+// Everything _layouts/default.html emits must be styled HERE: .container,
+// header h1/h2, #downloads .btn / .btn-github, #main_content, plus the usual
+// prose elements Markdown pages produce.
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.container {
+  width: 92%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+section { display: block; }
+
+// ── Site header ──────────────────────────────────────────────────────────────
+header {
+  width: 100%;
+  padding: 20px 0;
+  margin: 0 0 36px;
+  background: rgba(7, 11, 18, 0.72);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+header .container {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+header h2 {
+  flex: 1 1 320px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--dim);
+}
+
+#downloads {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+// ── Buttons emitted by the layout ────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  text-decoration: none;
+}
+
+// The theme drew this with blacktocat.png; a CSS mark avoids the image.
+.btn-github .icon {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+// ── Main content ─────────────────────────────────────────────────────────────
+#main_content {
+  width: 100%;
+  padding-bottom: 72px;
+}
+
+#main_content img,
+section img { max-width: 100%; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 18px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+#main_content h1 { font-size: 34px; }
+#main_content h2 { font-size: 25px; }
+#main_content h3 { font-size: 18px; }
+#main_content h4 { font-size: 15px; }
+
+#main_content h5,
+#main_content h6 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+p { margin: 0 0 16px; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover { text-decoration: underline; }
+
+ul, ol { padding-left: 22px; }
+
+li { line-height: 1.55; margin-bottom: 4px; }
+
+dt { font-weight: 700; }
+
+blockquote {
+  margin: 0 0 18px;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+}
+
+pre {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.42);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--purple);
+}
+
+table {
+  width: 100%;
+  margin: 0 0 20px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--text);
+  text-align: left;
+}
+
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+
+hr {
+  height: 0;
+  margin: 28px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+::selection {
+  background: rgba(61, 214, 180, 0.3);
+  color: var(--text);
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (max-width: 860px) {
+  header { position: static; margin-bottom: 24px; }
+  header h2 { flex-basis: 100%; }
+  #main_content h1 { font-size: 27px; }
+  #main_content h2 { font-size: 21px; }
+}
