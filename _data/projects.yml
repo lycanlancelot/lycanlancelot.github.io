@@ -1,0 +1,989 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Single source of truth for project content.
+#
+# Consumed by:
+#   • projects.html  — inlined as JSON via {{ site.data.projects | jsonify }}
+#   • index.html     — Featured / Data Science / Enablement sections via Liquid
+#
+# RULES — read before editing:
+#
+# 1. This file MUST stay a top-level SEQUENCE (a list of `- id: ...` entries).
+#    If it is ever split into a `_data/projects/` DIRECTORY, Jekyll turns
+#    `site.data.projects` into a hash keyed by filename and `PROJECTS.length` /
+#    `.filter(...)` break at runtime with NO build error.
+#
+# 2. NEVER write the literal sequence `</script` in any value. `jsonify` does
+#    not escape `<`, so it would terminate the JSON script tag early and break
+#    the dashboard. `script/validate-projects.py` enforces this.
+#
+# 3. Liquid is NEVER run over data-file values, so mermaid's `{{Node}}` syntax
+#    is safe HERE and only here. That is the whole reason this file exists.
+#    Keep `<br/>` and `&amp;` exactly as written — mermaid renders them.
+#
+# 4. `featured: true` REQUIRES `featured_order` (Liquid's `sort` needs the key
+#    present on every filtered item). Lower number = higher on the homepage.
+#
+# 5. Tabs in the project modal are PRESENCE-DRIVEN. A tab appears iff its field
+#    exists: mermaid→Architecture, graph→Code Graph, experiment→Experiment
+#    Design, metrics→Impact & Metrics, delivery→Delivery, lectures→Sessions.
+#    Omit a field entirely rather than setting it to null.
+#
+# 6. `source_refs` are bullet ids in data/experience-bank.json. They are not
+#    rendered — they exist so every claim here can be traced to verified copy.
+#
+# Run `python3 script/validate-projects.py` after editing.
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: termly
+  name: Termly
+  tagline: Document AI for Australian Healthcare Contracts
+  kicker: Healthcare AI · Contract Intelligence
+  category: ai-systems
+  kind: repo
+  status: active
+  year: "2026"
+  highlight: true
+  featured: true
+  featured_order: 10
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/Termly", primary: true}
+  tech: ["Python", "FastAPI", "Pydantic", "Claude Sonnet", "Azure Doc Intelligence", "Tesseract OCR", "Docker"]
+  description: Australian medical contract automation system. Ingests scanned PDFs, corrects OCR artefacts, extracts structured clauses and Medicare/PBS identifiers, validates compliance fields, and produces risk assessments via Claude Sonnet. Backed by FastAPI REST services with healthcare-domain validation logic and a provider-switchable LLM layer.
+  features:
+    - PDF extraction pipeline (Azure Doc Intelligence + Tesseract fallback)
+    - Structured clause/entity extraction via Claude Sonnet with Pydantic schema enforcement
+    - MPPA/Medicare identifier validation and risk scoring
+    - Docker-containerised with environment parity local ↔ deployed
+    - Switchable LLM provider layer (Claude, OpenAI, local)
+  mermaid: |-
+    graph LR
+        A([PDF / Contract]) --> B[Azure Doc Intelligence]
+        A --> C[Tesseract OCR]
+        B --> D[Clause Extractor]
+        C --> D
+        D --> E{{Claude Sonnet}}
+        E --> F[Structured Output<br/>Pydantic]
+        F --> G{Validation Engine}
+        G -->|pass| H[(PostgreSQL)]
+        G -->|fail| I[Risk Report]
+        H --> J[FastAPI REST]
+  graph:
+    nodes:
+      - {id: "main", label: "main.py", type: "entry"}
+      - {id: "routes_contracts", label: "routes/contracts.py", type: "api"}
+      - {id: "routes_analysis", label: "routes/analysis.py", type: "api"}
+      - {id: "svc_ocr", label: "services/ocr.py", type: "service"}
+      - {id: "svc_llm", label: "services/llm_client.py", type: "service"}
+      - {id: "svc_extract", label: "services/extractor.py", type: "service"}
+      - {id: "svc_valid", label: "services/validator.py", type: "service"}
+      - {id: "models", label: "models/contract.py", type: "data"}
+      - {id: "docker", label: "Dockerfile", type: "config"}
+      - {id: "azure", label: "Azure Doc Intel", type: "external"}
+      - {id: "claude", label: "Claude Sonnet", type: "external"}
+      - {id: "db", label: "PostgreSQL", type: "data"}
+    links:
+      - {s: "main", t: "routes_contracts"}
+      - {s: "main", t: "routes_analysis"}
+      - {s: "routes_contracts", t: "svc_ocr"}
+      - {s: "routes_contracts", t: "svc_extract"}
+      - {s: "routes_analysis", t: "svc_llm"}
+      - {s: "routes_analysis", t: "svc_valid"}
+      - {s: "svc_ocr", t: "azure"}
+      - {s: "svc_llm", t: "claude"}
+      - {s: "svc_extract", t: "models"}
+      - {s: "svc_valid", t: "models"}
+      - {s: "svc_valid", t: "db"}
+      - {s: "docker", t: "main"}
+
+- id: agentic-workbench
+  name: Agentic Workbench
+  tagline: Remote orchestration + multi-agent control plane for AI coding agents
+  kicker: Agentic Developer Tooling
+  category: dev-tools
+  kind: repo
+  status: active
+  year: 2025–2026
+  highlight: true
+  featured: true
+  featured_order: 50
+  links:
+    - {label: "Remote Agent", url: "https://github.com/lycanlancelot/remote-agent", primary: true}
+    - {label: "AgentForge", url: "https://github.com/lycanlancelot/agent-forge"}
+  tech: ["React", "TypeScript", "Express", "Socket.IO", "xterm.js", "SQLite", "PM2", "Git Worktrees", "PTY"]
+  description: Two complementary tools unified under one umbrella. Remote Agent Workbench handles single-agent browser orchestration via PTY streaming — live terminals, file previews, task persistence, and permission prompts. AgentForge is the multi-agent parallel control plane — running Claude Code, Codex, and Kimi Code simultaneously across isolated git worktrees with PM2 management and auto-commit scheduling. Together they cover the full range of AI coding-agent workflows from one-shot interactive tasks to long-running parallel batch jobs.
+  features:
+    - PTY-backed live terminal streaming via xterm.js (single-agent mode)
+    - Task queue with persistence, conversation continuity, and allowed-directory safety boundary
+    - File preview with syntax highlighting and model selector UI
+    - Multi-agent grid running Claude Code, Codex, and Kimi Code in parallel
+    - Git worktree isolation — each task works on its own branch copy
+    - PM2 process management with auto-restart and auto-commit scheduling
+    - Socket.IO real-time comms, Cloudflare Tunnel for remote browser access
+  mermaid: |-
+    graph TB
+        subgraph WB["Remote Workbench · single agent"]
+          UI[React UI] <-->|Socket.IO| SRV[Express Server]
+          SRV --> TR[Terminal Router]
+          TR --> PT[PTY Process]
+          SRV --> WS[Workspace Router]
+        end
+        subgraph AF["AgentForge · multi-agent"]
+          AG[Agent Grid] <--> OR[Orchestrator]
+          OR --> WM[Worktree Manager]
+          OR --> PM[PM2 Manager]
+        end
+        PT --> CC([Claude Code])
+        WM --> CC
+        WM --> CX([Codex CLI])
+        WM --> KI([Kimi Code])
+        OR <--> DB[(SQLite)]
+        WS --> DB
+  graph:
+    nodes:
+      - {id: "UI", label: "App.tsx (React)", type: "ui"}
+      - {id: "AgentGrid", label: "AgentGrid.tsx", type: "ui"}
+      - {id: "TaskQueue", label: "TaskQueue.tsx", type: "ui"}
+      - {id: "XTerm", label: "Terminal.tsx (xterm)", type: "ui"}
+      - {id: "FilePreview", label: "FilePreview.tsx", type: "ui"}
+      - {id: "server", label: "server/index.ts", type: "entry"}
+      - {id: "ws_router", label: "routes/workspace.ts", type: "api"}
+      - {id: "term_router", label: "routes/terminal.ts", type: "api"}
+      - {id: "orchestrator", label: "orchestrator.ts", type: "service"}
+      - {id: "agentEngine", label: "agentEngine.ts", type: "service"}
+      - {id: "worktree", label: "worktreeManager.ts", type: "service"}
+      - {id: "pm2mgr", label: "pm2Manager.ts", type: "service"}
+      - {id: "db", label: "SQLite", type: "data"}
+      - {id: "pty", label: "PTY Process", type: "external"}
+      - {id: "git", label: "Git Worktrees", type: "external"}
+      - {id: "pm2", label: "PM2", type: "external"}
+    links:
+      - {s: "UI", t: "AgentGrid"}
+      - {s: "UI", t: "TaskQueue"}
+      - {s: "UI", t: "FilePreview"}
+      - {s: "UI", t: "server"}
+      - {s: "server", t: "ws_router"}
+      - {s: "server", t: "term_router"}
+      - {s: "server", t: "orchestrator"}
+      - {s: "ws_router", t: "agentEngine"}
+      - {s: "ws_router", t: "db"}
+      - {s: "term_router", t: "pty"}
+      - {s: "agentEngine", t: "pty"}
+      - {s: "AgentGrid", t: "orchestrator"}
+      - {s: "orchestrator", t: "worktree"}
+      - {s: "orchestrator", t: "pm2mgr"}
+      - {s: "orchestrator", t: "db"}
+      - {s: "worktree", t: "git"}
+      - {s: "pm2mgr", t: "pm2"}
+
+- id: video-rag
+  name: Video-RAG
+  tagline: Multimodal RAG over video with CLIP embeddings
+  kicker: Multimodal Retrieval · AI Systems
+  category: ai-systems
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/Iliana678/Video-RAG", primary: true}
+  tech: ["Python", "CLIP", "ChromaDB", "FastAPI", "OpenCV", "OpenAI API"]
+  description: Collaborative multimodal RAG pipeline. Samples video frames at configurable rates, generates CLIP image embeddings, stores them in ChromaDB, and answers natural-language queries with timestamped visual evidence. Supports image-only search paths and multiple LLM provider backends.
+  features:
+    - Configurable frame sampling (keyframes or fixed interval)
+    - CLIP image embeddings stored in ChromaDB vector store
+    - Natural-language query with timestamped frame results
+    - Multiple LLM provider backends (OpenAI, local)
+    - FastAPI serving layer with query and ingest endpoints
+  mermaid: |-
+    graph LR
+        VF([Video File]) --> FS[Frame Sampler]
+        FS --> CLIP{{CLIP Encoder}}
+        CLIP --> VDB[(ChromaDB)]
+        Q([NL Query]) --> QE[Query Encoder]
+        QE --> SR[Similarity Search]
+        VDB --> SR
+        SR --> TS[Timestamped Frames]
+        TS --> LLM{{LLM}}
+        LLM --> ANS([Answer])
+  graph:
+    nodes:
+      - {id: "ingest", label: "ingest.py", type: "entry"}
+      - {id: "frame_ex", label: "frame_extractor.py", type: "service"}
+      - {id: "embedder", label: "embedder.py", type: "service"}
+      - {id: "vectorstore", label: "vectorstore.py", type: "data"}
+      - {id: "retriever", label: "retriever.py", type: "service"}
+      - {id: "qa_chain", label: "qa_chain.py", type: "service"}
+      - {id: "api", label: "api.py", type: "api"}
+      - {id: "clip", label: "CLIP Model", type: "external"}
+      - {id: "chroma", label: "ChromaDB", type: "data"}
+      - {id: "llm", label: "LLM API", type: "external"}
+    links:
+      - {s: "ingest", t: "frame_ex"}
+      - {s: "frame_ex", t: "embedder"}
+      - {s: "embedder", t: "clip"}
+      - {s: "embedder", t: "vectorstore"}
+      - {s: "vectorstore", t: "chroma"}
+      - {s: "api", t: "retriever"}
+      - {s: "retriever", t: "vectorstore"}
+      - {s: "retriever", t: "qa_chain"}
+      - {s: "qa_chain", t: "llm"}
+
+- id: toy-gifting
+  name: Toy Gifting System
+  tagline: Back-office sourcing + 3D bin-packing for gift boxes
+  kicker: Operator Automation · Web App
+  category: product-eng
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/toy-gifting", primary: true}
+  tech: ["JavaScript", "Node.js", "SQLite", "Three.js", "HTML/CSS"]
+  description: Back-office sourcing and assembly tool for building custom toy gift boxes targeting Australian children. Ingests SQLite toy catalogs, models supplier/compliance metadata and bilingual product data, drives an operator review loop, and renders a Three.js 3D bin-packing visualisation of the assembled box.
+  features:
+    - SQLite catalog ingestion with multi-field filtering
+    - Supplier compliance, certification and dimension metadata
+    - Three.js 3D bin-packing visualisation of assembled box
+    - Operator feedback and approval workflow
+    - Bilingual (English/Chinese) product data support
+    - Price conversion and small-batch supplier modelling
+  mermaid: |-
+    graph TB
+        CAT[(Toy Catalog DB)] --> UI[Operator UI]
+        SUP[Supplier Metadata] --> UI
+        UI --> AS[Assembly Engine]
+        AS --> BP[Bin-Packing Algorithm]
+        BP --> 3D{{Three.js Renderer}}
+        3D --> VIZ([3D Box Preview])
+        UI --> FB[Operator Feedback]
+        FB --> AS
+        AS --> EX[Export / PDF]
+  graph:
+    nodes:
+      - {id: "index", label: "index.html", type: "entry"}
+      - {id: "catalog", label: "catalog.js", type: "service"}
+      - {id: "assembler", label: "assembler.js", type: "service"}
+      - {id: "packer", label: "packer.js", type: "service"}
+      - {id: "renderer", label: "ThreeRenderer.js", type: "ui"}
+      - {id: "api_catalog", label: "api/catalog.js", type: "api"}
+      - {id: "db", label: "db/catalog.db", type: "data"}
+      - {id: "three", label: "Three.js", type: "external"}
+    links:
+      - {s: "index", t: "catalog"}
+      - {s: "index", t: "renderer"}
+      - {s: "catalog", t: "api_catalog"}
+      - {s: "api_catalog", t: "db"}
+      - {s: "catalog", t: "assembler"}
+      - {s: "assembler", t: "packer"}
+      - {s: "renderer", t: "three"}
+      - {s: "packer", t: "renderer"}
+
+- id: branchflow
+  name: BranchFlow
+  tagline: Nonlinear writing workbench with React Flow mind maps
+  kicker: Creative AI · Web App
+  category: product-eng
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/writer-helper", primary: true}
+  tech: ["React 18", "TypeScript", "Vite", "React Flow", "Obsidian Canvas"]
+  description: Local nonlinear writing and prompt-orchestration workbench (枝影 · BranchFlow) for Seedance-style branching narrative work. Manages branching story state, drives prompt drawers per branch node, renders a React Flow mind-map of the story tree, and exports to Obsidian Canvas format.
+  features:
+    - Branching story editor with per-branch context isolation
+    - Prompt drawer per node with LLM call and result injection
+    - React Flow mind-map visualisation of story tree
+    - Obsidian Canvas export for external note-taking integration
+    - Local-only — no server, no auth required
+  mermaid: |-
+    graph TB
+        ED[Branch Editor] --> BS[Branch Tree State]
+        BS --> RF{{React Flow Graph}}
+        ED --> PD[Prompt Drawer]
+        PD --> LLM{{LLM Provider}}
+        LLM --> GEN[Generated Content]
+        GEN --> ED
+        BS --> OC[Obsidian Canvas Export]
+  graph:
+    nodes:
+      - {id: "App", label: "App.tsx", type: "entry"}
+      - {id: "BranchEditor", label: "BranchEditor.tsx", type: "ui"}
+      - {id: "BranchTree", label: "BranchTree.ts", type: "service"}
+      - {id: "FlowGraph", label: "ReactFlowGraph.tsx", type: "ui"}
+      - {id: "PromptDrawer", label: "PromptDrawer.tsx", type: "ui"}
+      - {id: "llm", label: "llm/provider.ts", type: "service"}
+      - {id: "canvas_export", label: "export/canvas.ts", type: "service"}
+      - {id: "rf", label: "React Flow", type: "external"}
+    links:
+      - {s: "App", t: "BranchEditor"}
+      - {s: "App", t: "FlowGraph"}
+      - {s: "BranchEditor", t: "BranchTree"}
+      - {s: "BranchEditor", t: "PromptDrawer"}
+      - {s: "BranchTree", t: "FlowGraph"}
+      - {s: "FlowGraph", t: "rf"}
+      - {s: "PromptDrawer", t: "llm"}
+      - {s: "BranchTree", t: "canvas_export"}
+
+- id: elder-companion
+  name: Elder Companion
+  tagline: Voice AI companion + family dashboard for elderly users
+  kicker: Voice AI · Mobile Prototype
+  category: product-eng
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/elder-companion", primary: true}
+  tech: ["Expo", "React Native", "Node.js", "Firebase", "Claude API", "ElevenLabs"]
+  description: Expo React Native prototype for elderly users, paired with a family-facing dashboard. Elder screen handles voice conversation, daily summaries, and alert workflows. Family dashboard shows activity feed, summaries, and allows configuring reminders and alerts.
+  features:
+    - Voice-first UI for elderly users (Expo/React Native)
+    - Claude-backed conversation engine with safety guardrails
+    - Firebase Firestore persistence for sessions and summaries
+    - Daily summary generation workflow for family dashboard
+    - ElevenLabs TTS integration plan for natural voice output
+    - Alert system for unusual activity patterns
+  mermaid: |-
+    graph TB
+        subgraph ElderApp
+          VA([Voice Input]) --> ASR[Speech Recognition]
+          TTS[TTS Engine] --> VA
+        end
+        ASR --> LLM{{Claude API}}
+        LLM --> TTS
+        LLM --> SUM[Daily Summary]
+        SUM --> FS[(Firebase)]
+        FS --> FAM[Family Dashboard]
+        FAM --> ALERT[Alert Workflow]
+  graph:
+    nodes:
+      - {id: "App", label: "App.tsx", type: "entry"}
+      - {id: "VoiceScreen", label: "VoiceScreen.tsx", type: "ui"}
+      - {id: "FamilyDash", label: "FamilyDashboard.tsx", type: "ui"}
+      - {id: "claude_svc", label: "llm/claude.ts", type: "service"}
+      - {id: "elevenlabs", label: "audio/elevenlabs.ts", type: "service"}
+      - {id: "firebase_db", label: "firebase/db.ts", type: "data"}
+      - {id: "summary_svc", label: "services/summary.ts", type: "service"}
+      - {id: "firebase", label: "Firebase", type: "external"}
+      - {id: "claude_api", label: "Claude API", type: "external"}
+    links:
+      - {s: "App", t: "VoiceScreen"}
+      - {s: "App", t: "FamilyDash"}
+      - {s: "VoiceScreen", t: "claude_svc"}
+      - {s: "VoiceScreen", t: "elevenlabs"}
+      - {s: "claude_svc", t: "claude_api"}
+      - {s: "claude_svc", t: "summary_svc"}
+      - {s: "summary_svc", t: "firebase_db"}
+      - {s: "firebase_db", t: "firebase"}
+      - {s: "FamilyDash", t: "firebase_db"}
+
+- id: ragezone
+  name: RageZone
+  tagline: LLM-assisted argument coaching via WeChat Mini Program
+  kicker: Realtime Communication AI
+  category: product-eng
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/ragezone", primary: true}
+  tech: ["WeChat Mini Program", "Node.js", "WebSocket", "LLM API", "JWT", "Firebase"]
+  description: WeChat Mini Program and Node/WebSocket backend for an LLM-assisted argument coaching product. Users set a persona, engage in real-time chat guided by the LLM coach, and receive de-escalation or reframing suggestions. Includes auth design, evaluation scripts, and monetisation entry points.
+  features:
+    - WeChat Mini Program frontend with persona setup
+    - Real-time WebSocket communication server
+    - LLM-driven coaching and de-escalation suggestions
+    - JWT + Firebase auth plan
+    - Evaluation scripts and A/B test scaffolding
+    - Monetisation entry points design
+  mermaid: |-
+    graph TB
+        WX([WeChat Mini Program]) <-->|WSS| WS[WebSocket Server]
+        WS --> PE[Persona Engine]
+        PE --> LLM{{LLM Coach}}
+        LLM --> CM[Coaching Messages]
+        CM --> WS
+        WS --> AUTH[JWT Auth]
+        AUTH --> FB[(Firebase)]
+  graph:
+    nodes:
+      - {id: "wechat", label: "pages/chat.js", type: "ui"}
+      - {id: "ws_client", label: "utils/ws.js", type: "service"}
+      - {id: "server", label: "server/index.js", type: "entry"}
+      - {id: "chat_route", label: "routes/chat.js", type: "api"}
+      - {id: "persona", label: "services/persona.js", type: "service"}
+      - {id: "llm_svc", label: "services/llm.js", type: "service"}
+      - {id: "auth", label: "middleware/auth.js", type: "service"}
+      - {id: "firebase", label: "Firebase", type: "external"}
+      - {id: "llm_api", label: "LLM API", type: "external"}
+    links:
+      - {s: "wechat", t: "ws_client"}
+      - {s: "ws_client", t: "server"}
+      - {s: "server", t: "chat_route"}
+      - {s: "server", t: "auth"}
+      - {s: "chat_route", t: "persona"}
+      - {s: "persona", t: "llm_svc"}
+      - {s: "llm_svc", t: "llm_api"}
+      - {s: "auth", t: "firebase"}
+
+- id: claude-sourcemap
+  name: Claude Code Source Map
+  tagline: Source-map inspection of early Claude Code CLI internals
+  kicker: Agent Architecture Research
+  category: dev-tools
+  kind: repo
+  status: "2025"
+  year: "2025"
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/lycanlancelot/claude-code-sourcemap", primary: true}
+  tech: ["Node.js", "JavaScript", "Source Maps"]
+  description: Technical research repository for understanding early Claude Code CLI internals. Extracts and resolves source maps from the minified bundle to reconstruct agent architecture, command flow, and terminal-agent interaction patterns.
+  features:
+    - Source map extraction from minified CLI bundle
+    - Symbol resolution and module boundary reconstruction
+    - Reconstructed agent architecture graph
+    - Command-flow and terminal-agent interaction notes
+    - Architecture annotations for study
+  mermaid: |-
+    graph LR
+        BUN([Minified Bundle]) --> EX[Source Map Extractor]
+        EX --> RS[Symbol Resolver]
+        RS --> MB[Module Boundaries]
+        MB --> AG[Architecture Graph]
+        AG --> VIZ([Visualisation])
+        AG --> DOC([Documentation])
+  graph:
+    nodes:
+      - {id: "index", label: "index.js", type: "entry"}
+      - {id: "extractor", label: "extractor.js", type: "service"}
+      - {id: "resolver", label: "resolver.js", type: "service"}
+      - {id: "graph_b", label: "graph_builder.js", type: "service"}
+      - {id: "visualizer", label: "visualizer.js", type: "ui"}
+      - {id: "maps", label: "source-maps/", type: "data"}
+      - {id: "output", label: "output/", type: "data"}
+    links:
+      - {s: "index", t: "extractor"}
+      - {s: "extractor", t: "maps"}
+      - {s: "extractor", t: "resolver"}
+      - {s: "resolver", t: "graph_b"}
+      - {s: "graph_b", t: "visualizer"}
+      - {s: "graph_b", t: "output"}
+
+- id: sglang
+  name: SGLang Framework
+  tagline: LLM inference runtime optimisation — open source contributor
+  kicker: Open Source Contribution · LLM Systems
+  category: contributions
+  kind: repo
+  status: active
+  year: 2025–Present
+  highlight: false
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/sgl-project/sglang", primary: true}
+  tech: ["Python", "CUDA", "Triton", "NCCL", "C++", "Rust"]
+  description: Contributing runtime and serving optimisations to the SGLang LLM inference framework (LMSYS / UC Berkeley). Work spans backend runtime, distributed serving, and frontend prompt-language features for DeepSeek R1, Llama 3, and Qwen. Uses Claude Code as an AI-assisted open-source contribution workflow.
+  features:
+    - Backend runtime optimisations for throughput and latency
+    - Distributed serving and multi-GPU coordination
+    - Frontend prompt-language features for contextual routing
+    - KV cache management improvements
+    - AI-assisted (Claude Code) open-source contribution workflow
+  mermaid: |-
+    graph TB
+        subgraph Frontend
+          PL[Prompt Language] --> SC[Scheduler]
+        end
+        subgraph Backend
+          SC --> RT[Runtime]
+          RT --> KV[KV Cache Manager]
+          RT --> DS[Distributed Serving]
+        end
+        subgraph Workers
+          DS --> G1([GPU Worker 1])
+          DS --> G2([GPU Worker 2])
+          DS --> GN([GPU Worker N])
+        end
+  graph:
+    nodes:
+      - {id: "frontend", label: "sglang/frontend/", type: "entry"}
+      - {id: "scheduler", label: "scheduler.py", type: "service"}
+      - {id: "srt_backend", label: "srt_backend.py", type: "service"}
+      - {id: "model_runner", label: "model_runner.py", type: "service"}
+      - {id: "kv_cache", label: "radix_cache.py", type: "data"}
+      - {id: "dist_serving", label: "dist_serving.py", type: "service"}
+      - {id: "tokenizer", label: "tokenizer_manager.py", type: "service"}
+      - {id: "gpu", label: "GPU Workers", type: "external"}
+    links:
+      - {s: "frontend", t: "scheduler"}
+      - {s: "scheduler", t: "srt_backend"}
+      - {s: "srt_backend", t: "model_runner"}
+      - {s: "model_runner", t: "kv_cache"}
+      - {s: "srt_backend", t: "dist_serving"}
+      - {s: "scheduler", t: "tokenizer"}
+      - {s: "dist_serving", t: "gpu"}
+
+- id: dispatch-ai
+  name: Dispatch.AI
+  tagline: 6-week AI engineering course project — curriculum design + hands-on instruction
+  kicker: Teaching · Curriculum Design · LangGraph
+  category: enablement
+  kind: enablement
+  status: "2026"
+  year: "2026"
+  org: Australia IT Group
+  period: Feb – May 2026
+  highlight: true
+  featured: true
+  featured_order: 60
+  links:
+    - {label: "Repository", url: "https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI", primary: true}
+  delivery:
+    audience: Career-change and early-career engineers with no prior agentic-AI experience
+    format: 6-week progressive project — weekly build, PR submission, automated grading
+    size: 13 students
+    outcomes:
+      - Every student shipped a deployed multi-agent booking assistant, not a notebook
+      - Scaffolded each week so students met one new concept at a time rather than all at once
+      - CI/CD grading pipeline gave objective, same-day feedback on every submission
+      - Reference implementation published so students could diff their work against a known-good build
+  lectures_note: 6 weeks · one build step per week
+  tech: ["Python", "FastAPI", "LangGraph", "Groq", "Pydantic", "Redis", "MCP", "NeMo Guardrails", "RAGAS", "Docker", "Render"]
+  description: Designed and instructed a 6-week progressive AI engineering course project for 13 students at Australia IT Group. Students build a production-grade AI booking assistant incrementally — from Pydantic state models and Redis persistence through LangGraph multi-turn agents, MCP tool servers, multi-agent routing, NeMo Guardrails, and RAGAS evaluation — finishing with a Docker + Render capstone deployment. Delivered the reference implementation, student scaffold, CI/CD grading pipeline, and PR-based submission workflow with a 100-synthetic-user evaluation gate.
+  features:
+    - "Curriculum design: 6 progressive weeks from state management to full agentic deployment"
+    - Reference implementation (week6/) with complete working solution for all weeks
+    - "Student scaffold: Pydantic state, Redis StateManager, LangGraph BookingAgent and FAQAgent"
+    - MCP server with service catalog and booking tools
+    - SupervisorAgent routing between BookingAgent, FAQAgent, and escalation paths
+    - NeMo Guardrails for content safety + RAGAS evaluation with 100-synthetic-user test gate
+    - Docker Compose + Render deployment; GitHub Actions CI/CD grading on PR submission
+  mermaid: |-
+    graph TB
+        USR([User]) --> API[FastAPI /dispatch]
+        API --> SV{SupervisorAgent}
+        SV -->|booking intent| BA[BookingAgent]
+        SV -->|FAQ intent| QA[FAQAgent]
+        SV -->|escalate| ES([Escalation])
+        BA --> MCP[MCP Tools<br/>service catalog]
+        BA --> GR[NeMo Guardrails]
+        BA --> PS[(Pydantic State)]
+        PS --> RD[(Redis)]
+        BA --> EV[RAGAS Eval]
+        QA --> RAG[RAG Retrieval]
+  graph:
+    nodes:
+      - {id: "main", label: "main.py (FastAPI)", type: "entry"}
+      - {id: "api", label: "api/dispatch.py", type: "api"}
+      - {id: "supervisor", label: "agents/supervisor.py", type: "service"}
+      - {id: "booking", label: "agents/booking.py", type: "service"}
+      - {id: "faq", label: "agents/faq_agent.py", type: "service"}
+      - {id: "tools", label: "agents/tools.py", type: "service"}
+      - {id: "mcp", label: "mcp/server.py", type: "service"}
+      - {id: "state", label: "models/agent_state.py", type: "data"}
+      - {id: "stmgr", label: "infrastructure/state_manager.py", type: "service"}
+      - {id: "redis", label: "Redis", type: "external"}
+      - {id: "ragas", label: "eval/ragas.py", type: "service"}
+      - {id: "guardrails", label: "NeMo Guardrails", type: "external"}
+    links:
+      - {s: "main", t: "api"}
+      - {s: "api", t: "supervisor"}
+      - {s: "supervisor", t: "booking"}
+      - {s: "supervisor", t: "faq"}
+      - {s: "booking", t: "tools"}
+      - {s: "booking", t: "mcp"}
+      - {s: "booking", t: "guardrails"}
+      - {s: "booking", t: "state"}
+      - {s: "state", t: "stmgr"}
+      - {s: "stmgr", t: "redis"}
+      - {s: "booking", t: "ragas"}
+  lectures:
+    - {date: "Week 1", topic: "applied", duration: "2hr", title: "State Management — Pydantic models + Redis persistence"}
+    - {date: "Week 2", topic: "agents", duration: "2hr", title: "LangGraph Agent — BookingAgent with intent classification"}
+    - {date: "Week 3", topic: "agents", duration: "2hr", title: "MCP Server — service catalog + booking tools"}
+    - {date: "Week 4", topic: "agents", duration: "2hr", title: "Multi-Agent — SupervisorAgent routing BookingAgent / FAQAgent"}
+    - {date: "Week 5", topic: "rag", duration: "2hr", title: "Guardrails + Evaluation — NeMo Guardrails + RAGAS"}
+    - {date: "Week 6", topic: "applied", duration: "3hr", title: "Capstone Demo — Docker + Render deployment + student showcase"}
+  source_refs: ["tea-2"]
+
+- id: ai-bootcamp
+  name: AI Engineer Bootcamp
+  tagline: Guest Instructor at Australia IT Group — RAG, Agents, Fine-tuning
+  kicker: Teaching · Applied AI Engineering
+  category: enablement
+  kind: enablement
+  status: active
+  year: "2026"
+  org: Australia IT Group
+  period: Feb – May 2026
+  highlight: true
+  featured: false
+  links:
+    - {label: "Repository", url: "https://github.com/australiaitgroup/AI-Engineer-Bootcamp", primary: true}
+  delivery:
+    audience: Working engineers moving into AI engineering — mixed backgrounds, no shared ML baseline
+    format: 12+ guest lectures, 2–3 hours each, every session hands-on with a runnable notebook
+    size: 28+ contact hours
+    outcomes:
+      - Sequenced embeddings → RAG → multi-agent → evaluation → fine-tuning so each session built on the last
+      - Every lecture shipped with a working notebook committed to the shared cohort repo
+      - Taught evaluation (RAGAS, MTEB) as a first-class topic, not an afterthought
+  tech: ["Python", "LangChain", "LangGraph", "RAG", "RAGAS", "Gemini", "DeepSeek", "ChromaDB", "PyTorch", "QLoRA"]
+  description: Guest lecturer at Australia IT Group's AI Engineer Bootcamp (2026). Delivered 12+ sessions covering the full production AI stack — from embeddings and RAG architecture through multi-agent systems, LangGraph orchestration, evaluation engineering, and fine-tuning. All lecture notebooks and slides committed directly to the shared cohort repo (lycanlancelot@gmail.com).
+  features:
+    - "RAG architecture: adaptive RAG, production RAG with DeepSeek, hybrid retrieval, RAGAS evaluation"
+    - "Embeddings and vector search: 3-hour hands-on course with ChromaDB and sentence transformers"
+    - "Multi-agent systems: architecture patterns, AutoGen & CrewAI, LangGraph orchestration"
+    - "Fine-tuning: QLoRA, PEFT/Unsloth, sentence-transformer fine-tuning, MTEB benchmarking"
+    - "Applied AI: Python UI building, PDF parsing, Text-to-SQL, LLM rate limits"
+    - "Tooling: LangFuse monitoring, LangSmith ops, synthetic test data generation"
+  mermaid: |-
+    graph LR
+        subgraph RAG["RAG & Retrieval"]
+          R1[Adaptive RAG<br/>Gemini 2.0]-->R2[RAG QA<br/>LangChain]-->R3[Multi-Agent RAG<br/>Hybrid Search]-->R4[Production RAG<br/>DeepSeek]
+        end
+        subgraph Agents["Multi-Agent Systems"]
+          A1[Architecture]-->A2[AutoGen &amp; CrewAI]-->A3[LangGraph]
+        end
+        subgraph Applied["Applied AI"]
+          P1[Embeddings<br/>3hr]-->P2[Text-to-SQL]-->P3[UI &amp; PDF]
+        end
+        subgraph MLOps["Evaluation &amp; Fine-tuning"]
+          M1[Model Eval<br/>3hr]-->M2[Fine-tuning<br/>QLoRA]
+        end
+        P1-->R1
+        R4-->A1
+        A3-->M1
+  lectures:
+    - {date: "2026-05-27", topic: "rag", duration: "3hr", title: "Production RAG Application + LangChain Core Constructs"}
+    - {date: "2026-05-20", topic: "applied", duration: "2hr", title: "UI Building, PDF Parsing & LLM Rate Limits"}
+    - {date: "2026-05-17", topic: "applied", duration: "2hr", title: "AI Data Engineering: Text to SQL"}
+    - {date: "2026-05-14", topic: "embeddings", duration: "3hr", title: "Embeddings, Vector Search & RAG"}
+    - {date: "2026-05-06", topic: "rag", duration: "2hr", title: "Advanced RAG — Bug Fixes & New Modules"}
+    - {date: "2026-03-23", topic: "finetune", duration: "2hr", title: "Fine-tuning Lecture (split slides edition)"}
+    - {date: "2026-03-18", topic: "finetune", duration: "3hr", title: "ML Model Evaluation & Fine-tuning"}
+    - {date: "2026-03-15", topic: "agents", duration: "2hr", title: "Multi-Agent RAG with Hybrid Search & Evaluation"}
+    - {date: "2026-03-08", topic: "agents", duration: "2hr", title: "AutoGen & CrewAI Practical Workshop"}
+    - {date: "2026-02-28", topic: "agents", duration: "2hr", title: "Multi-Agent Architecture"}
+    - {date: "2026-02-14", topic: "rag", duration: "2.5hr", title: "RAG QA Application with LangChain"}
+    - {date: "2026-02-05", topic: "rag", duration: "2hr", title: "Adaptive RAG with Google Gemini 2.0 Flash"}
+  lectures_note: Feb – May 2026 · Australia IT Group
+  source_refs: ["tea-1"]
+
+# ─── Data Science case studies ───────────────────────────────────────────────
+# Employer work: no public repo, so these carry `access` instead of `links` and
+# an `experiment` / `metrics` block instead of a `graph`. Every claim traces to
+# a verified bullet in data/experience-bank.json via source_refs.
+
+- id: rb-search-ranking
+  name: Search Ranking & Vector Retrieval
+  tagline: Semantic retrieval and ranking for a marketplace with 100M+ user events
+  kicker: Data Science · Search & Recommendation
+  category: ds-ml
+  kind: case-study
+  status: case-study
+  year: 2023–2025
+  org: Redbubble
+  period: Mar 2023 – Jan 2025
+  highlight: true
+  featured: true
+  featured_order: 40
+  access: Internal production work at Redbubble — no public repo
+  tech: ["Marqo", "GCP Vertex AI", "BigQuery", "Python", "Vector Search", "MLOps", "Offline Evaluation", "A/B Testing"]
+  description: >-
+    Led search and recommendation enhancements on a global e-commerce marketplace, built on Marqo
+    vector search and GCP Vertex AI MLOps pipelines. The hard part was not the model — it was making
+    semantic retrieval pay off on a large, noisy, long-tail catalogue without regressing the head
+    queries that carry the revenue. I owned this end to end: offline evaluation, experiment design,
+    deployment coordination, and post-launch metric review, communicating results and model logic to
+    product stakeholders throughout.
+  features:
+    - Marqo vector retrieval for semantic coverage of long-tail queries
+    - ML and data infrastructure over 100M+ user events for feature extraction and relevance analysis
+    - Vertex AI MLOps pipelines for repeatable training, deployment and monitoring
+    - Long-tail relevance tuning explicitly balanced against measurable business impact
+    - Owned the full lifecycle — offline eval, experiment design, rollout, post-launch review
+  experiment:
+    hypothesis: Semantic (vector) retrieval improves relevance on long-tail queries without regressing head-query conversion.
+    design: Offline relevance evaluation on held-out sessions first, then an online A/B test on production traffic with a staged rollout.
+    guardrails: ["Head-query conversion", "Latency budget", "Catalogue coverage", "Result diversity"]
+    readouts: ["CTR", "Add-to-cart rate", "Long-tail query relevance"]
+  metrics:
+    - {label: "CTR", value: "+10%", note: "search and recommendation surfaces"}
+    - {label: "Add-to-cart rate", value: "+0.5%"}
+    - {label: "User events modelled", value: "100M+"}
+  mermaid: |-
+    graph LR
+        Q([User Query]) --> QU[Query Understanding<br/>long-tail rewriting]
+        QU --> EMB{{Embedding Model}}
+        CAT([Catalogue]) --> IDX[Indexing Pipeline]
+        EMB --> MQ[(Marqo<br/>Vector Index)]
+        IDX --> MQ
+        MQ --> CAND[Candidate Retrieval]
+        EV[100M+ User Events] --> FEAT[Feature Pipeline]
+        FEAT --> RANK[Ranking Layer]
+        CAND --> RANK
+        RANK --> SERP([Ranked Results])
+        SERP --> AB{A/B Experiment}
+        AB --> BQ[(BigQuery<br/>metric readout)]
+  source_refs: ["rbs-1", "rbs-3", "rbs-5"]
+
+- id: rb-experimentation
+  name: Experimentation & Metrics Foundation
+  tagline: Making A/B results trustworthy — GA4 to BigQuery, offline eval, ship gates
+  kicker: Data Science · Experimentation
+  category: ds-ml
+  kind: case-study
+  status: case-study
+  year: 2021–2025
+  org: Redbubble
+  period: Jan 2021 – Jan 2025
+  highlight: false
+  featured: false
+  access: Internal production work at Redbubble — no public repo
+  tech: ["A/B Testing", "GA4", "BigQuery", "Experiment Design", "Metric Design", "Offline Evaluation", "Python", "SQL"]
+  description: A model only counts once you can prove it moved something. I drove the GA4 analytics migration onto BigQuery so the internal dashboard-driven A/B testing framework rested on reliable data, and owned production ML workflows end to end — offline evaluation, experiment design, deployment coordination and post-launch metric review. The recurring job was translating model behaviour and experiment results into decisions product stakeholders could act on.
+  features:
+    - GA4 → BigQuery analytics migration for data reliability across A/B dashboards
+    - Experiment design with explicit guardrail metrics, not just a headline number
+    - Offline evaluation as a ship gate before any online test consumed traffic
+    - Post-launch metric review to confirm launches held up beyond the test window
+    - Results and model logic communicated to non-technical product stakeholders
+  experiment:
+    hypothesis: Experiment readouts are only as trustworthy as the event pipeline underneath them — fix the data layer and the ship decisions improve.
+    design: Migrate event collection to GA4 on BigQuery, re-derive metric definitions against the new source, and reconcile against the legacy pipeline before cutting dashboards over.
+    guardrails: ["Metric parity with the legacy pipeline", "Event completeness", "Dashboard freshness"]
+    readouts: ["Data reliability across A/B dashboards", "Experiment turnaround time"]
+  mermaid: |-
+    graph TB
+        GA4([GA4 Event Stream]) --> BQ[(BigQuery)]
+        BQ --> DQ{Data Quality<br/>checks}
+        DQ -->|fail| ALERT([Anomaly Alert])
+        DQ -->|pass| MET[Metric Definitions]
+        MET --> DASH[A/B Dashboards]
+        OFF[Offline Evaluation<br/>held-out sessions] --> GATE{Ship Gate}
+        DASH --> GATE
+        GATE -->|hold| ITER([Iterate])
+        GATE -->|ship| PROD([Staged Rollout])
+        PROD --> POST[Post-launch Review]
+        POST --> STK([Stakeholder Readout])
+  source_refs: ["rbs-2", "rbs-4"]
+
+- id: rb-content-understanding
+  name: Content Understanding & Moderation
+  tagline: Language-image models for classification, moderation and duplicate detection
+  kicker: Data Science · Content AI
+  category: ds-ml
+  kind: case-study
+  status: case-study
+  year: 2021–2023
+  org: Redbubble
+  period: Jan 2021 – Mar 2023
+  highlight: false
+  featured: false
+  access: Internal production work at Redbubble — no public repo
+  tech: ["Language-Image Models", "Image Embeddings", "Classification", "Anomaly Detection", "Python", "Taxonomy Design", "SEO"]
+  description: Shipped production content-classification and moderation systems using language-image models on a marketplace where anyone can upload artwork — reducing intellectual-property moderation risk while improving operational throughput for the review team. Alongside it, image duplicate-detection pipelines and data-quality / anomaly-detection workflows kept the models and pipelines themselves safe to operate, and tagging, taxonomy and SEO experiments fed the discovery surfaces.
+  features:
+    - Production content classification and moderation with language-image models
+    - Image duplicate-detection pipelines across a large user-generated catalogue
+    - Data-quality and anomaly-detection workflows guarding model and pipeline operation
+    - Content tagging, taxonomy and SEO experiments to improve product discovery
+    - Personalization workflows connecting data science experiments to production metrics
+  metrics:
+    - {label: "IP moderation risk", value: "Reduced", note: "language-image classification in production"}
+    - {label: "Operational throughput", value: "Improved", note: "human review team"}
+  mermaid: |-
+    graph LR
+        UP([Uploaded Artwork]) --> LIM{{Language-Image Model}}
+        LIM --> CLS[Content Classification]
+        LIM --> EMB[Image Embeddings]
+        EMB --> DUP[Duplicate Detection]
+        DUP --> AD[Anomaly Detection]
+        CLS --> MOD{Moderation Queue}
+        MOD -->|flagged| REV([Human Review])
+        MOD -->|clear| PUB([Published])
+        CLS --> TAX[Taxonomy &amp; Tagging]
+        TAX --> DISC([Discovery &amp; SEO])
+  source_refs: ["rbc-1", "rbc-2", "rbc-3", "rbc-4"]
+
+# ─── Client engagements ──────────────────────────────────────────────────────
+
+- id: ultra-ot
+  name: Ultra OT
+  tagline: Operations system for an occupational therapy practice — built onsite
+  kicker: Forward-Deployed · Client Engagement
+  category: product-eng
+  kind: case-study
+  status: "2026"
+  year: "2026"
+  org: Occupational therapy practice
+  period: 2026
+  highlight: true
+  featured: true
+  featured_order: 20
+  access: Client engagement — private codebase
+  tech: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Row-Level Security", "Google Routes API", "Geospatial Clustering"]
+  description: Engaged onsite with a practice that had no single view of its operations — case status, scheduling and billable time lived across spreadsheets, calendars and email. I ran discovery with clinicians and admin staff to map the real workflow before committing to a build, then scoped and shipped the internal operations system as sole engineer. The hardest problem turned out to be scheduling, and it was a geography problem rather than a calendar one.
+  features:
+    - Discovery interviews with clinicians and admin staff to map the actual workflow first
+    - Case flow, Jira-style ticketing, calendar scheduling and client intake imports
+    - Time and finance visibility the practice previously reconstructed by hand
+    - Geospatial client clustering on driving distance via the Google Routes API, turning ad-hoc visit planning into route-aware scheduling
+    - Multi-tenant access modelled with Supabase row-level security so practice roles see only their own client data (RLS, not full enterprise SSO)
+    - Iterated in place as the team used it, rather than shipping once and leaving
+  mermaid: |-
+    graph TB
+        INT([Client Intake<br/>spreadsheet import]) --> CASE[(Case Records)]
+        CASE --> FLOW[Case Flow Board]
+        CASE --> TIX[Jira-style Tickets]
+        CASE --> CAL[Calendar Scheduling]
+        ADDR[Client Addresses] --> ROUTES{{Google Routes API}}
+        ROUTES --> CLU[Driving-distance<br/>Clustering]
+        CLU --> CAL
+        TIX --> TIME[Time &amp; Finance View]
+        CASE --> RLS{Supabase RLS}
+        RLS --> SB[(Supabase Postgres)]
+  source_refs: ["uot-1", "uot-2", "uot-3", "uot-4"]
+
+- id: callforme
+  name: CallForMe
+  tagline: AI phone assistant — transcripts, summaries, risk analysis, hold-for-me
+  kicker: Voice AI · Collaboration
+  category: product-eng
+  kind: case-study
+  status: "2026"
+  year: "2026"
+  highlight: true
+  featured: true
+  featured_order: 30
+  access: Collaboration with a partner developer — private codebase
+  tech: ["Next.js", "TypeScript", "WebSocket", "Realtime Audio", "LLM Summarisation", "PostgreSQL"]
+  description: >-
+    Collaborating with a partner developer on an AI phone assistant MVP — call records, transcripts
+    and summaries, AI risk analysis, and interactive hold-for-me call flows, built on
+    Next.js/TypeScript with WebSocket realtime services. The hold-for-me flow is the interesting
+    part: the system waits through the hold music and IVR tree on the user's behalf and hands the
+    call back only once a human is actually on the line.
+  features:
+    - Realtime call handling over WebSocket services
+    - Live transcription with post-call summaries
+    - AI risk analysis over call content
+    - Interactive hold-for-me flows — IVR navigation and hand-back on human detection
+    - Call record dashboard in Next.js
+  mermaid: |-
+    graph LR
+        CALL([Inbound Call]) --> WS{{WebSocket Realtime}}
+        WS --> TR[Live Transcription]
+        WS --> HOLD[Hold-for-me Flow]
+        TR --> SUM[Call Summary]
+        TR --> RISK{AI Risk Analysis}
+        HOLD --> IVR[IVR Navigation]
+        IVR --> HUM{Human detected?}
+        HUM -->|yes| NOTIF([Hand back to user])
+        HUM -->|no| HOLD
+        SUM --> REC[(Call Records)]
+        RISK --> REC
+        REC --> DASH[Next.js Dashboard]
+  source_refs: ["proj-cfm-1"]
+
+# ─── Communication & enablement ──────────────────────────────────────────────
+
+- id: anzcc-workshop
+  name: ANZCC AI Accounting Workshop
+  tagline: Agentic AI for accounting professionals — a non-technical audience
+  kicker: Workshop · Non-technical Audience
+  diagram_label: Workshop Flow
+  category: enablement
+  kind: enablement
+  status: workshop
+  year: "2026"
+  org: ANZCC
+  period: Jun 2026
+  highlight: false
+  featured: false
+  links:
+    - {label: "Open the deck", url: "/anzcc-workshop/", primary: true}
+  tech: ["Workshop Design", "Agentic AI", "Live Demo", "Stakeholder Communication"]
+  description: Designed and delivered a hands-on workshop introducing agentic AI workflows to accounting professionals, adapting technical content for a non-technical business audience. The challenge was not simplification — it was choosing which abstractions to hand over. Accountants already reason precisely about process, control and audit trails, so the workshop framed agents in exactly those terms and spent as much time on where the technology breaks as on what it can do.
+  features:
+    - Framed agentic workflows in process, control and audit-trail terms the audience already owns
+    - Live demonstration rather than slideware, so the failure modes were visible
+    - Hands-on exercise with the audience driving the tool themselves
+    - Explicit treatment of limitations and what a professional still has to verify
+    - Take-home playbook for applying the workflows to their own practice
+  mermaid: |-
+    graph LR
+        AUD([Accounting Professionals<br/>non-technical]) --> FRAME[Frame in Their Language<br/>process · control · audit]
+        FRAME --> DEMO[Live Agentic Demo]
+        DEMO --> HANDS[Hands-on Exercise]
+        HANDS --> LIMIT[Where It Breaks<br/>&amp; what to verify]
+        LIMIT --> TAKE([Take-home Playbook])
+  delivery:
+    audience: Accounting professionals — domain experts with no engineering background
+    format: Hands-on workshop with live demonstration
+    outcomes:
+      - Translated agentic AI into the audience's existing vocabulary instead of teaching them ours
+      - Led with limitations and verification, which is what a regulated profession actually needs
+      - Participants drove the tools themselves rather than watching a demo
+  source_refs: ["tea-3"]
+
+- id: fde-discovery
+  name: Forward-Deployed Discovery
+  tagline: How I scope a client system before writing any of it
+  kicker: Discovery · Stakeholder Communication
+  diagram_label: Discovery Process
+  category: enablement
+  kind: case-study
+  status: case-study
+  year: "2026"
+  period: 2026
+  highlight: false
+  featured: false
+  access: Practice drawn from the Ultra OT and Termly client engagements
+  tech: ["Discovery Interviews", "Workflow Mapping", "Scope Reduction", "Stakeholder Alignment", "Regulated Domains"]
+  description: >-
+    Both of my 2026 client engagements started the same way — onsite, asking questions, before any
+    architecture existed. At the occupational therapy practice that meant running discovery with
+    clinicians and admin staff to map the real workflow before committing to a build. At Termly it
+    meant working inside a regulated healthcare setting where manual contract review was slow and
+    inconsistent, and where the right answer had to be checkable rather than merely impressive. The
+    pattern in both: find where the work actually hurts, cut scope to that, build in place, and keep
+    iterating while the team uses it.
+  features:
+    - Discovery with the people doing the work — clinicians, admin staff, reviewers — not just the buyer
+    - Map the real workflow, including the spreadsheet and email steps nobody documents
+    - Reduce scope to where the pain concentrates instead of rebuilding everything at once
+    - Build in place and iterate as the team adopts it, so the feedback loop stays short
+    - In regulated settings, design for human oversight and verification from the start
+  mermaid: |-
+    graph TB
+        STK([Stakeholders<br/>clinicians · admin · reviewers]) --> INT[Discovery Interviews]
+        INT --> MAP[Map the Real Workflow]
+        MAP --> GAP{Where does the<br/>work actually hurt?}
+        GAP --> SCOPE[Reduce Scope to That]
+        SCOPE --> BUILD[Build In Place]
+        BUILD --> USE([Team Uses It])
+        USE --> ITER[Iterate on Feedback]
+        ITER --> BUILD
+  delivery:
+    audience: Non-technical domain experts — clinicians, practice admin, contract reviewers
+    format: Onsite engagement — discovery, scoping, build, iterate in place
+    size: 2 client engagements in 2026
+    outcomes:
+      - Scoped both systems from stakeholder interviews rather than from a written brief
+      - Shipped as sole engineer on both, so discovery and delivery stayed in the same head
+      - Built verification and human review into the regulated-healthcare system by design
+  source_refs: ["uot-1", "tm-1", "tm-3"]

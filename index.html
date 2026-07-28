@@ -1,0 +1,231 @@
+---
+layout: default
+---
+
+{%- comment -%}
+  Project cards on this page render from _data/projects.yml — the same source
+  the projects dashboard uses. Do not hand-write project copy here; it drifted
+  four ways last time. Add `featured: true` + `featured_order` to an entry to
+  surface it in Featured Systems.
+
+  This file is .html rather than .md on purpose: Liquid loops emitting indented
+  HTML inside a Markdown document is where kramdown starts turning output into
+  <pre> blocks.
+{%- endcomment -%}
+
+{%- assign featured = site.data.projects | where: "featured", true | sort: "featured_order" -%}
+{%- assign ds = site.data.projects | where: "category", "ds-ml" -%}
+{%- assign enablement = site.data.projects | where: "category", "enablement" -%}
+
+<section class="hero-panel reveal">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <p class="eyebrow">Melbourne, Australia / Australian Permanent Resident</p>
+  <h1>Liangjun (Lance) Song, PhD</h1>
+  <p class="hero-copy">Senior Data Scientist &amp; ML Engineer · PhD in Search &amp; Recommendation Systems. I build production AI across the stack: search ranking, retrieval pipelines, experimentation and measurement, content understanding, RAG, and agentic automation — and I explain it to the people who have to use it.</p>
+  <div class="hero-actions">
+    <a class="button primary" href="/cv-ds.html">CV · Data Scientist</a>
+    <a class="button primary" href="/cv.html">CV · ML Engineer</a>
+    <a class="button primary" href="/projects.html">Projects Dashboard</a>
+    <a class="button primary" href="/fit.html">JD Fit Checker</a>
+    <a class="button primary" href="mailto:liangjun.song@outlook.com">Email Lance</a>
+    <a class="button" href="https://linkedin.com/in/liangjun-lance-song-50376055">LinkedIn</a>
+    <a class="button" href="https://github.com/lycanlancelot">GitHub</a>
+  </div>
+</section>
+
+<section class="signal-grid reveal">
+  <div>
+    <strong data-count="6+ years">6+ years</strong>
+    <span>Data science, ML, search and recommendation in production</span>
+  </div>
+  <div>
+    <strong data-count="100M+ events">100M+ events</strong>
+    <span>Feature pipelines and ML infrastructure designed at Redbubble</span>
+  </div>
+  <div>
+    <strong data-count="+10% CTR">+10% CTR</strong>
+    <span>Search and recommendation lift from vector search and MLOps, measured by A/B test</span>
+  </div>
+  <div>
+    <strong data-count="{{ site.data.projects | size }} systems">{{ site.data.projects | size }} systems</strong>
+    <span>Shipped projects and case studies across DS, AI systems, and client work</span>
+  </div>
+</section>
+
+<h2>What I Build</h2>
+
+<p>My background starts in classical IR and ML — PhD-level research on personalised ranking and search, then four years as a Data Scientist at Redbubble building search, recommendation, and content-understanding systems over 100M+ user events. It runs through to the modern AI layer: LLM orchestration, RAG, agentic workflows, evaluation engineering, and CI/CD-grade deployment.</p>
+
+<p>I'm strongest where retrieval quality, ML system design, and data engineering matter together: search that has to be measurable, recommendations that have to survive a real catalog, and agents that have to work reliably across messy enterprise data. The other half of the job is communication — I've owned experiment readouts for product stakeholders, taught 12+ lectures to a bootcamp cohort, and run onsite discovery with clinicians and contract reviewers who don't speak engineering.</p>
+
+<div class="capability-strip">
+  <span>Search</span>
+  <span>Recommendation</span>
+  <span>Ranking</span>
+  <span>Vector Search</span>
+  <span>A/B Testing</span>
+  <span>Experiment Design</span>
+  <span>RAG</span>
+  <span>LangGraph</span>
+  <span>FastAPI</span>
+  <span>Python</span>
+  <span>SQL</span>
+  <span>Pandas · NumPy</span>
+  <span>Scikit-learn</span>
+  <span>PyTorch</span>
+  <span>BigQuery</span>
+  <span>Azure OpenAI</span>
+  <span>GCP Vertex AI</span>
+  <span>Docker</span>
+  <span>MLOps</span>
+</div>
+
+<h2>Data Science Deep Dive</h2>
+
+<p class="section-intro">The work I go deepest on: search ranking and retrieval, the experimentation foundation that proves a model moved something, and content understanding at catalogue scale. These are employer systems rather than public repos — each case study opens with its system map, experiment design, and measured impact.</p>
+
+<div class="project-grid">
+  {%- for p in ds %}
+  <article class="project-card reveal{% if p.highlight %} highlight grad-border{% endif %}" data-tilt style="--i:{{ forloop.index0 }}">
+    <p class="project-kicker">{{ p.kicker }}</p>
+    <h3>{{ p.name }}</h3>
+    {%- if p.org or p.period %}
+    <p class="card-meta">{{ p.org }}{% if p.org and p.period %} · {% endif %}{{ p.period }}</p>
+    {%- endif %}
+    {%- if p.metrics %}
+    <div class="metric-chips">
+      {%- for m in p.metrics limit: 3 %}
+      <span><strong>{{ m.value }}</strong>{{ m.label }}</span>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+    <p>{{ p.tagline }}</p>
+    <p class="tech-line">{{ p.tech | join: " · " }}</p>
+    <div class="card-links"><a href="/projects.html#{{ p.id }}">Open case study →</a></div>
+  </article>
+  {%- endfor %}
+</div>
+
+<h2>Featured Systems</h2>
+
+<div class="project-summary-panel">
+  <p>Applied AI products, data-science case studies, agentic developer tooling, and client engagements — original builds, collaborations, and research forks kept clearly apart.</p>
+  <a class="button primary" href="/projects.html">Open Projects Dashboard →</a>
+</div>
+
+<div class="project-grid">
+  {%- for p in featured %}
+  <article class="project-card reveal{% if p.highlight %} highlight grad-border{% endif %}" data-tilt style="--i:{{ forloop.index0 }}">
+    <p class="project-kicker">{{ p.kicker }}</p>
+    <h3>{{ p.name }}</h3>
+    {%- if p.org or p.period %}
+    <p class="card-meta">{{ p.org }}{% if p.org and p.period %} · {% endif %}{{ p.period }}</p>
+    {%- endif %}
+    <p>{{ p.tagline }}</p>
+    <p class="tech-line">{{ p.tech | join: " · " }}</p>
+    <div class="card-links">
+      <a href="/projects.html#{{ p.id }}">Details →</a>
+      {%- for l in p.links %}
+      <a href="{{ l.url }}">{{ l.label }}</a>
+      {%- endfor %}
+      {%- unless p.links %}
+      {%- if p.access %}<span class="access-note">{{ p.access }}</span>{% endif %}
+      {%- endunless %}
+    </div>
+  </article>
+  {%- endfor %}
+</div>
+
+<h2>Communication &amp; Enablement</h2>
+
+<p class="section-intro">Most of what I build has to be handed to someone who didn't build it. That has meant teaching a 13-student cohort to ship a deployed multi-agent system, running 12+ hands-on lectures for engineers moving into AI, introducing agentic workflows to accounting professionals with no engineering background, and scoping two client systems from onsite interviews with clinicians and contract reviewers. Translating a technical system into the language of the people who own the problem is a skill I practise deliberately, not a side effect.</p>
+
+<div class="project-grid">
+  {%- for p in enablement %}
+  <article class="project-card reveal" data-tilt style="--i:{{ forloop.index0 }}">
+    <p class="project-kicker">{{ p.kicker }}</p>
+    <h3>{{ p.name }}</h3>
+    {%- if p.delivery.size or p.period %}
+    <p class="card-meta">{{ p.delivery.size }}{% if p.delivery.size and p.period %} · {% endif %}{{ p.period }}</p>
+    {%- endif %}
+    <p>{{ p.tagline }}</p>
+    {%- if p.delivery %}
+    <p class="tech-line">Audience — {{ p.delivery.audience }}</p>
+    {%- endif %}
+    <div class="card-links">
+      <a href="/projects.html#{{ p.id }}">Details →</a>
+      {%- for l in p.links %}
+      <a href="{{ l.url }}">{{ l.label }}</a>
+      {%- endfor %}
+    </div>
+  </article>
+  {%- endfor %}
+</div>
+
+<h2>Work Experience</h2>
+
+<div class="timeline">
+  <div class="timeline-item reveal">
+    <span>Apr 2025 - Jun 2026</span>
+    <h3>WiseTech Global - AI Engineer, AI/ML Group</h3>
+    <p>AI Engineer on CWBot and TriageAgent. Architected stateful multi-turn LLM agents with LangGraph and MCP, designed RAG workflows over enterprise knowledge bases, implemented guardrails and evaluation pipelines, instrumented request tracing and token/cost accounting, and owned CI/CD and deployment standards for production AI services.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>2026</span>
+    <h3>Ultra OT &amp; Termly - Lead Engineer, onsite client engagements</h3>
+    <p>Two forward-deployed engagements as sole engineer. Ran discovery with clinicians and admin staff before scoping an occupational therapy practice's operations system, including route-aware scheduling via geospatial clustering. Delivered document AI for Australian medical contract automation in a regulated healthcare setting, designed so output was checkable rather than trusted blindly.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>Feb 2025 - Present</span>
+    <h3>SGLang Framework - Open Source Contributor</h3>
+    <p>Contribute runtime and serving optimizations for LLM inference backends used by agentic systems, spanning backend runtime, distributed serving, and prompt-language features for models including DeepSeek R1, Llama 3 and Qwen.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>Feb 2026 - Jun 2026</span>
+    <h3>Australia IT Group &amp; ANZCC - Guest Instructor, Workshop Facilitator</h3>
+    <p>12+ bootcamp sessions on production RAG, vector search, multi-agent systems, QLoRA fine-tuning and RAGAS evaluation. Designed Dispatch.AI, a 6-week project taking 13 students to a deployed AI booking assistant. Delivered a hands-on agentic AI workshop for accounting professionals, adapting technical content for a non-technical business audience.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>Mar 2023 - Jan 2025</span>
+    <h3>Redbubble - Data Scientist, Search &amp; Recommendation</h3>
+    <p>Led search and recommendation enhancements with Marqo vector search and GCP Vertex AI MLOps pipelines, improving add-to-cart by 0.5% and CTR by 10%. Owned production ML workflows end to end — offline evaluation, experiment design, deployment coordination and post-launch metric review — communicating results and model logic to product stakeholders. Designed ML infrastructure over 100M+ user events and drove the GA4 to BigQuery analytics migration underpinning A/B testing.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>Jan 2021 - Mar 2023</span>
+    <h3>Redbubble - Data Scientist, Content &amp; Discovery</h3>
+    <p>Shipped production content-classification and moderation systems using language-image models, reducing IP moderation risk and improving operational throughput. Built image duplicate-detection pipelines and data-quality/anomaly-detection workflows, and ran tagging, taxonomy and SEO experiments to improve product discovery.</p>
+  </div>
+  <div class="timeline-item reveal">
+    <span>Jul 2012 - Jun 2013</span>
+    <h3>Microsoft Research Asia - Research Intern</h3>
+    <p>Web Search and Data Mining Group. Developed Autosub, a collaborative subtitle-generation system using speech-to-text APIs, and contributed to web page mining projects using data mining and time-series analysis.</p>
+  </div>
+</div>
+
+<h2>Research, Education, Awards</h2>
+
+<div class="compact-grid">
+  <div class="reveal">
+    <h3>Education</h3>
+    <p>PhD in Computer Science — Search &amp; Recommendation Systems, RMIT University. B.Sc. in Computer Science, Harbin Institute of Technology.</p>
+  </div>
+  <div class="reveal">
+    <h3>Publications</h3>
+    <p>VLDB Journal, DASFAA, ADC. Research focus: personalized ranking, preference adjustment, and continuous summarization.</p>
+  </div>
+  <div class="reveal">
+    <h3>Awards</h3>
+    <p>ADC Best Student Paper Award, DASFAA Best Student Paper Runner Up, Google Code Jam Top 1000, ACM-ICPC Asia Regional Silver Medal.</p>
+  </div>
+  <div class="reveal">
+    <h3>Certifications</h3>
+    <p>Google Cloud Professional Data Engineer, Microsoft Azure AI Fundamentals, GCP data lake / warehouse modernization, deep learning and NLP specializations.</p>
+  </div>
+</div>
+
+<h2>Hiring Signal</h2>
+
+<div class="hire-panel reveal">
+  <p>My strongest fit is where search, retrieval, and ML engineering meet production AI: meaningful evaluation metrics, large or noisy catalogs, data pipelines that need to be reliable, and systems that need to improve measurably over time — not just demo well once. PhD-trained in search and recommendation, hands-on in data science and MLOps, now building LLM-powered systems end-to-end — and able to explain any of it to the people who have to live with it.</p>
+  <a class="button primary" href="mailto:liangjun.song@outlook.com">Start a conversation</a>
+</div>

@@ -1,10 +1,21 @@
 title: Liangjun (Lance) Song, PhD
-description: Forward-Deployed AI Engineer building production agentic workflows, RAG systems, and automation platforms.
+description: Senior Data Scientist and ML Engineer. PhD in search and recommendation — production search ranking, experimentation, RAG and agentic systems.
 show_downloads: false
 google_analytics:
-theme: jekyll-theme-hacker
 
-# Worker backend for the JD Fit Checker is deployed separately via wrangler.
-# Keep its source out of the published site.
+# No `theme:` key. This repo is a vendored fork of pages-themes/hacker — the
+# layouts, _sass partials and assets/css/style.scss all live here, so declaring
+# the gem added nothing and broke local builds (the gem isn't installed).
+plugins:
+  - jekyll-seo-tag
+
+# Keep non-site sources out of the published output.
+# NOTE: do NOT exclude `data/` — fit.html fetches /data/experience-bank.json at
+# runtime, and the Cloudflare Worker bundles the same file.
 exclude:
-  - worker/
+  - worker/          # JD Fit Checker backend, deployed separately via wrangler
+  - script/          # build/validation helpers
+  - docs/
+  - jekyll-theme-hacker.gemspec
+  - .travis.yml
+  - .rubocop.yml

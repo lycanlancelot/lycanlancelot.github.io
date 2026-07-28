@@ -1,227 +1,23 @@
+---
+title: Projects Dashboard
+description: >-
+  Applied AI systems, data-science case studies, agentic developer tooling and
+  enablement work by Liangjun (Lance) Song.
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projects Dashboard — Lance Song</title>
 <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+{% seo %}
+<!-- Set before first paint so scroll-reveal starts hidden only when JS can
+     actually reveal it. Without JS the content simply stays visible. -->
+<script>document.documentElement.className += ' js';</script>
+<script src="/assets/js/motion.js" defer></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<style>
-:root {
-  --bg:       #070b12;
-  --panel:    #101826;
-  --panel-2:  #132033;
-  --panel-3:  #1a2d45;
-  --line:     rgba(148,163,184,0.18);
-  --text:     #e5edf8;
-  --muted:    #9fb0c7;
-  --dim:      #74849b;
-  --accent:   #3dd6b4;
-  --accent-2: #61a5ff;
-  --warn:     #f5c15c;
-  --red:      #f87171;
-  --purple:   #a78bfa;
-}
-
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);color:var(--text);font-family:Monaco,"Bitstream Vera Sans Mono","Lucida Console",Terminal,monospace;font-size:13px;line-height:1.5;}
-a{color:var(--accent-2);text-decoration:none;}
-a:hover{text-decoration:underline;}
-
-/* NAV */
-.site-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 32px;border-bottom:1px solid var(--line);
-  background:var(--panel);position:sticky;top:0;z-index:100;
-}
-.site-nav .brand{font-size:14px;color:var(--accent);font-weight:700;letter-spacing:1px;}
-.site-nav .back-link{color:var(--muted);font-size:12px;}
-.site-nav .back-link:hover{color:var(--text);}
-
-/* HERO */
-.dash-hero{
-  padding:48px 32px 32px;max-width:960px;margin:0 auto;
-}
-.dash-hero h1{font-size:28px;color:var(--text);letter-spacing:-0.5px;margin-bottom:10px;}
-.dash-hero h1 span{color:var(--accent);}
-.dash-hero p{color:var(--muted);max-width:560px;font-size:12px;line-height:1.7;}
-
-/* STATS */
-.stat-row{
-  display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;
-}
-.stat-pill{
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:6px;padding:10px 18px;font-size:11px;
-  display:flex;flex-direction:column;gap:2px;
-}
-.stat-pill strong{color:var(--accent);font-size:18px;}
-.stat-pill span{color:var(--dim);}
-
-/* FILTERS */
-.filter-bar{
-  max-width:960px;margin:0 auto;padding:0 32px 20px;
-  display:flex;gap:8px;flex-wrap:wrap;
-}
-.filter-btn{
-  background:var(--panel);border:1px solid var(--line);color:var(--muted);
-  padding:6px 14px;border-radius:4px;cursor:pointer;font-size:11px;
-  font-family:inherit;transition:all 0.15s;
-}
-.filter-btn:hover{border-color:var(--accent);color:var(--text);}
-.filter-btn.active{background:var(--accent);color:#070b12;border-color:var(--accent);font-weight:700;}
-
-/* GRID */
-.projects-grid{
-  max-width:960px;margin:0 auto;padding:0 32px 80px;
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
-}
-
-/* CARD */
-.project-card{
-  background:var(--panel);border:1px solid var(--line);border-radius:8px;
-  padding:20px;cursor:pointer;transition:all 0.2s;position:relative;
-  display:flex;flex-direction:column;gap:10px;
-}
-.project-card:hover{border-color:var(--accent-2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
-.project-card.highlight{border-color:rgba(61,214,180,0.35);}
-
-.card-kicker{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;}
-.card-title{font-size:16px;color:var(--text);font-weight:700;}
-.card-tagline{font-size:11px;color:var(--muted);line-height:1.5;}
-.card-tech{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;}
-.tech-pill{
-  font-size:9px;padding:2px 7px;border-radius:3px;
-  background:var(--panel-2);border:1px solid var(--line);color:var(--dim);
-}
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--line);}
-.status-badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;letter-spacing:0.5px;}
-.status-active{background:rgba(61,214,180,0.12);color:var(--accent);border:1px solid rgba(61,214,180,0.3);}
-.status-2025{background:rgba(97,165,255,0.12);color:var(--accent-2);border:1px solid rgba(97,165,255,0.3);}
-.status-2026{background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.3);}
-.status-contrib{background:rgba(245,193,92,0.12);color:var(--warn);border:1px solid rgba(245,193,92,0.3);}
-.card-open-hint{font-size:10px;color:var(--dim);}
-
-/* MODAL */
-.modal-overlay{
-  display:none;position:fixed;inset:0;z-index:200;
-  background:rgba(4,8,16,0.85);backdrop-filter:blur(4px);
-  align-items:center;justify-content:center;padding:24px;
-}
-.modal-overlay.open{display:flex;}
-.modal{
-  background:var(--panel);border:1px solid var(--line);border-radius:12px;
-  width:100%;max-width:820px;max-height:90vh;overflow:hidden;
-  display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,0.6);
-}
-.modal-header{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  padding:22px 24px 16px;border-bottom:1px solid var(--line);gap:16px;
-}
-.modal-header-info{display:flex;flex-direction:column;gap:6px;}
-.modal-title{font-size:20px;color:var(--text);font-weight:700;}
-.modal-tagline{font-size:12px;color:var(--muted);}
-.modal-links{display:flex;gap:8px;align-items:center;}
-.modal-link-btn{
-  font-size:10px;padding:4px 12px;border-radius:4px;border:1px solid var(--line);
-  color:var(--muted);background:var(--panel-2);cursor:pointer;font-family:inherit;
-  text-decoration:none;display:inline-flex;align-items:center;gap:4px;
-}
-.modal-link-btn:hover{border-color:var(--accent-2);color:var(--accent-2);}
-.modal-link-btn.primary{background:var(--accent);color:#070b12;border-color:var(--accent);font-weight:700;}
-.modal-link-btn.primary:hover{background:#2fc49f;}
-.modal-close{
-  background:none;border:1px solid var(--line);border-radius:6px;
-  color:var(--dim);font-size:16px;width:30px;height:30px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  font-family:inherit;
-}
-.modal-close:hover{color:var(--text);border-color:var(--muted);}
-
-/* TABS */
-.modal-tabs{
-  display:flex;gap:0;border-bottom:1px solid var(--line);
-  padding:0 24px;background:var(--panel);
-}
-.modal-tab{
-  padding:11px 16px;font-size:11px;color:var(--dim);cursor:pointer;
-  border-bottom:2px solid transparent;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;
-  transition:all 0.15s;margin-bottom:-1px;
-}
-.modal-tab:hover{color:var(--muted);}
-.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-
-/* MODAL BODY */
-.modal-body{flex:1;overflow-y:auto;padding:24px;}
-
-/* OVERVIEW TAB */
-.overview-description{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
-.feature-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
-.feature-list li{
-  font-size:11px;color:var(--muted);padding-left:16px;position:relative;line-height:1.5;
-}
-.feature-list li::before{content:"▸";position:absolute;left:0;color:var(--accent);}
-.tech-section h4{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.tech-grid{display:flex;flex-wrap:wrap;gap:5px;}
-.tech-tag{
-  font-size:10px;padding:3px 10px;border-radius:4px;
-  background:var(--panel-3);border:1px solid var(--line);color:var(--text);
-}
-
-/* ARCHITECTURE TAB */
-.arch-wrap{min-height:240px;padding:8px 0;}
-.mermaid{font-size:11px !important;}
-
-/* GRAPH TAB */
-.graph-wrap{width:100%;height:380px;position:relative;}
-.graph-wrap svg{width:100%;height:100%;}
-.graph-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
-.legend-dot{width:10px;height:10px;border-radius:50%;}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:var(--panel);}
-::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
-
-/* SECTION LABEL */
-.section-label{
-  max-width:960px;margin:32px auto 12px;padding:0 32px;
-  font-size:10px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;
-  display:flex;align-items:center;gap:10px;
-}
-.section-label::after{content:"";flex:1;height:1px;background:var(--line);}
-
-/* LECTURES TAB */
-.lec-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
-.lec-legend{display:flex;flex-wrap:wrap;gap:5px;}
-.lec-list{display:flex;flex-direction:column;gap:8px;}
-.lec-row{
-  display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:start;
-  background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:12px 14px;
-  transition:border-color 0.15s;
-}
-.lec-row:hover{border-color:rgba(148,163,184,0.35);}
-.lec-date{font-size:10px;color:var(--dim);padding-top:2px;font-variant-numeric:tabular-nums;}
-.lec-body{display:flex;flex-direction:column;gap:6px;}
-.lec-title{font-size:12px;color:var(--text);line-height:1.4;}
-.lec-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.lec-topic-pill{
-  font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid;font-weight:700;letter-spacing:0.5px;
-}
-.lec-duration{font-size:10px;color:var(--dim);}
-
-/* HIDDEN */
-.hidden{display:none !important;}
-
-@media(max-width:600px){
-  .dash-hero{padding:32px 16px 24px;}
-  .filter-bar,.projects-grid,.section-label{padding-left:16px;padding-right:16px;}
-  .modal{max-height:95vh;}
-  .modal-header{flex-direction:column;}
-}
-</style>
+<link rel="stylesheet" href="{{ '/assets/css/dashboard.css?v=' | append: site.github.build_revision | relative_url }}">
 </head>
 <body>
 
@@ -232,7 +28,7 @@ a:hover{text-decoration:underline;}
 
 <div class="dash-hero">
   <h1>Projects <span>Dashboard</span></h1>
-  <p>Applied AI systems, agentic developer tooling, multimodal retrieval, and web applications — built and contributed by Lance Song.</p>
+  <p>Data-science case studies, applied AI systems, agentic developer tooling, client engagements, and the teaching and discovery work around them. Case studies open with a system map, experiment design, and measured impact; code projects open with an architecture diagram and a code graph.</p>
   <div class="stat-row" id="stat-row"></div>
 </div>
 
@@ -256,620 +52,26 @@ a:hover{text-decoration:underline;}
   </div>
 </div>
 
+<!-- ─── PROJECT DATA ──────────────────────────────────────────────────────────
+     Content lives in _data/projects.yml — edit it there, not here.
+
+     It is injected as a JSON <script> tag rather than as JS source because:
+       (a) Liquid never runs over data-file VALUES, so mermaid's double-brace
+           hexagon-node syntax survives; inlining it as JS source here would let
+           Liquid parse it as an output tag and eat it.
+       (b) no quote or backtick in the data can break the surrounding script.
+
+     Constraint: never put the literal `</script` in the data — jsonify does not
+     escape `<`. script/validate-projects.py enforces this. -->
+<script id="projects-data" type="application/json">{{ site.data.projects | jsonify }}</script>
+<script id="categories-data" type="application/json">{{ site.data.project_categories | jsonify }}</script>
+
 <script>
-// ─── PROJECT DATA ────────────────────────────────────────────────────────────
-// To add a new project: append a new object to this array.
-
-const PROJECTS = [
-  {
-    id: "termly",
-    name: "Termly",
-    tagline: "Document AI for Australian Healthcare Contracts",
-    kicker: "Healthcare AI · Contract Intelligence",
-    category: "ai-systems",
-    status: "active",
-    year: "2026",
-    github: "https://github.com/lycanlancelot/Termly",
-    demo: null,
-    highlight: true,
-    tech: ["Python", "FastAPI", "Pydantic", "Claude Sonnet", "Azure Doc Intelligence", "Tesseract OCR", "Docker"],
-    description: "Australian medical contract automation system. Ingests scanned PDFs, corrects OCR artefacts, extracts structured clauses and Medicare/PBS identifiers, validates compliance fields, and produces risk assessments via Claude Sonnet. Backed by FastAPI REST services with healthcare-domain validation logic and a provider-switchable LLM layer.",
-    features: [
-      "PDF extraction pipeline (Azure Doc Intelligence + Tesseract fallback)",
-      "Structured clause/entity extraction via Claude Sonnet with Pydantic schema enforcement",
-      "MPPA/Medicare identifier validation and risk scoring",
-      "Docker-containerised with environment parity local ↔ deployed",
-      "Switchable LLM provider layer (Claude, OpenAI, local)"
-    ],
-    mermaid: `graph LR
-    A([PDF / Contract]) --> B[Azure Doc Intelligence]
-    A --> C[Tesseract OCR]
-    B --> D[Clause Extractor]
-    C --> D
-    D --> E{{Claude Sonnet}}
-    E --> F[Structured Output<br/>Pydantic]
-    F --> G{Validation Engine}
-    G -->|pass| H[(PostgreSQL)]
-    G -->|fail| I[Risk Report]
-    H --> J[FastAPI REST]`,
-    graph: {
-      nodes: [
-        {id:"main", label:"main.py", type:"entry"},
-        {id:"routes_contracts", label:"routes/contracts.py", type:"api"},
-        {id:"routes_analysis", label:"routes/analysis.py", type:"api"},
-        {id:"svc_ocr", label:"services/ocr.py", type:"service"},
-        {id:"svc_llm", label:"services/llm_client.py", type:"service"},
-        {id:"svc_extract", label:"services/extractor.py", type:"service"},
-        {id:"svc_valid", label:"services/validator.py", type:"service"},
-        {id:"models", label:"models/contract.py", type:"data"},
-        {id:"docker", label:"Dockerfile", type:"config"},
-        {id:"azure", label:"Azure Doc Intel", type:"external"},
-        {id:"claude", label:"Claude Sonnet", type:"external"},
-        {id:"db", label:"PostgreSQL", type:"data"}
-      ],
-      links: [
-        {s:"main",t:"routes_contracts"},{s:"main",t:"routes_analysis"},
-        {s:"routes_contracts",t:"svc_ocr"},{s:"routes_contracts",t:"svc_extract"},
-        {s:"routes_analysis",t:"svc_llm"},{s:"routes_analysis",t:"svc_valid"},
-        {s:"svc_ocr",t:"azure"},{s:"svc_llm",t:"claude"},
-        {s:"svc_extract",t:"models"},{s:"svc_valid",t:"models"},
-        {s:"svc_valid",t:"db"},{s:"docker",t:"main"}
-      ]
-    }
-  },
-  {
-    id: "agentic-workbench",
-    name: "Agentic Workbench",
-    tagline: "Remote orchestration + multi-agent control plane for AI coding agents",
-    kicker: "Agentic Developer Tooling",
-    category: "dev-tools",
-    status: "active",
-    year: "2025–2026",
-    github: "https://github.com/lycanlancelot/remote-agent",
-    github2: "https://github.com/lycanlancelot/agent-forge",
-    demo: null,
-    highlight: true,
-    tech: ["React", "TypeScript", "Express", "Socket.IO", "xterm.js", "SQLite", "PM2", "Git Worktrees", "PTY"],
-    description: "Two complementary tools unified under one umbrella. Remote Agent Workbench handles single-agent browser orchestration via PTY streaming — live terminals, file previews, task persistence, and permission prompts. AgentForge is the multi-agent parallel control plane — running Claude Code, Codex, and Kimi Code simultaneously across isolated git worktrees with PM2 management and auto-commit scheduling. Together they cover the full range of AI coding-agent workflows from one-shot interactive tasks to long-running parallel batch jobs.",
-    features: [
-      "PTY-backed live terminal streaming via xterm.js (single-agent mode)",
-      "Task queue with persistence, conversation continuity, and allowed-directory safety boundary",
-      "File preview with syntax highlighting and model selector UI",
-      "Multi-agent grid running Claude Code, Codex, and Kimi Code in parallel",
-      "Git worktree isolation — each task works on its own branch copy",
-      "PM2 process management with auto-restart and auto-commit scheduling",
-      "Socket.IO real-time comms, Cloudflare Tunnel for remote browser access"
-    ],
-    mermaid: `graph TB
-    subgraph WB["Remote Workbench · single agent"]
-      UI[React UI] <-->|Socket.IO| SRV[Express Server]
-      SRV --> TR[Terminal Router]
-      TR --> PT[PTY Process]
-      SRV --> WS[Workspace Router]
-    end
-    subgraph AF["AgentForge · multi-agent"]
-      AG[Agent Grid] <--> OR[Orchestrator]
-      OR --> WM[Worktree Manager]
-      OR --> PM[PM2 Manager]
-    end
-    PT --> CC([Claude Code])
-    WM --> CC
-    WM --> CX([Codex CLI])
-    WM --> KI([Kimi Code])
-    OR <--> DB[(SQLite)]
-    WS --> DB`,
-    graph: {
-      nodes: [
-        {id:"UI", label:"App.tsx (React)", type:"ui"},
-        {id:"AgentGrid", label:"AgentGrid.tsx", type:"ui"},
-        {id:"TaskQueue", label:"TaskQueue.tsx", type:"ui"},
-        {id:"XTerm", label:"Terminal.tsx (xterm)", type:"ui"},
-        {id:"FilePreview", label:"FilePreview.tsx", type:"ui"},
-        {id:"server", label:"server/index.ts", type:"entry"},
-        {id:"ws_router", label:"routes/workspace.ts", type:"api"},
-        {id:"term_router", label:"routes/terminal.ts", type:"api"},
-        {id:"orchestrator", label:"orchestrator.ts", type:"service"},
-        {id:"agentEngine", label:"agentEngine.ts", type:"service"},
-        {id:"worktree", label:"worktreeManager.ts", type:"service"},
-        {id:"pm2mgr", label:"pm2Manager.ts", type:"service"},
-        {id:"db", label:"SQLite", type:"data"},
-        {id:"pty", label:"PTY Process", type:"external"},
-        {id:"git", label:"Git Worktrees", type:"external"},
-        {id:"pm2", label:"PM2", type:"external"}
-      ],
-      links: [
-        {s:"UI",t:"AgentGrid"},{s:"UI",t:"TaskQueue"},{s:"UI",t:"FilePreview"},
-        {s:"UI",t:"server"},
-        {s:"server",t:"ws_router"},{s:"server",t:"term_router"},{s:"server",t:"orchestrator"},
-        {s:"ws_router",t:"agentEngine"},{s:"ws_router",t:"db"},
-        {s:"term_router",t:"pty"},{s:"agentEngine",t:"pty"},
-        {s:"AgentGrid",t:"orchestrator"},
-        {s:"orchestrator",t:"worktree"},{s:"orchestrator",t:"pm2mgr"},{s:"orchestrator",t:"db"},
-        {s:"worktree",t:"git"},{s:"pm2mgr",t:"pm2"}
-      ]
-    }
-  },
-  {
-    id: "video-rag",
-    name: "Video-RAG",
-    tagline: "Multimodal RAG over video with CLIP embeddings",
-    kicker: "Multimodal Retrieval · AI Systems",
-    category: "ai-systems",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/Iliana678/Video-RAG",
-    demo: null,
-    highlight: false,
-    tech: ["Python", "CLIP", "ChromaDB", "FastAPI", "OpenCV", "OpenAI API"],
-    description: "Collaborative multimodal RAG pipeline. Samples video frames at configurable rates, generates CLIP image embeddings, stores them in ChromaDB, and answers natural-language queries with timestamped visual evidence. Supports image-only search paths and multiple LLM provider backends.",
-    features: [
-      "Configurable frame sampling (keyframes or fixed interval)",
-      "CLIP image embeddings stored in ChromaDB vector store",
-      "Natural-language query with timestamped frame results",
-      "Multiple LLM provider backends (OpenAI, local)",
-      "FastAPI serving layer with query and ingest endpoints"
-    ],
-    mermaid: `graph LR
-    VF([Video File]) --> FS[Frame Sampler]
-    FS --> CLIP{{CLIP Encoder}}
-    CLIP --> VDB[(ChromaDB)]
-    Q([NL Query]) --> QE[Query Encoder]
-    QE --> SR[Similarity Search]
-    VDB --> SR
-    SR --> TS[Timestamped Frames]
-    TS --> LLM{{LLM}}
-    LLM --> ANS([Answer])`,
-    graph: {
-      nodes: [
-        {id:"ingest", label:"ingest.py", type:"entry"},
-        {id:"frame_ex", label:"frame_extractor.py", type:"service"},
-        {id:"embedder", label:"embedder.py", type:"service"},
-        {id:"vectorstore", label:"vectorstore.py", type:"data"},
-        {id:"retriever", label:"retriever.py", type:"service"},
-        {id:"qa_chain", label:"qa_chain.py", type:"service"},
-        {id:"api", label:"api.py", type:"api"},
-        {id:"clip", label:"CLIP Model", type:"external"},
-        {id:"chroma", label:"ChromaDB", type:"data"},
-        {id:"llm", label:"LLM API", type:"external"}
-      ],
-      links: [
-        {s:"ingest",t:"frame_ex"},{s:"frame_ex",t:"embedder"},
-        {s:"embedder",t:"clip"},{s:"embedder",t:"vectorstore"},
-        {s:"vectorstore",t:"chroma"},{s:"api",t:"retriever"},
-        {s:"retriever",t:"vectorstore"},{s:"retriever",t:"qa_chain"},
-        {s:"qa_chain",t:"llm"}
-      ]
-    }
-  },
-  {
-    id: "toy-gifting",
-    name: "Toy Gifting System",
-    tagline: "Back-office sourcing + 3D bin-packing for gift boxes",
-    kicker: "Operator Automation · Web App",
-    category: "web-mobile",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/lycanlancelot/toy-gifting",
-    demo: null,
-    highlight: false,
-    tech: ["JavaScript", "Node.js", "SQLite", "Three.js", "HTML/CSS"],
-    description: "Back-office sourcing and assembly tool for building custom toy gift boxes targeting Australian children. Ingests SQLite toy catalogs, models supplier/compliance metadata and bilingual product data, drives an operator review loop, and renders a Three.js 3D bin-packing visualisation of the assembled box.",
-    features: [
-      "SQLite catalog ingestion with multi-field filtering",
-      "Supplier compliance, certification and dimension metadata",
-      "Three.js 3D bin-packing visualisation of assembled box",
-      "Operator feedback and approval workflow",
-      "Bilingual (English/Chinese) product data support",
-      "Price conversion and small-batch supplier modelling"
-    ],
-    mermaid: `graph TB
-    CAT[(Toy Catalog DB)] --> UI[Operator UI]
-    SUP[Supplier Metadata] --> UI
-    UI --> AS[Assembly Engine]
-    AS --> BP[Bin-Packing Algorithm]
-    BP --> 3D{{Three.js Renderer}}
-    3D --> VIZ([3D Box Preview])
-    UI --> FB[Operator Feedback]
-    FB --> AS
-    AS --> EX[Export / PDF]`,
-    graph: {
-      nodes: [
-        {id:"index", label:"index.html", type:"entry"},
-        {id:"catalog", label:"catalog.js", type:"service"},
-        {id:"assembler", label:"assembler.js", type:"service"},
-        {id:"packer", label:"packer.js", type:"service"},
-        {id:"renderer", label:"ThreeRenderer.js", type:"ui"},
-        {id:"api_catalog", label:"api/catalog.js", type:"api"},
-        {id:"db", label:"db/catalog.db", type:"data"},
-        {id:"three", label:"Three.js", type:"external"}
-      ],
-      links: [
-        {s:"index",t:"catalog"},{s:"index",t:"renderer"},
-        {s:"catalog",t:"api_catalog"},{s:"api_catalog",t:"db"},
-        {s:"catalog",t:"assembler"},{s:"assembler",t:"packer"},
-        {s:"renderer",t:"three"},{s:"packer",t:"renderer"}
-      ]
-    }
-  },
-  {
-    id: "branchflow",
-    name: "BranchFlow",
-    tagline: "Nonlinear writing workbench with React Flow mind maps",
-    kicker: "Creative AI · Web App",
-    category: "web-mobile",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/lycanlancelot/writer-helper",
-    demo: null,
-    highlight: false,
-    tech: ["React 18", "TypeScript", "Vite", "React Flow", "Obsidian Canvas"],
-    description: "Local nonlinear writing and prompt-orchestration workbench (枝影 · BranchFlow) for Seedance-style branching narrative work. Manages branching story state, drives prompt drawers per branch node, renders a React Flow mind-map of the story tree, and exports to Obsidian Canvas format.",
-    features: [
-      "Branching story editor with per-branch context isolation",
-      "Prompt drawer per node with LLM call and result injection",
-      "React Flow mind-map visualisation of story tree",
-      "Obsidian Canvas export for external note-taking integration",
-      "Local-only — no server, no auth required"
-    ],
-    mermaid: `graph TB
-    ED[Branch Editor] --> BS[Branch Tree State]
-    BS --> RF{{React Flow Graph}}
-    ED --> PD[Prompt Drawer]
-    PD --> LLM{{LLM Provider}}
-    LLM --> GEN[Generated Content]
-    GEN --> ED
-    BS --> OC[Obsidian Canvas Export]`,
-    graph: {
-      nodes: [
-        {id:"App", label:"App.tsx", type:"entry"},
-        {id:"BranchEditor", label:"BranchEditor.tsx", type:"ui"},
-        {id:"BranchTree", label:"BranchTree.ts", type:"service"},
-        {id:"FlowGraph", label:"ReactFlowGraph.tsx", type:"ui"},
-        {id:"PromptDrawer", label:"PromptDrawer.tsx", type:"ui"},
-        {id:"llm", label:"llm/provider.ts", type:"service"},
-        {id:"canvas_export", label:"export/canvas.ts", type:"service"},
-        {id:"rf", label:"React Flow", type:"external"}
-      ],
-      links: [
-        {s:"App",t:"BranchEditor"},{s:"App",t:"FlowGraph"},
-        {s:"BranchEditor",t:"BranchTree"},{s:"BranchEditor",t:"PromptDrawer"},
-        {s:"BranchTree",t:"FlowGraph"},{s:"FlowGraph",t:"rf"},
-        {s:"PromptDrawer",t:"llm"},{s:"BranchTree",t:"canvas_export"}
-      ]
-    }
-  },
-  {
-    id: "elder-companion",
-    name: "Elder Companion",
-    tagline: "Voice AI companion + family dashboard for elderly users",
-    kicker: "Voice AI · Mobile Prototype",
-    category: "web-mobile",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/lycanlancelot/elder-companion",
-    demo: null,
-    highlight: false,
-    tech: ["Expo", "React Native", "Node.js", "Firebase", "Claude API", "ElevenLabs"],
-    description: "Expo React Native prototype for elderly users, paired with a family-facing dashboard. Elder screen handles voice conversation, daily summaries, and alert workflows. Family dashboard shows activity feed, summaries, and allows configuring reminders and alerts.",
-    features: [
-      "Voice-first UI for elderly users (Expo/React Native)",
-      "Claude-backed conversation engine with safety guardrails",
-      "Firebase Firestore persistence for sessions and summaries",
-      "Daily summary generation workflow for family dashboard",
-      "ElevenLabs TTS integration plan for natural voice output",
-      "Alert system for unusual activity patterns"
-    ],
-    mermaid: `graph TB
-    subgraph ElderApp
-      VA([Voice Input]) --> ASR[Speech Recognition]
-      TTS[TTS Engine] --> VA
-    end
-    ASR --> LLM{{Claude API}}
-    LLM --> TTS
-    LLM --> SUM[Daily Summary]
-    SUM --> FS[(Firebase)]
-    FS --> FAM[Family Dashboard]
-    FAM --> ALERT[Alert Workflow]`,
-    graph: {
-      nodes: [
-        {id:"App", label:"App.tsx", type:"entry"},
-        {id:"VoiceScreen", label:"VoiceScreen.tsx", type:"ui"},
-        {id:"FamilyDash", label:"FamilyDashboard.tsx", type:"ui"},
-        {id:"claude_svc", label:"llm/claude.ts", type:"service"},
-        {id:"elevenlabs", label:"audio/elevenlabs.ts", type:"service"},
-        {id:"firebase_db", label:"firebase/db.ts", type:"data"},
-        {id:"summary_svc", label:"services/summary.ts", type:"service"},
-        {id:"firebase", label:"Firebase", type:"external"},
-        {id:"claude_api", label:"Claude API", type:"external"}
-      ],
-      links: [
-        {s:"App",t:"VoiceScreen"},{s:"App",t:"FamilyDash"},
-        {s:"VoiceScreen",t:"claude_svc"},{s:"VoiceScreen",t:"elevenlabs"},
-        {s:"claude_svc",t:"claude_api"},{s:"claude_svc",t:"summary_svc"},
-        {s:"summary_svc",t:"firebase_db"},{s:"firebase_db",t:"firebase"},
-        {s:"FamilyDash",t:"firebase_db"}
-      ]
-    }
-  },
-  {
-    id: "ragezone",
-    name: "RageZone",
-    tagline: "LLM-assisted argument coaching via WeChat Mini Program",
-    kicker: "Realtime Communication AI",
-    category: "web-mobile",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/lycanlancelot/ragezone",
-    demo: null,
-    highlight: false,
-    tech: ["WeChat Mini Program", "Node.js", "WebSocket", "LLM API", "JWT", "Firebase"],
-    description: "WeChat Mini Program and Node/WebSocket backend for an LLM-assisted argument coaching product. Users set a persona, engage in real-time chat guided by the LLM coach, and receive de-escalation or reframing suggestions. Includes auth design, evaluation scripts, and monetisation entry points.",
-    features: [
-      "WeChat Mini Program frontend with persona setup",
-      "Real-time WebSocket communication server",
-      "LLM-driven coaching and de-escalation suggestions",
-      "JWT + Firebase auth plan",
-      "Evaluation scripts and A/B test scaffolding",
-      "Monetisation entry points design"
-    ],
-    mermaid: `graph TB
-    WX([WeChat Mini Program]) <-->|WSS| WS[WebSocket Server]
-    WS --> PE[Persona Engine]
-    PE --> LLM{{LLM Coach}}
-    LLM --> CM[Coaching Messages]
-    CM --> WS
-    WS --> AUTH[JWT Auth]
-    AUTH --> FB[(Firebase)]`,
-    graph: {
-      nodes: [
-        {id:"wechat", label:"pages/chat.js", type:"ui"},
-        {id:"ws_client", label:"utils/ws.js", type:"service"},
-        {id:"server", label:"server/index.js", type:"entry"},
-        {id:"chat_route", label:"routes/chat.js", type:"api"},
-        {id:"persona", label:"services/persona.js", type:"service"},
-        {id:"llm_svc", label:"services/llm.js", type:"service"},
-        {id:"auth", label:"middleware/auth.js", type:"service"},
-        {id:"firebase", label:"Firebase", type:"external"},
-        {id:"llm_api", label:"LLM API", type:"external"}
-      ],
-      links: [
-        {s:"wechat",t:"ws_client"},{s:"ws_client",t:"server"},
-        {s:"server",t:"chat_route"},{s:"server",t:"auth"},
-        {s:"chat_route",t:"persona"},{s:"persona",t:"llm_svc"},
-        {s:"llm_svc",t:"llm_api"},{s:"auth",t:"firebase"}
-      ]
-    }
-  },
-  {
-    id: "claude-sourcemap",
-    name: "Claude Code Source Map",
-    tagline: "Source-map inspection of early Claude Code CLI internals",
-    kicker: "Agent Architecture Research",
-    category: "dev-tools",
-    status: "2025",
-    year: "2025",
-    github: "https://github.com/lycanlancelot/claude-code-sourcemap",
-    demo: null,
-    highlight: false,
-    tech: ["Node.js", "JavaScript", "Source Maps"],
-    description: "Technical research repository for understanding early Claude Code CLI internals. Extracts and resolves source maps from the minified bundle to reconstruct agent architecture, command flow, and terminal-agent interaction patterns.",
-    features: [
-      "Source map extraction from minified CLI bundle",
-      "Symbol resolution and module boundary reconstruction",
-      "Reconstructed agent architecture graph",
-      "Command-flow and terminal-agent interaction notes",
-      "Architecture annotations for study"
-    ],
-    mermaid: `graph LR
-    BUN([Minified Bundle]) --> EX[Source Map Extractor]
-    EX --> RS[Symbol Resolver]
-    RS --> MB[Module Boundaries]
-    MB --> AG[Architecture Graph]
-    AG --> VIZ([Visualisation])
-    AG --> DOC([Documentation])`,
-    graph: {
-      nodes: [
-        {id:"index", label:"index.js", type:"entry"},
-        {id:"extractor", label:"extractor.js", type:"service"},
-        {id:"resolver", label:"resolver.js", type:"service"},
-        {id:"graph_b", label:"graph_builder.js", type:"service"},
-        {id:"visualizer", label:"visualizer.js", type:"ui"},
-        {id:"maps", label:"source-maps/", type:"data"},
-        {id:"output", label:"output/", type:"data"}
-      ],
-      links: [
-        {s:"index",t:"extractor"},{s:"extractor",t:"maps"},
-        {s:"extractor",t:"resolver"},{s:"resolver",t:"graph_b"},
-        {s:"graph_b",t:"visualizer"},{s:"graph_b",t:"output"}
-      ]
-    }
-  },
-  {
-    id: "sglang",
-    name: "SGLang Framework",
-    tagline: "LLM inference runtime optimisation — open source contributor",
-    kicker: "Open Source Contribution · LLM Systems",
-    category: "contributions",
-    status: "active",
-    year: "2025–Present",
-    github: "https://github.com/sgl-project/sglang",
-    demo: null,
-    highlight: false,
-    tech: ["Python", "CUDA", "Triton", "NCCL", "C++", "Rust"],
-    description: "Contributing runtime and serving optimisations to the SGLang LLM inference framework (LMSYS / UC Berkeley). Work spans backend runtime, distributed serving, and frontend prompt-language features for DeepSeek R1, Llama 3, and Qwen. Uses Claude Code as an AI-assisted open-source contribution workflow.",
-    features: [
-      "Backend runtime optimisations for throughput and latency",
-      "Distributed serving and multi-GPU coordination",
-      "Frontend prompt-language features for contextual routing",
-      "KV cache management improvements",
-      "AI-assisted (Claude Code) open-source contribution workflow"
-    ],
-    mermaid: `graph TB
-    subgraph Frontend
-      PL[Prompt Language] --> SC[Scheduler]
-    end
-    subgraph Backend
-      SC --> RT[Runtime]
-      RT --> KV[KV Cache Manager]
-      RT --> DS[Distributed Serving]
-    end
-    subgraph Workers
-      DS --> G1([GPU Worker 1])
-      DS --> G2([GPU Worker 2])
-      DS --> GN([GPU Worker N])
-    end`,
-    graph: {
-      nodes: [
-        {id:"frontend", label:"sglang/frontend/", type:"entry"},
-        {id:"scheduler", label:"scheduler.py", type:"service"},
-        {id:"srt_backend", label:"srt_backend.py", type:"service"},
-        {id:"model_runner", label:"model_runner.py", type:"service"},
-        {id:"kv_cache", label:"radix_cache.py", type:"data"},
-        {id:"dist_serving", label:"dist_serving.py", type:"service"},
-        {id:"tokenizer", label:"tokenizer_manager.py", type:"service"},
-        {id:"gpu", label:"GPU Workers", type:"external"}
-      ],
-      links: [
-        {s:"frontend",t:"scheduler"},{s:"scheduler",t:"srt_backend"},
-        {s:"srt_backend",t:"model_runner"},{s:"model_runner",t:"kv_cache"},
-        {s:"srt_backend",t:"dist_serving"},{s:"scheduler",t:"tokenizer"},
-        {s:"dist_serving",t:"gpu"}
-      ]
-    }
-  },
-  {
-    id: "dispatch-ai",
-    name: "Dispatch.AI",
-    tagline: "6-week AI engineering course project — curriculum design + hands-on instruction",
-    kicker: "Teaching · Curriculum Design · LangGraph",
-    category: "teaching",
-    type: "teaching",
-    status: "2026",
-    year: "2026",
-    github: "https://github.com/australiaitgroup/AI-Engineer-Project-Dispatch-AI",
-    demo: null,
-    highlight: true,
-    tech: ["Python", "FastAPI", "LangGraph", "Groq", "Pydantic", "Redis", "MCP", "NeMo Guardrails", "RAGAS", "Docker", "Render"],
-    description: "Designed and instructed a 6-week progressive AI engineering course project for 13 students at Australia IT Group. Students build a production-grade AI booking assistant incrementally — from Pydantic state models and Redis persistence through LangGraph multi-turn agents, MCP tool servers, multi-agent routing, NeMo Guardrails, and RAGAS evaluation — finishing with a Docker + Render capstone deployment. Delivered the reference implementation, student scaffold, CI/CD grading pipeline, and PR-based submission workflow with a 100-synthetic-user evaluation gate.",
-    features: [
-      "Curriculum design: 6 progressive weeks from state management to full agentic deployment",
-      "Reference implementation (week6/) with complete working solution for all weeks",
-      "Student scaffold: Pydantic state, Redis StateManager, LangGraph BookingAgent and FAQAgent",
-      "MCP server with service catalog and booking tools",
-      "SupervisorAgent routing between BookingAgent, FAQAgent, and escalation paths",
-      "NeMo Guardrails for content safety + RAGAS evaluation with 100-synthetic-user test gate",
-      "Docker Compose + Render deployment; GitHub Actions CI/CD grading on PR submission"
-    ],
-    lectures: [
-      { date:"Week 1", title:"State Management — Pydantic models + Redis persistence",             duration:"2hr", topic:"applied" },
-      { date:"Week 2", title:"LangGraph Agent — BookingAgent with intent classification",          duration:"2hr", topic:"agents" },
-      { date:"Week 3", title:"MCP Server — service catalog + booking tools",                       duration:"2hr", topic:"agents" },
-      { date:"Week 4", title:"Multi-Agent — SupervisorAgent routing BookingAgent / FAQAgent",      duration:"2hr", topic:"agents" },
-      { date:"Week 5", title:"Guardrails + Evaluation — NeMo Guardrails + RAGAS",                 duration:"2hr", topic:"rag" },
-      { date:"Week 6", title:"Capstone Demo — Docker + Render deployment + student showcase",      duration:"3hr", topic:"applied" },
-    ],
-    mermaid: `graph TB
-    USR([User]) --> API[FastAPI /dispatch]
-    API --> SV{SupervisorAgent}
-    SV -->|booking intent| BA[BookingAgent]
-    SV -->|FAQ intent| QA[FAQAgent]
-    SV -->|escalate| ES([Escalation])
-    BA --> MCP[MCP Tools<br/>service catalog]
-    BA --> GR[NeMo Guardrails]
-    BA --> PS[(Pydantic State)]
-    PS --> RD[(Redis)]
-    BA --> EV[RAGAS Eval]
-    QA --> RAG[RAG Retrieval]`,
-    graph: {
-      nodes: [
-        {id:"main", label:"main.py (FastAPI)", type:"entry"},
-        {id:"api", label:"api/dispatch.py", type:"api"},
-        {id:"supervisor", label:"agents/supervisor.py", type:"service"},
-        {id:"booking", label:"agents/booking.py", type:"service"},
-        {id:"faq", label:"agents/faq_agent.py", type:"service"},
-        {id:"tools", label:"agents/tools.py", type:"service"},
-        {id:"mcp", label:"mcp/server.py", type:"service"},
-        {id:"state", label:"models/agent_state.py", type:"data"},
-        {id:"stmgr", label:"infrastructure/state_manager.py", type:"service"},
-        {id:"redis", label:"Redis", type:"external"},
-        {id:"ragas", label:"eval/ragas.py", type:"service"},
-        {id:"guardrails", label:"NeMo Guardrails", type:"external"}
-      ],
-      links: [
-        {s:"main",t:"api"},{s:"api",t:"supervisor"},
-        {s:"supervisor",t:"booking"},{s:"supervisor",t:"faq"},
-        {s:"booking",t:"tools"},{s:"booking",t:"mcp"},
-        {s:"booking",t:"guardrails"},{s:"booking",t:"state"},
-        {s:"state",t:"stmgr"},{s:"stmgr",t:"redis"},
-        {s:"booking",t:"ragas"}
-      ]
-    }
-  },
-  {
-    id: "ai-bootcamp",
-    name: "AI Engineer Bootcamp",
-    tagline: "Guest Instructor at Australia IT Group — RAG, Agents, Fine-tuning",
-    kicker: "Teaching · Applied AI Engineering",
-    category: "teaching",
-    type: "teaching",
-    status: "active",
-    year: "2026",
-    github: "https://github.com/australiaitgroup/AI-Engineer-Bootcamp",
-    demo: null,
-    highlight: true,
-    tech: ["Python", "LangChain", "LangGraph", "RAG", "RAGAS", "Gemini", "DeepSeek", "ChromaDB", "PyTorch", "QLoRA"],
-    description: "Guest lecturer at Australia IT Group's AI Engineer Bootcamp (2026). Delivered 12+ sessions covering the full production AI stack — from embeddings and RAG architecture through multi-agent systems, LangGraph orchestration, evaluation engineering, and fine-tuning. All lecture notebooks and slides committed directly to the shared cohort repo (lycanlancelot@gmail.com).",
-    features: [
-      "RAG architecture: adaptive RAG, production RAG with DeepSeek, hybrid retrieval, RAGAS evaluation",
-      "Embeddings and vector search: 3-hour hands-on course with ChromaDB and sentence transformers",
-      "Multi-agent systems: architecture patterns, AutoGen & CrewAI, LangGraph orchestration",
-      "Fine-tuning: QLoRA, PEFT/Unsloth, sentence-transformer fine-tuning, MTEB benchmarking",
-      "Applied AI: Python UI building, PDF parsing, Text-to-SQL, LLM rate limits",
-      "Tooling: LangFuse monitoring, LangSmith ops, synthetic test data generation"
-    ],
-    lectures: [
-      { date:"2026-05-27", title:"Production RAG Application + LangChain Core Constructs", duration:"3hr", topic:"rag" },
-      { date:"2026-05-20", title:"UI Building, PDF Parsing & LLM Rate Limits",             duration:"2hr", topic:"applied" },
-      { date:"2026-05-17", title:"AI Data Engineering: Text to SQL",                       duration:"2hr", topic:"applied" },
-      { date:"2026-05-14", title:"Embeddings, Vector Search & RAG",                        duration:"3hr", topic:"embeddings" },
-      { date:"2026-05-06", title:"Advanced RAG — Bug Fixes & New Modules",                 duration:"2hr", topic:"rag" },
-      { date:"2026-03-23", title:"Fine-tuning Lecture (split slides edition)",             duration:"2hr", topic:"finetune" },
-      { date:"2026-03-18", title:"ML Model Evaluation & Fine-tuning",                      duration:"3hr", topic:"finetune" },
-      { date:"2026-03-15", title:"Multi-Agent RAG with Hybrid Search & Evaluation",        duration:"2hr", topic:"agents" },
-      { date:"2026-03-08", title:"AutoGen & CrewAI Practical Workshop",                    duration:"2hr", topic:"agents" },
-      { date:"2026-02-28", title:"Multi-Agent Architecture",                               duration:"2hr", topic:"agents" },
-      { date:"2026-02-14", title:"RAG QA Application with LangChain",                      duration:"2.5hr", topic:"rag" },
-      { date:"2026-02-05", title:"Adaptive RAG with Google Gemini 2.0 Flash",              duration:"2hr", topic:"rag" },
-    ],
-    mermaid: `graph LR
-    subgraph RAG["RAG & Retrieval"]
-      R1[Adaptive RAG<br/>Gemini 2.0]-->R2[RAG QA<br/>LangChain]-->R3[Multi-Agent RAG<br/>Hybrid Search]-->R4[Production RAG<br/>DeepSeek]
-    end
-    subgraph Agents["Multi-Agent Systems"]
-      A1[Architecture]-->A2[AutoGen &amp; CrewAI]-->A3[LangGraph]
-    end
-    subgraph Applied["Applied AI"]
-      P1[Embeddings<br/>3hr]-->P2[Text-to-SQL]-->P3[UI &amp; PDF]
-    end
-    subgraph MLOps["Evaluation &amp; Fine-tuning"]
-      M1[Model Eval<br/>3hr]-->M2[Fine-tuning<br/>QLoRA]
-    end
-    P1-->R1
-    R4-->A1
-    A3-->M1`,
-    graph: null
-  }
-];
-
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
-
+{% raw %}
+const PROJECTS = JSON.parse(document.getElementById("projects-data").textContent);
 const CATEGORIES = [
-  { id: "all",           label: "All Projects" },
-  { id: "ai-systems",   label: "AI Systems" },
-  { id: "dev-tools",    label: "Dev Tools" },
-  { id: "web-mobile",   label: "Web / Mobile" },
-  { id: "contributions",label: "Contributions" },
-  { id: "teaching",     label: "Teaching" },
+  { id: "all", label: "All Projects" },
+  ...JSON.parse(document.getElementById("categories-data").textContent)
 ];
 
 const NODE_COLORS = {
@@ -882,61 +84,86 @@ const NODE_COLORS = {
   external: "#3a5060"
 };
 
-const STATUS_LABELS = {
-  active: "ACTIVE",
-  "2025": "2025",
-  "2026": "2026",
-  contrib: "CONTRIB"
+const STATUS_META = {
+  active:        { cls: "status-active",  label: "● ACTIVE" },
+  "2025":        { cls: "status-2025",    label: "2025" },
+  "2026":        { cls: "status-2026",    label: "2026" },
+  contrib:       { cls: "status-contrib", label: "CONTRIB" },
+  "case-study":  { cls: "status-case",    label: "CASE STUDY" },
+  workshop:      { cls: "status-workshop",label: "WORKSHOP" }
 };
+
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Data is authored by hand in _data/projects.yml and may contain intentional
+// markup (mermaid uses <br/>), so text nodes stay raw. Attribute values do not.
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function motion(root) {
+  if (window.Motion && root) window.Motion.initAll(root);
+}
 
 // ─── RENDER STATS ─────────────────────────────────────────────────────────────
 function renderStats() {
-  const total = PROJECTS.length;
-  const active = PROJECTS.filter(p => p.status === "active").length;
-  const techs = new Set(PROJECTS.flatMap(p => p.tech)).size;
-  const cats = new Set(PROJECTS.map(p => p.category)).size;
+  const total  = PROJECTS.length;
+  const cases  = PROJECTS.filter(p => p.kind === "case-study").length;
+  const techs  = new Set(PROJECTS.flatMap(p => p.tech || [])).size;
+  const cats   = new Set(PROJECTS.map(p => p.category)).size;
 
   const data = [
-    { value: total,  label: "Total Projects" },
-    { value: active, label: "Active Now" },
-    { value: techs,  label: "Technologies" },
-    { value: cats,   label: "Categories" }
+    { value: total, label: "Projects & case studies" },
+    { value: cases, label: "Client & DS case studies" },
+    { value: techs, label: "Technologies" },
+    { value: cats,  label: "Categories" }
   ];
 
   document.getElementById("stat-row").innerHTML = data
-    .map(d => `<div class="stat-pill"><strong>${d.value}</strong><span>${d.label}</span></div>`)
+    .map((d, i) => `<div class="stat-pill reveal" style="--i:${i}"><strong>${d.value}</strong><span>${d.label}</span></div>`)
     .join("");
+  motion(document.getElementById("stat-row"));
 }
 
 // ─── RENDER FILTERS ───────────────────────────────────────────────────────────
 let currentFilter = "all";
 
-function renderFilters() {
-  document.getElementById("filter-bar").innerHTML = CATEGORIES
-    .map(c => `<button class="filter-btn${c.id === currentFilter ? " active" : ""}"
-                 data-filter="${c.id}">${c.label}
-                 <span style="margin-left:4px;opacity:0.6">
-                   ${c.id === "all" ? PROJECTS.length : PROJECTS.filter(p => p.category === c.id).length}
-                 </span></button>`)
-    .join("");
+function countFor(id) {
+  return id === "all" ? PROJECTS.length : PROJECTS.filter(p => p.category === id).length;
+}
 
-  document.querySelectorAll(".filter-btn").forEach(btn => {
+function renderFilters() {
+  const bar = document.getElementById("filter-bar");
+  bar.innerHTML = CATEGORIES
+    .map(c => `<button class="filter-btn${c.id === currentFilter ? " active" : ""}" role="tab"
+                 aria-selected="${c.id === currentFilter}" data-filter="${esc(c.id)}">${c.label}<span class="filter-count">${countFor(c.id)}</span></button>`)
+    .join("") + `<span class="filter-underline" aria-hidden="true"></span>`;
+
+  bar.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       currentFilter = btn.dataset.filter;
       renderFilters();
       renderGrid();
     });
   });
+  moveFilterUnderline();
+}
+
+function moveFilterUnderline() {
+  const bar = document.getElementById("filter-bar");
+  const active = bar.querySelector(".filter-btn.active");
+  const bead = bar.querySelector(".filter-underline");
+  if (!active || !bead) return;
+  bead.style.transform = `translateX(${active.offsetLeft}px)`;
+  bead.style.width = `${active.offsetWidth}px`;
+  bead.style.top = `${active.offsetTop + active.offsetHeight - 1}px`;
 }
 
 // ─── RENDER GRID ─────────────────────────────────────────────────────────────
 function statusBadge(p) {
-  const cls = p.status === "active" ? "status-active"
-            : p.status === "2025"   ? "status-2025"
-            : p.status === "2026"   ? "status-2026"
-            : "status-contrib";
-  const label = p.status === "active" ? "● ACTIVE" : p.year;
-  return `<span class="status-badge ${cls}">${label}</span>`;
+  const m = STATUS_META[p.status] || { cls: "status-contrib", label: p.year || "" };
+  return `<span class="status-badge ${m.cls}">${m.label}</span>`;
 }
 
 function renderGrid() {
@@ -944,41 +171,52 @@ function renderGrid() {
     ? PROJECTS
     : PROJECTS.filter(p => p.category === currentFilter);
 
-  const grouped = {};
-  CATEGORIES.slice(1).forEach(c => {
-    const items = filtered.filter(p => p.category === c.id);
-    if (items.length) grouped[c.id] = { label: c.label, items };
-  });
-
   const container = document.getElementById("projects-container");
 
   if (currentFilter !== "all") {
+    const cat = CATEGORIES.find(c => c.id === currentFilter);
     container.innerHTML = `
-      <div class="projects-grid">
-        ${filtered.map(cardHTML).join("")}
-      </div>`;
+      ${cat && cat.blurb ? `<div class="section-blurb">${cat.blurb}</div>` : ""}
+      <div class="projects-grid">${filtered.map(cardHTML).join("")}</div>`;
   } else {
-    container.innerHTML = Object.entries(grouped).map(([id, { label, items }]) => `
-      <div class="section-label">${label}</div>
-      <div class="projects-grid">
-        ${items.map(cardHTML).join("")}
-      </div>`).join("");
+    container.innerHTML = CATEGORIES.slice(1).map(c => {
+      const items = filtered.filter(p => p.category === c.id);
+      if (!items.length) return "";
+      return `
+      <div class="section-label">${c.label}</div>
+      ${c.blurb ? `<div class="section-blurb">${c.blurb}</div>` : ""}
+      <div class="projects-grid">${items.map(cardHTML).join("")}</div>`;
+    }).join("");
   }
 
   container.querySelectorAll(".project-card").forEach(card => {
     card.addEventListener("click", () => openModal(card.dataset.id));
+    card.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(card.dataset.id); }
+    });
   });
+  motion(container);
 }
 
-function cardHTML(p) {
-  return `<article class="project-card${p.highlight ? " highlight" : ""}" data-id="${p.id}">
+function cardHTML(p, i) {
+  const tech = p.tech || [];
+  const extra = tech.length > 4 ? `<span class="tech-pill">+${tech.length - 4}</span>` : "";
+  // Entries with no public repo carry an `access` string instead of links —
+  // show it so a card without a GitHub button still explains itself.
+  const provenance = (p.links && p.links.length)
+    ? `<span class="card-open-hint">↗ details</span>`
+    : `<span class="access-chip" title="${esc(p.access || "")}">${p.access ? "no public repo" : "↗ details"}</span>`;
+
+  return `<article class="project-card reveal${p.highlight ? " highlight grad-border" : ""}"
+    style="--i:${i}" data-id="${esc(p.id)}" data-tilt tabindex="0" role="button"
+    aria-label="Open details for ${esc(p.name)}">
     <div class="card-kicker">${p.kicker}</div>
     <div class="card-title">${p.name}</div>
     <div class="card-tagline">${p.tagline}</div>
-    <div class="card-tech">${p.tech.slice(0, 4).map(t => `<span class="tech-pill">${t}</span>`).join("")}${p.tech.length > 4 ? `<span class="tech-pill">+${p.tech.length - 4}</span>` : ""}</div>
+    <div class="card-tech">${tech.slice(0, 4).map(t => `<span class="tech-pill">${t}</span>`).join("")}${extra}</div>
     <div class="card-footer">
       ${statusBadge(p)}
-      <span class="card-open-hint">↗ details</span>
+      ${provenance}
     </div>
   </article>`;
 }
@@ -986,65 +224,125 @@ function cardHTML(p) {
 // ─── MODAL ────────────────────────────────────────────────────────────────────
 let currentProject = null;
 let currentTab = "overview";
-let mermaidRendered = new Set();
+const mermaidCache = new Map();
+let lastFocused = null;
 
 function openModal(id) {
-  currentProject = PROJECTS.find(p => p.id === id);
-  currentTab = "overview";
-  mermaidRendered.clear();
+  const p = PROJECTS.find(x => x.id === id);
+  if (!p) return;
+  currentProject = p;
+  currentTab = tabsForProject(p)[0].id;
+
   renderModalHeader();
   renderModalTabs();
-  renderTabContent("overview");
-  document.getElementById("modal-overlay").classList.add("open");
+  renderTabContent(currentTab);
+
+  const overlay = document.getElementById("modal-overlay");
+  const modal = overlay.querySelector(".modal");
+  overlay.classList.add("open");
   document.body.style.overflow = "hidden";
+
+  modal.classList.add("entering");
+  modal.addEventListener("animationend", () => modal.classList.remove("entering"), { once: true });
+
+  lastFocused = document.activeElement;
+  document.getElementById("modal-close").focus();
+  history.replaceState(null, "", "#" + p.id);
 }
 
 function closeModal() {
   document.getElementById("modal-overlay").classList.remove("open");
   document.body.style.overflow = "";
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  if (lastFocused && lastFocused.focus) lastFocused.focus();
+  lastFocused = null;
+  currentProject = null;
+}
+
+// Keep Tab inside the dialog while it is open.
+function trapFocus(e) {
+  const overlay = document.getElementById("modal-overlay");
+  if (e.key !== "Tab" || !overlay.classList.contains("open")) return;
+  const items = overlay.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+  if (!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 }
 
 function renderModalHeader() {
   const p = currentProject;
   document.getElementById("modal-title").textContent = p.name;
-  document.getElementById("modal-tagline").textContent = p.tagline;
 
-  const links = [statusBadge(p)];
-  if (p.github)  links.push(`<a class="modal-link-btn primary" href="${p.github}"  target="_blank">↗ GitHub</a>`);
-  if (p.github2) links.push(`<a class="modal-link-btn"         href="${p.github2}" target="_blank">↗ GitHub 2</a>`);
-  if (p.demo)    links.push(`<a class="modal-link-btn"         href="${p.demo}"    target="_blank">↗ Demo</a>`);
-  document.getElementById("modal-links").innerHTML = links.join("");
+  const attribution = [p.org, p.period].filter(Boolean).join(" · ");
+  document.getElementById("modal-tagline").innerHTML =
+    `${p.tagline}${attribution ? `<span class="modal-attribution">${esc(attribution)}</span>` : ""}`;
+
+  const bits = [statusBadge(p)];
+  (p.links || []).forEach(l => {
+    bits.push(`<a class="modal-link-btn${l.primary ? " primary" : ""}" href="${esc(l.url)}"
+      ${l.url.startsWith("/") ? "" : 'target="_blank" rel="noopener"'}>↗ ${l.label}</a>`);
+  });
+  if (!(p.links && p.links.length) && p.access) {
+    bits.push(`<span class="access-chip access-chip-lg">${p.access}</span>`);
+  }
+  document.getElementById("modal-links").innerHTML = bits.join("");
 }
 
+// Tabs are presence-driven: a tab exists iff the data field backing it exists.
+// This is what lets case studies (no repo, no code graph) render correctly.
 function tabsForProject(p) {
-  if (p.type === "teaching") {
-    return [
-      { id: "overview",     label: "Overview" },
-      { id: "architecture", label: "Curriculum Map" },
-      { id: "lectures",     label: "Lectures" },
-    ];
-  }
-  return [
-    { id: "overview",     label: "Overview" },
-    { id: "architecture", label: "Architecture" },
-    { id: "codegraph",    label: "Code Graph" },
-  ];
+  const diagramLabel = p.diagram_label
+    || (p.kind === "enablement" ? "Curriculum Map"
+      : p.kind === "case-study" ? "System Map"
+      : "Architecture");
+
+  const tabs = [{ id: "overview", label: "Overview" }];
+  if (p.mermaid)    tabs.push({ id: "architecture", label: diagramLabel });
+  if (p.experiment) tabs.push({ id: "experiment",   label: "Experiment Design" });
+  if (p.metrics)    tabs.push({ id: "metrics",      label: "Impact & Metrics" });
+  if (p.delivery)   tabs.push({ id: "delivery",     label: "Delivery" });
+  if (p.graph && p.graph.nodes && p.graph.nodes.length)
+    tabs.push({ id: "codegraph", label: "Code Graph" });
+  if (p.lectures && p.lectures.length)
+    tabs.push({ id: "lectures", label: p.kind === "enablement" ? "Sessions" : "Lectures" });
+  return tabs;
 }
 
 function renderModalTabs() {
   const tabs = tabsForProject(currentProject);
-  document.getElementById("modal-tabs").innerHTML = tabs
-    .map(t => `<button class="modal-tab${t.id === currentTab ? " active" : ""}" data-tab="${t.id}">${t.label}</button>`)
+  const host = document.getElementById("modal-tabs");
+  host.setAttribute("role", "tablist");
+  host.innerHTML = tabs
+    .map(t => `<button class="modal-tab${t.id === currentTab ? " active" : ""}" role="tab"
+       aria-selected="${t.id === currentTab}" data-tab="${esc(t.id)}">${t.label}</button>`)
     .join("");
-  document.querySelectorAll(".modal-tab").forEach(btn => {
+
+  const btns = [...host.querySelectorAll(".modal-tab")];
+  btns.forEach((btn, i) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    btn.addEventListener("keydown", e => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      e.preventDefault();
+      const next = btns[(i + (e.key === "ArrowRight" ? 1 : btns.length - 1)) % btns.length];
+      next.focus();
+      switchTab(next.dataset.tab);
+    });
   });
 }
 
 function switchTab(tabId) {
+  if (tabId === currentTab) return;
   currentTab = tabId;
-  document.querySelectorAll(".modal-tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
-  renderTabContent(tabId);
+  document.querySelectorAll(".modal-tab").forEach(b => {
+    const on = b.dataset.tab === tabId;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-selected", on);
+  });
+  const body = document.getElementById("modal-body");
+  if (REDUCED) { renderTabContent(tabId); return; }
+  body.classList.add("leaving");
+  setTimeout(() => { body.classList.remove("leaving"); renderTabContent(tabId); }, 130);
 }
 
 const TOPIC_COLORS = {
@@ -1057,32 +355,78 @@ const TOPIC_COLORS = {
 
 function renderTabContent(tabId) {
   const p = currentProject;
+  if (!p) return;
   const body = document.getElementById("modal-body");
+  body.classList.add("entering");
+  setTimeout(() => body.classList.remove("entering"), 260);
 
   if (tabId === "overview") {
     body.innerHTML = `
       <p class="overview-description">${p.description}</p>
-      <ul class="feature-list">${p.features.map(f => `<li>${f}</li>`).join("")}</ul>
+      <ul class="feature-list">${(p.features || []).map(f => `<li>${f}</li>`).join("")}</ul>
       <div class="tech-section">
-        <h4>Tech Stack</h4>
-        <div class="tech-grid">${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join("")}</div>
+        <h4>${p.kind === "case-study" ? "Methods & Stack" : "Tech Stack"}</h4>
+        <div class="tech-grid">${(p.tech || []).map(t => `<span class="tech-tag">${t}</span>`).join("")}</div>
       </div>`;
   }
 
   else if (tabId === "architecture") {
     const mId = "mermaid-" + p.id;
-    if (!mermaidRendered.has(mId)) {
-      body.innerHTML = `<div class="arch-wrap"><div class="mermaid" id="${mId}">${p.mermaid}</div></div>`;
-      mermaid.run({ nodes: [document.getElementById(mId)] });
-      mermaidRendered.add(mId);
+    if (mermaidCache.has(p.id)) {
+      body.innerHTML = `<div class="arch-wrap">${mermaidCache.get(p.id)}</div>`;
     } else {
       body.innerHTML = `<div class="arch-wrap"><div class="mermaid" id="${mId}">${p.mermaid}</div></div>`;
+      // Cache the rendered SVG, not a flag — re-showing the tab must not leave raw source on screen.
+      Promise.resolve(mermaid.run({ nodes: [document.getElementById(mId)] }))
+        .then(() => { const el = document.getElementById(mId); if (el) mermaidCache.set(p.id, el.outerHTML); })
+        .catch(() => {});
     }
+  }
+
+  else if (tabId === "experiment") {
+    const e = p.experiment;
+    body.innerHTML = `
+      <div class="exp-block"><h4>Hypothesis</h4><p>${e.hypothesis}</p></div>
+      <div class="exp-block"><h4>Design</h4><p>${e.design}</p></div>
+      <div class="exp-split">
+        <div class="exp-block">
+          <h4>Guardrail metrics</h4>
+          <ul class="feature-list">${e.guardrails.map(g => `<li>${g}</li>`).join("")}</ul>
+        </div>
+        <div class="exp-block">
+          <h4>Readouts</h4>
+          <ul class="feature-list">${e.readouts.map(r => `<li>${r}</li>`).join("")}</ul>
+        </div>
+      </div>`;
+  }
+
+  else if (tabId === "metrics") {
+    body.innerHTML = `
+      <div class="metric-grid">${p.metrics.map((m, i) => `
+        <div class="metric-tile reveal" style="--i:${i}">
+          <strong>${m.value}</strong>
+          <span class="metric-label">${m.label}</span>
+          ${m.note ? `<span class="metric-note">${m.note}</span>` : ""}
+        </div>`).join("")}</div>
+      ${p.access ? `<p class="metric-source">${p.access}</p>` : ""}`;
+    motion(body);
+  }
+
+  else if (tabId === "delivery") {
+    const d = p.delivery;
+    body.innerHTML = `
+      <div class="delivery-meta">
+        <div><h4>Audience</h4><p>${d.audience}</p></div>
+        <div><h4>Format</h4><p>${d.format}</p></div>
+        ${d.size ? `<div><h4>Scale</h4><p>${d.size}</p></div>` : ""}
+      </div>
+      <h4 class="delivery-h">What it achieved</h4>
+      <ul class="feature-list">${d.outcomes.map(o => `<li>${o}</li>`).join("")}</ul>`;
   }
 
   else if (tabId === "codegraph") {
     body.innerHTML = `
-      <div class="graph-wrap" id="graph-wrap-${p.id}"></div>
+      <div class="graph-wrap" id="graph-wrap-${esc(p.id)}"></div>
       <div class="graph-legend">${
         Object.entries(NODE_COLORS).map(([type, color]) =>
           `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${type}</div>`
@@ -1096,7 +440,8 @@ function renderTabContent(tabId) {
       `<span class="lec-topic-pill" style="background:${v.bg};border-color:${v.border};color:${v.text}">${v.label}</span>`
     ).join("");
 
-    const rows = (p.lectures || []).map(l => {
+    const lectures = p.lectures || [];
+    const rows = lectures.map(l => {
       const tc = TOPIC_COLORS[l.topic] || TOPIC_COLORS.applied;
       return `<div class="lec-row">
         <div class="lec-date">${l.date}</div>
@@ -1112,7 +457,7 @@ function renderTabContent(tabId) {
 
     body.innerHTML = `
       <div class="lec-header">
-        <span style="color:var(--muted);font-size:11px">${p.lectures.length} sessions · Feb – May 2026</span>
+        <span class="lec-count">${lectures.length} sessions${p.lectures_note ? " · " + p.lectures_note : ""}</span>
         <div class="lec-legend">${legend}</div>
       </div>
       <div class="lec-list">${rows}</div>`;
@@ -1122,7 +467,8 @@ function renderTabContent(tabId) {
 // ─── D3 CODE GRAPH ────────────────────────────────────────────────────────────
 function renderD3Graph(project, containerId) {
   const container = document.getElementById(containerId);
-  if (!container) return;
+  // Case studies carry no graph — bail before touching project.graph.nodes.
+  if (!container || !project.graph || !project.graph.nodes || !project.graph.nodes.length) return;
   const W = container.clientWidth || 760;
   const H = 380;
 
@@ -1161,12 +507,15 @@ function renderD3Graph(project, containerId) {
 
   const node = svg.append("g").selectAll("g")
     .data(nodes).join("g")
-    .attr("cursor", "pointer")
-    .call(d3.drag()
+    .attr("cursor", REDUCED ? "default" : "pointer");
+
+  if (!REDUCED) {
+    node.call(d3.drag()
       .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
       .on("drag",  (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end",   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
     );
+  }
 
   node.append("circle")
     .attr("r", 14)
@@ -1186,17 +535,36 @@ function renderD3Graph(project, containerId) {
   // Tooltip label below
   node.append("title").text(d => d.label);
 
-  sim.on("tick", () => {
+  const draw = () => {
     link
       .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
     node.attr("transform", d => `translate(${Math.max(16, Math.min(W - 16, d.x))},${Math.max(16, Math.min(H - 16, d.y))})`);
-  });
+  };
+
+  if (REDUCED) {
+    // Settle the layout synchronously and paint once — no animation at all.
+    sim.stop();
+    for (let i = 0; i < 300; i++) sim.tick();
+    draw();
+  } else {
+    sim.on("tick", draw);
+  }
+}
+
+// ─── DEEP LINKS ───────────────────────────────────────────────────────────────
+// /projects.html#rb-search-ranking opens that case study directly. The homepage
+// links straight into these.
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  if (PROJECTS.some(p => p.id === id)) openModal(id);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 mermaid.initialize({
   startOnLoad: false,
+  securityLevel: "strict",
   theme: "dark",
   themeVariables: {
     background: "#101826",
@@ -1214,11 +582,21 @@ document.getElementById("modal-close").addEventListener("click", closeModal);
 document.getElementById("modal-overlay").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-overlay")) closeModal();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+  trapFocus(e);
+});
+window.addEventListener("hashchange", () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id) openFromHash(); else closeModal();
+});
+window.addEventListener("resize", moveFilterUnderline);
 
 renderStats();
 renderFilters();
 renderGrid();
+openFromHash();
+{% endraw %}
 </script>
 </body>
 </html>
